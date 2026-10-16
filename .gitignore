@@ -1,0 +1,24 @@
+# Runtime caches and installed runtimes — all regenerable
+node_modules/
+.cache/
+
+# Source masters: 4.7 GB, irreplaceable, never committed
+_source/
+
+# The drop folder normally lives OUTSIDE this repo, beside it as
+# CLAUDE project/KRAF/outer assets/ — 35 GB that must never be pushed. Listed here as
+# insurance in case anyone ever copies or symlinks it back inside.
+outer assets/
+outer-assets/
+
+# Prepared media: rebuilt by `npm run prepare-assets` from "outer assets/"
+content/artists/*/video/
+content/artists/*/steps/*.mp4
+
+# AI-assistant workspace files — deliberately not shared. Each person's assistant setup is
+# their own; nothing here is needed to build, run or understand the project.
+.claude/
+CLAUDE.md
+.cursor/
+.aider*
+.github/copilot-instructions.md

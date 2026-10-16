@@ -1,0 +1,667 @@
+{
+  "schemaVersion": 1,
+  "museum": {
+    "title": "Muzium Kraf Kuala Lumpur",
+    "logo": "artists/_shared/logo.png",
+    "titleImage": "artists/_shared/title.png"
+  },
+  "ui": {
+    "back": "artists/_shared/ui/btn-back.png",
+    "pill": "artists/_shared/ui/btn-empty.png",
+    "_note_stage": "Stage buttons now ship with their text baked in, so nothing is drawn over them. Keys match the strings vocabulary (profile/products/process).",
+    "profile": "artists/_shared/ui/btn-profile.png",
+    "products": "artists/_shared/ui/btn-product.png",
+    "_note_explain": "Terangkan Produk. Shared rather than per-artist, so an artist with an explain video and no artwork of their own still gets a button; Bangie and Maznah override it with theirs. Artists without an explain video are unaffected, since the stage builds its buttons from what the artist actually has.",
+    "explain": "artists/_shared/ui/btn-explain.png",
+    "process": "artists/_shared/ui/btn-step.png",
+    "plus": "artists/_shared/ui/btn-plus.png",
+    "minus": "artists/_shared/ui/btn-minus.png",
+    "reset": "artists/_shared/ui/btn-reset.png",
+    "_note_toggle": "Keyed to the strings vocabulary (split/join), not the filenames. Both halves of the Pisahkan/Sambung toggle now have artwork.",
+    "split": "artists/_shared/ui/btn-separate.png",
+    "join": "artists/_shared/ui/btn-combine.png"
+  },
+  "kiosk": {
+    "_note_idle": "3 minutes of no touch returns to the main menu. The countdown is suspended while the artist is talking (Profil) and while a Pembuatan step video is playing; it starts again when that video ends.",
+    "idleTimeoutMs": 180000,
+    "menuReloadAfterMs": 1800000,
+    "designWidth": 1080,
+    "designHeight": 1920,
+    "_note_fade": "Duration of EACH half of the white crossfade, so 500 = 0.5s to white + 0.5s out = 1s total.",
+    "fadeMs": 500,
+    "_note_window": "Size the window becomes when fullscreen is exited (F11). Portrait, matching the 9:16 design canvas.",
+    "windowedWidth": 608,
+    "windowedHeight": 1080,
+    "_note_swap": "Each half of the quick fade when switching between products (e.g. Keris 1 and Keris 2).",
+    "productSwapFadeMs": 160
+  },
+  "strings": {
+    "profile": {
+      "ms": "Profil",
+      "en": "Profile"
+    },
+    "products": {
+      "ms": "Produk",
+      "en": "Product"
+    },
+    "process": {
+      "ms": "Pembuatan",
+      "en": "Creation Step"
+    },
+    "explain": {
+      "ms": "Terangkan Produk",
+      "en": "Product Explain"
+    },
+    "reset": {
+      "ms": "Set Semula",
+      "en": "Reset"
+    },
+    "split": {
+      "ms": "Pisahkan",
+      "en": "Separate"
+    },
+    "join": {
+      "ms": "Sambung",
+      "en": "Combine"
+    },
+    "rotate": {
+      "ms": "Pusing",
+      "en": "Rotate"
+    },
+    "zoom": {
+      "ms": "Zum",
+      "en": "Zoom"
+    },
+    "loading": {
+      "ms": "Memuatkan aset…",
+      "en": "Loading assets…"
+    },
+    "preparing": {
+      "ms": "Menyediakan video…",
+      "en": "Preparing videos…"
+    },
+    "modelSoon": {
+      "ms": "Model 3D belum tersedia",
+      "en": "3D model not yet available"
+    }
+  },
+  "artists": [
+    {
+      "id": "samat",
+      "order": 1,
+      "name": "Samat bin Man",
+      "honorific": "Adiguru Kraf Wau",
+      "menuCard": "artists/samat/menu/card.png",
+      "menuPlate": "artists/samat/menu/nameplate.png",
+      "menuPortrait": "artists/samat/menu/portrait.webp",
+      "backdrop": "#FCFCFF",
+      "video": {
+        "walk": {
+          "src": "artists/samat/video/walk.mp4",
+          "fps": 25,
+          "muted": true,
+          "durationMs": 7840
+        },
+        "idle": {
+          "src": "artists/samat/video/idle.mp4",
+          "fps": 25,
+          "muted": true
+        },
+        "profile": {
+          "src": "artists/samat/video/profil.mp4",
+          "fps": 25,
+          "srt": "artists/samat/video/profil.srt"
+        }
+      },
+      "products": [
+        {
+          "id": "wau-bulan",
+          "order": 1,
+          "enabled": true,
+          "title": "Wau Bulan",
+          "meta": [
+            "Kraf Wau Tradisional",
+            "Perlis"
+          ],
+          "thumb": "artists/samat/products/wau-bulan/thumb.webp",
+          "type": "model",
+          "model": {
+            "format": "fbx",
+            "resourcePath": "artists/samat/products/wau-bulan/fbx/texture/",
+            "material": {
+              "_note_unlit": "The textures are painted artwork with the shading already in them. Unlit shows each texel exactly as painted, from both faces and at any angle, with no specular sheen and no darkening as the kite turns away from a light.",
+              "unlit": true,
+              "doubleSide": true,
+              "dropAlphaMap": true,
+              "alphaTest": 0.5
+            },
+            "initialVariant": "assembled",
+            "variants": [
+              {
+                "_note": "No per-variant camera. Rotation, pitch and zoom belong to the viewer so they carry across the swap — the kite opens and closes from whatever angle the visitor is already looking at.",
+                "id": "assembled",
+                "src": "artists/samat/products/wau-bulan/fbx/Wau.fbx"
+              },
+              {
+                "id": "exploded",
+                "src": "artists/samat/products/wau-bulan/fbx/WauSeparated.fbx",
+                "_note_facing": "WauSeparated.fbx is authored facing the opposite way to Wau.fbx — its painted side points -Z. Without this the kite appears to flip round as it separates and shows its plain blue backing. This rotates the MODEL, so the visitor's own rotation still composes on top.",
+                "modelYawDeg": 180,
+                "animation": {
+                  "clips": "self-matched",
+                  "_note_duration": "Wall-clock seconds for the open, and for the reverse close. The Blender export runs 2.042s; every clip is retimed to this.",
+                  "durationSec": 1,
+                  "loop": "once",
+                  "playOnEnter": true,
+                  "clampWhenFinished": true
+                }
+              }
+            ],
+            "_note_camera": "Elevated three-quarter view, matching the old build's product shot. startPitchDeg orbits the CAMERA, so dragging still spins the kite about the upright world axis rather than a tilted one.",
+            "_note_centre": "centreOffsetX nudges the kite (design px, + = right) from the measured centre of the free space between the back button and the controls. Tuned by eye against the museum's own layout.",
+            "camera": {
+              "fitMargin": 1.35,
+              "startYawDeg": 0,
+              "startPitchDeg": 16,
+              "centreOffsetX": 65
+            },
+            "lighting": {
+              "ambient": 2,
+              "key": 0.9,
+              "back": 0.7
+            }
+          },
+          "controls": [
+            {
+              "widget": "drag",
+              "binds": "rotation"
+            },
+            {
+              "widget": "pinch",
+              "binds": "zoom",
+              "min": 0.5,
+              "max": 3
+            },
+            {
+              "widget": "zoomButtons",
+              "binds": "zoom",
+              "step": 0.25
+            },
+            {
+              "widget": "toggle",
+              "binds": "variant",
+              "states": [
+                "assembled",
+                "exploded"
+              ],
+              "labels": [
+                "split",
+                "join"
+              ]
+            },
+            {
+              "widget": "button",
+              "binds": "reset",
+              "label": "reset"
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "video": "artists/samat/steps/01.mp4",
+          "srt": null,
+          "thumb": "artists/samat/steps/01.webp"
+        },
+        {
+          "order": 2,
+          "video": "artists/samat/steps/02.mp4",
+          "srt": null,
+          "thumb": "artists/samat/steps/02.webp"
+        },
+        {
+          "order": 3,
+          "video": "artists/samat/steps/03.mp4",
+          "srt": null,
+          "thumb": "artists/samat/steps/03.webp"
+        },
+        {
+          "order": 4,
+          "video": "artists/samat/steps/04.mp4",
+          "srt": null,
+          "thumb": "artists/samat/steps/04.webp"
+        }
+      ]
+    },
+    {
+      "_note": "Second artist. Keris are pre-rendered 360-degree turntables (type \"sequence\"), not 3D models: drag scrubs the frames and loops (a full 360-degree turn). Title blocks are designed IMAGES (metaImage); the title/meta text is kept only as alt text and as a fallback.",
+      "id": "norhaiza",
+      "order": 2,
+      "name": "Norhaiza bin Noordin",
+      "honorific": "Tokoh Kraf Negara (Ukiran Halus)",
+      "menuCard": "artists/norhaiza/menu/card.png",
+      "menuPlate": "artists/norhaiza/menu/nameplate.png",
+      "_note_backdrop": "Measured from his footage. Darker than Samat's #FCFCFF, which is why the backdrop is per-artist.",
+      "backdrop": "#F4F4F9",
+      "video": {
+        "walk": {
+          "src": "artists/norhaiza/video/walk.mp4",
+          "fps": 25,
+          "muted": true,
+          "durationMs": 14960
+        },
+        "idle": {
+          "src": "artists/norhaiza/video/idle.mp4",
+          "fps": 25,
+          "muted": true
+        },
+        "profile": {
+          "src": "artists/norhaiza/video/profil.mp4",
+          "fps": 25,
+          "srt": "artists/norhaiza/video/profil.srt"
+        }
+      },
+      "products": [
+        {
+          "id": "keris-1",
+          "order": 1,
+          "enabled": true,
+          "title": "Keris Bugis Berukir",
+          "meta": [
+            "Motif Daun Ketumbit",
+            "Teknik Tebuk Timbul Bersilat",
+            "Tahun 2000"
+          ],
+          "metaImage": "artists/norhaiza/products/keris-1/info.png",
+          "icon": "artists/norhaiza/products/keris-1/icon.png",
+          "type": "sequence",
+          "sequence": {
+            "pattern": "artists/norhaiza/products/keris-1/frames/frame-{i:02}.webp",
+            "start": 0,
+            "count": 76,
+            "fitHeight": 0.68,
+            "_note_fit": "Fraction of the product viewport height at zoom 1. 0.68 matches the keris size in the old app (23_NorhaizaProduct.png), leaving room to zoom in for detail."
+          },
+          "controls": [
+            {
+              "widget": "drag",
+              "binds": "rotation"
+            },
+            {
+              "widget": "pinch",
+              "binds": "zoom",
+              "min": 1,
+              "max": 3
+            },
+            {
+              "widget": "zoomButtons",
+              "binds": "zoom",
+              "step": 0.25
+            }
+          ]
+        },
+        {
+          "id": "keris-2",
+          "order": 2,
+          "enabled": true,
+          "title": "Keris 2",
+          "meta": [
+            "(placeholder)"
+          ],
+          "metaImage": "artists/norhaiza/products/keris-2/info.png",
+          "icon": "artists/norhaiza/products/keris-2/icon.png",
+          "type": "sequence",
+          "sequence": {
+            "pattern": "artists/norhaiza/products/keris-2/frames/frame-{i:02}.webp",
+            "start": 0,
+            "count": 76,
+            "fitHeight": 0.68,
+            "_note_fit": "Fraction of the product viewport height at zoom 1. 0.68 matches the keris size in the old app (23_NorhaizaProduct.png), leaving room to zoom in for detail."
+          },
+          "controls": [
+            {
+              "widget": "drag",
+              "binds": "rotation"
+            },
+            {
+              "widget": "pinch",
+              "binds": "zoom",
+              "min": 1,
+              "max": 3
+            },
+            {
+              "widget": "zoomButtons",
+              "binds": "zoom",
+              "step": 0.25
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "video": "artists/norhaiza/steps/01.mp4",
+          "srt": "artists/norhaiza/steps/01.srt",
+          "thumb": "artists/norhaiza/steps/01.webp"
+        },
+        {
+          "order": 2,
+          "video": "artists/norhaiza/steps/02.mp4",
+          "srt": "artists/norhaiza/steps/02.srt",
+          "thumb": "artists/norhaiza/steps/02.webp"
+        },
+        {
+          "order": 3,
+          "video": "artists/norhaiza/steps/03.mp4",
+          "srt": "artists/norhaiza/steps/03.srt",
+          "thumb": "artists/norhaiza/steps/03.webp"
+        },
+        {
+          "order": 4,
+          "video": "artists/norhaiza/steps/04.mp4",
+          "srt": "artists/norhaiza/steps/04.srt",
+          "thumb": "artists/norhaiza/steps/04.webp"
+        },
+        {
+          "order": 5,
+          "video": "artists/norhaiza/steps/05.mp4",
+          "srt": "artists/norhaiza/steps/05.srt",
+          "thumb": "artists/norhaiza/steps/05.webp"
+        },
+        {
+          "order": 6,
+          "video": "artists/norhaiza/steps/06.mp4",
+          "srt": "artists/norhaiza/steps/06.srt",
+          "thumb": "artists/norhaiza/steps/06.webp"
+        },
+        {
+          "order": 7,
+          "video": "artists/norhaiza/steps/07.mp4",
+          "srt": "artists/norhaiza/steps/07.srt",
+          "thumb": "artists/norhaiza/steps/07.webp"
+        },
+        {
+          "order": 8,
+          "video": "artists/norhaiza/steps/08.mp4",
+          "srt": "artists/norhaiza/steps/08.srt",
+          "thumb": "artists/norhaiza/steps/08.webp"
+        },
+        {
+          "order": 9,
+          "video": "artists/norhaiza/steps/09.mp4",
+          "srt": "artists/norhaiza/steps/09.srt",
+          "thumb": "artists/norhaiza/steps/09.webp"
+        },
+        {
+          "order": 10,
+          "video": "artists/norhaiza/steps/10.mp4",
+          "srt": "artists/norhaiza/steps/10.srt",
+          "thumb": "artists/norhaiza/steps/10.webp"
+        }
+      ]
+    },
+    {
+      "_note": "Third artist, and the clearest proof that there is no template. He has NO Pembuatan steps and no subtitle files, so neither a Pembuatan button nor a subtitle band is ever built. He has a FOURTH video — Terangkan Produk — which is a second to-camera talk, with a supers card scheduled over it. And his product panel is a picture, not an object: five views of one cloth, switched by the rail, each registered as its own product so the rail's pressed/disabled behaviour applies unchanged.",
+      "id": "bangie",
+      "order": 3,
+      "name": "Bangie anak Embol",
+      "honorific": "Tenunan Pua",
+      "menuCard": "artists/bangie/menu/card.png",
+      "menuPlate": "artists/bangie/menu/nameplate.png",
+      "_note_backdrop": "Measured from his footage, and unlike the first two it is NOT near-white: his studio backdrop is a mid grey with a vertical vignette (~#928E8A at the top, ~#B0A9A4 at the bottom). It never shows behind the video — his footage is 1296x2304, exactly the 9:16 design canvas, so it fills the frame edge to edge. This colour therefore only covers the instant before a clip paints. The Terokai Produk panel is white, per the museum's own mockup.",
+      "backdrop": "#FFFFFF",
+      "_note_ui": "Per-artist button artwork, layered over the shared set. Two of the three carry labels no other artist has.",
+      "ui": {
+        "profile": "artists/bangie/ui/btn-profile.png",
+        "explain": "artists/bangie/ui/btn-explain.png",
+        "products": "artists/bangie/ui/btn-product.png"
+      },
+      "_note_strings": "His product button reads 'Terokai Produk', not the shared 'Produk'. The words are baked into the artwork; this keeps the accessible name matching what is printed on it.",
+      "strings": {
+        "products": {
+          "ms": "Terokai Produk",
+          "en": "Product Explore"
+        }
+      },
+      "productsLayout": "explore",
+      "video": {
+        "_note_fps": "50 fps throughout, not 25 — the seamless player's early swap is timed in frames, so this has to be right.",
+        "walk": {
+          "src": "artists/bangie/video/walk.mp4",
+          "fps": 50,
+          "muted": true,
+          "durationMs": 25500
+        },
+        "idle": {
+          "src": "artists/bangie/video/idle.mp4",
+          "fps": 50,
+          "muted": true
+        },
+        "profile": {
+          "src": "artists/bangie/video/profil.mp4",
+          "fps": 50,
+          "_note_srt": "No subtitle file was supplied for Bangie, so the band never appears. Drop a .srt beside the video and point srt at it to turn captions on.",
+          "srt": null
+        },
+        "explain": {
+          "src": "artists/bangie/video/explain.mp4",
+          "fps": 50,
+          "srt": null,
+          "_note_overlay": "PLACEHOLDER, both the artwork and the schedule. The real supers are not designed yet; Text1.png stands in, centred over the picture, on a 5s-on/5s-off cycle driven from the video's own clock.",
+          "overlay": {
+            "image": "artists/bangie/video/explain-supers.png",
+            "width": 900,
+            "showMs": 5000,
+            "hideMs": 5000,
+            "startAtMs": 0
+          }
+        }
+      },
+      "products": [
+        {
+          "_note": "Five views of ONE cloth. Each is a product so the switcher rail, its pressed/disabled states and the swap fade all work unchanged. view-0 is the whole pua; view-1..4 are closer crops, which is why no zoom control is needed — the zoom IS the switch.",
+          "id": "tenunan-pua-0",
+          "order": 1,
+          "enabled": true,
+          "title": "Tenunan Pua",
+          "meta": [
+            "Motif ???",
+            "Teknik ???",
+            "Tahun 2000"
+          ],
+          "metaImage": "artists/bangie/products/tenunan-pua/info.png",
+          "thumb": "artists/bangie/products/tenunan-pua/thumb-0.webp",
+          "type": "image",
+          "image": {
+            "src": "artists/bangie/products/tenunan-pua/view-0.webp"
+          },
+          "controls": []
+        },
+        {
+          "id": "tenunan-pua-1",
+          "order": 2,
+          "enabled": true,
+          "title": "Tenunan Pua",
+          "metaImage": "artists/bangie/products/tenunan-pua/info.png",
+          "thumb": "artists/bangie/products/tenunan-pua/thumb-1.webp",
+          "type": "image",
+          "image": {
+            "src": "artists/bangie/products/tenunan-pua/view-1.webp"
+          },
+          "controls": []
+        },
+        {
+          "id": "tenunan-pua-2",
+          "order": 3,
+          "enabled": true,
+          "title": "Tenunan Pua",
+          "metaImage": "artists/bangie/products/tenunan-pua/info.png",
+          "thumb": "artists/bangie/products/tenunan-pua/thumb-2.webp",
+          "type": "image",
+          "image": {
+            "src": "artists/bangie/products/tenunan-pua/view-2.webp"
+          },
+          "controls": []
+        },
+        {
+          "id": "tenunan-pua-3",
+          "order": 4,
+          "enabled": true,
+          "title": "Tenunan Pua",
+          "metaImage": "artists/bangie/products/tenunan-pua/info.png",
+          "thumb": "artists/bangie/products/tenunan-pua/thumb-3.webp",
+          "type": "image",
+          "image": {
+            "src": "artists/bangie/products/tenunan-pua/view-3.webp"
+          },
+          "controls": []
+        },
+        {
+          "id": "tenunan-pua-4",
+          "order": 5,
+          "enabled": true,
+          "title": "Tenunan Pua",
+          "metaImage": "artists/bangie/products/tenunan-pua/info.png",
+          "thumb": "artists/bangie/products/tenunan-pua/thumb-4.webp",
+          "type": "image",
+          "image": {
+            "src": "artists/bangie/products/tenunan-pua/view-4.webp"
+          },
+          "controls": []
+        }
+      ]
+    },
+    {
+      "_note": "Fourth artist, and the first whose stage is a CYCLE rather than a single looping idle. She has a second idle — a dance — and the dance ends with her walking out of frame exactly where the walk clip begins (measured SSIM 0.987), so the whole performance closes on itself: walk in, stand, stand, dance, walk off, walk in again. Terokai Produk is deliberately absent: her product assets are not ready, and because the stage menu is built from what exists, the button appears by itself the moment `products` gets entries.",
+      "id": "maznah",
+      "order": 4,
+      "name": "Maznah anak Unyan",
+      "honorific": "Adiguru Kraf Anyaman Mah Meri",
+      "menuCard": "artists/maznah/menu/card.png",
+      "menuPlate": "artists/maznah/menu/nameplate.png",
+      "_note_backdrop": "Measured from the BUILT idle, not from the footage: her walk/idle/dance were shot on grey and tools/transcode.mjs lifts the backdrop with a difference matte (see the long comment there). It lands on 240 rather than pure white on purpose, which keeps her cast shadow visible on the backdrop instead of erasing it. 240 still reads as white on a white box.",
+      "backdrop": "#EFEFEF",
+      "ui": {
+        "profile": "artists/maznah/ui/btn-profile.png",
+        "explain": "artists/maznah/ui/btn-explain.png",
+        "products": "artists/maznah/ui/btn-product.png"
+      },
+      "_note_strings": "Her product button reads 'Terokai Produk', not the shared 'Produk'. The words are baked into the artwork; this keeps the accessible name matching what is printed on it.",
+      "strings": {
+        "products": {
+          "ms": "Terokai Produk",
+          "en": "Product Explore"
+        }
+      },
+      "_note_cycle": "Walk, then dance, repeating — the two together ARE her idle. Both clips open and close on an empty backdrop (walk in, stand, walk out / walk in, dance, walk out), so the joins are empty-to-empty and need no fade: walk->dance measures 0.979 and dance->walk 0.983, against a 0.977 median for an ordinary one-frame step. Both are hard cuts, which is the whole point of the seamless player. Add blendMs to a step only if a future re-cut breaks that.",
+      "stageCycle": {
+        "steps": [
+          { "clip": "walk" },
+          { "clip": "dance" }
+        ],
+        "loopFrom": 0,
+        "_note_resume": "0, so she walks back in. There is no standing clip any more — the cycle is built out of arrivals and departures, so returning from a sub-panel to anything else would drop her into frame from nowhere.",
+        "resumeFrom": 0
+      },
+      "video": {
+        "walk": {
+          "src": "artists/maznah/video/walk.mp4",
+          "fps": 50,
+          "muted": true,
+          "durationMs": 20720
+        },
+        "_note_dance": "There is deliberately no `idle` clip: her stage is the walk and the dance alternating. The masters carry no audio, and the stage is silent for every artist in any case.",
+        "dance": {
+          "src": "artists/maznah/video/dance.mp4",
+          "fps": 50,
+          "muted": true
+        },
+        "profile": {
+          "src": "artists/maznah/video/profil.mp4",
+          "fps": 50,
+          "srt": "artists/maznah/video/profil.srt"
+        },
+        "explain": {
+          "src": "artists/maznah/video/explain.mp4",
+          "fps": 50,
+          "_note_srt": "Unlike Bangie, her Terangkan Produk has real captions, so it runs a subtitle band rather than a placeholder supers card.",
+          "srt": "artists/maznah/video/explain.srt"
+        }
+      },
+      "_note_products": "One product, so the switcher rail never appears — the panel is the turntable alone. Same `sequence` viewer as Norhaiza's keris, and like his it LOOPS: no rotationLimits is declared, so dragging past the last frame wraps to the first.",
+      "products": [
+        {
+          "id": "bakul",
+          "order": 1,
+          "enabled": true,
+          "title": "Sungu Duri",
+          "meta": [
+            "Anyaman Mah Meri",
+            "Motif ???",
+            "Tahun ????"
+          ],
+          "metaImage": "artists/maznah/products/bakul/info.png",
+          "type": "sequence",
+          "sequence": {
+            "pattern": "artists/maznah/products/bakul/frames/frame-{i:03}.webp",
+            "start": 0,
+            "count": 126,
+            "fitHeight": 0.37,
+            "_note_fit": "Fraction of the product viewport height at zoom 1. Measured off the museum's own mark-up: the outline drawn over a screenshot came to 24.8% of the canvas height, which is 0.37 of the 1280px viewport. That shows the basket at about half its native pixel size, so there is plenty of detail left for the pinch zoom to find."
+          },
+          "controls": [
+            { "widget": "drag", "binds": "rotation" },
+            { "widget": "pinch", "binds": "zoom", "min": 1, "max": 3 }
+          ],
+          "_note_hotspots": "Markers over the basket, each opening a close-up of that part of the weave. x and y are the marker's CENTRE in design-canvas pixels, measured off the museum's mark-up over a screenshot, so they can be re-read the same way if the artwork moves. They are fixed to the canvas, not to the turntable, so they stay put as the basket spins.",
+          "hotspotArt": "artists/maznah/products/bakul/hotspot.png",
+          "hotspotSize": 96,
+          "hotspots": [
+            { "id": "top",    "label": "Bahagian atas",   "x": 536, "y": 799,  "image": "artists/maznah/products/bakul/zoom-top.webp" },
+            { "id": "right",  "label": "Bahagian sisi",   "x": 693, "y": 977,  "image": "artists/maznah/products/bakul/zoom-right.webp" },
+            { "id": "bottom", "label": "Bahagian bawah",  "x": 548, "y": 1166, "image": "artists/maznah/products/bakul/zoom-bottom.webp" }
+          ]
+        }
+      ]
+    },
+    {
+      "_note": "Johnny anak Barangan, the Parang Ilang smith. The simplest stage of the five: walk once, then the idle loops, with hard cuts throughout — the measured seams are walk END -> idle START 0.990 and idle END -> idle START 0.990, so there is nothing for a crossfade to hide and no stageCycle to declare. Contrast Maznah, whose walk and dance alternate because she has no loopable idle.",
+      "id": "johnny",
+      "order": 5,
+      "name": "Johnny anak Barangan",
+      "honorific": "Adiguru Kraf Parang Ilang",
+      "_note_menu": "NO CARD OR NAME PLATE HAS BEEN DELIVERED FOR HIM. menuCard and menuPlate are therefore absent: the menu falls back to menuPortrait for the art and simply omits the plate, so his card is a bare portrait with no name on it and will look plain beside the other four. The portrait itself is a placeholder frame cropped from his idle at the delivered cards' aspect. Drop card.png and nameplate.png into artists/johnny/menu/ and add the two keys to finish him.",
+      "menuPortrait": "artists/johnny/menu/portrait.webp",
+      "_note_backdrop": "Measured off the graded walk.mp4 by the transcode tool, not chosen. All four of his clips share one backdrop within 2-4 levels, so a single captured plate grades the whole set. The same value as Maznah, which is the cross-check one wants: both were lifted to the same WHITE=240 target, so they should land together.",
+      "backdrop": "#EFEFEF",
+      "_note_ui": "No per-artist button artwork either, so he inherits the shared set from the top-level ui block. Add a ui override here if his own buttons arrive.",
+      "_note_strings": "Default vocabulary: his second talk is Terangkan Produk, which is what the shared button says.",
+      "video": {
+        "walk": {
+          "src": "artists/johnny/video/walk.mp4",
+          "fps": 50,
+          "muted": true,
+          "durationMs": 4500
+        },
+        "idle": {
+          "src": "artists/johnny/video/idle.mp4",
+          "fps": 50,
+          "muted": true
+        },
+        "profile": {
+          "_note_srt": "English only, as asked. The script was read from a teleprompter, so the words were known exactly but nothing here can transcribe: tools/script-to-subs.py spreads the supplied script across the measured speech and snaps cue boundaries onto the pauses he actually took. 34 cues at a median 13.2 characters per second.",
+          "src": "artists/johnny/video/profil.mp4",
+          "fps": 50,
+          "srt": "artists/johnny/video/profil.srt"
+        },
+        "explain": {
+          "src": "artists/johnny/video/explain.mp4",
+          "fps": 50,
+          "srt": "artists/johnny/video/explain.srt"
+        }
+      },
+      "_note_products": "Terokai Produk is not built yet, by agreement. With no products array the stage simply does not offer the button, so this is a complete, shippable entry as it stands."
+    }
+  ]
+}

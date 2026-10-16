@@ -1,0 +1,119 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Wau facing probe</title>
+<style>body{margin:0;background:#FCFCFF;font:12px system-ui}
+#grid{display:flex;flex-wrap:wrap}.cell{padding:3px}.cell b{display:block;text-align:center;font-size:11px}
+#out{white-space:pre;padding:6px;font-size:11px}</style>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three/three.module.js",
+               "three/addons/": "./vendor/three/examples/jsm/" } }
+</script></head>
+<body>
+<div id="host"></div>
+<pre id="out">loading…</pre>
+<script type="module">
+import * as THREE from 'three';
+import { FBXLoader } from 'three/addons/loaders/FBXLoader.js';
+
+const out = document.getElementById('out');
+const log = [];
+const say = (s) => { log.push(s); out.textContent = log.join('\n'); };
+
+const q = new URLSearchParams(location.search);
+const FILE = q.get('f') ?? 'Wau.fbx';
+const T = q.get('t') ? Number(q.get('t')) : null;
+const YAW = Number(q.get('yaw') ?? 0);
+const PITCH = Number(q.get('pitch') ?? 0);
+const MODELYAW = Number(q.get('myaw') ?? 0);   // fixed correction baked into the object
+
+const BASE = '/content/artists/samat/products/wau-bulan/fbx/';
+const W = 520, H = 640;
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false);
+renderer.setClearColor(0xFCFCFF, 1);
+document.getElementById('host').appendChild(renderer.domElement);
+
+function selfMatched(clips) {
+  const keep = clips.filter((c) => {
+    const [o, a] = c.name.split('|');
+    return o && a && a.replace(/Action$/, '').trim() === o.trim();
+  });
+  return keep.length ? keep : clips.slice(0, 1);
+}
+
+const loader = new FBXLoader();
+loader.setResourcePath(BASE + 'texture/');
+const obj = await loader.loadAsync(BASE + FILE);
+
+obj.traverse((c) => {
+  if (!c.isMesh) return;
+  const conv = (m) => {
+    const b = new THREE.MeshBasicMaterial({ name: m.name, map: m.map ?? null, toneMapped: false });
+    b.side = THREE.DoubleSide;
+    if (b.map) { b.map.colorSpace = THREE.SRGBColorSpace; b.transparent = true; b.alphaTest = 0.5; b.depthWrite = true; }
+    return b;
+  };
+  c.material = Array.isArray(c.material) ? c.material.map(conv) : conv(c.material);
+});
+
+await new Promise((resolve) => {
+  const maps = [];
+  obj.traverse((c) => { if (c.isMesh) for (const m of [].concat(c.material)) if (m.map) maps.push(m.map); });
+  const ready = () => maps.every((t) => t.image && t.image.width);
+  if (ready()) return resolve();
+  const t0 = Date.now();
+  const iv = setInterval(() => { if (ready() || Date.now() - t0 > 15000) { clearInterval(iv); resolve(); } }, 100);
+});
+
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(35, W / H, 0.1, 100000);
+
+const pivot = new THREE.Group();
+const inner = new THREE.Group();     // holds the fixed model-space correction
+inner.add(obj);
+inner.rotation.y = MODELYAW * Math.PI / 180;
+pivot.add(inner);
+scene.add(pivot);
+
+if (T != null && obj.animations.length) {
+  const mixer = new THREE.AnimationMixer(obj);
+  const clips = selfMatched(obj.animations);
+  for (const c of clips) {
+    const a = mixer.clipAction(c);
+    a.setLoop(THREE.LoopOnce, 1); a.clampWhenFinished = true; a.reset().play();
+  }
+  mixer.update(T);
+  say(`animated ${clips.length} clips to t=${T}`);
+}
+
+// measure at rest pose for a stable frame
+const box = new THREE.Box3().setFromObject(obj);
+const size = box.getSize(new THREE.Vector3());
+obj.position.sub(box.getCenter(new THREE.Vector3()));
+const maxDim = Math.max(size.x, size.y, 500);
+const dist = (maxDim / 2 / Math.tan((35 * Math.PI / 180) / 2)) * 1.35;
+const py = PITCH * Math.PI / 180;
+cam.position.set(0, Math.sin(py) * dist, Math.cos(py) * dist);
+cam.up.set(0, 1, 0);
+cam.lookAt(0, 0, 0);
+cam.updateProjectionMatrix();
+pivot.rotation.set(0, YAW * Math.PI / 180, 0);
+
+renderer.render(scene, cam);
+say(`file=${FILE} t=${T} yaw=${YAW} pitch=${PITCH} modelYaw=${MODELYAW}`);
+say(`bounds ${size.x.toFixed(0)}x${size.y.toFixed(0)}x${size.z.toFixed(0)}`);
+
+// Which way does each mesh face? Report the world-space +Z of its first triangle normal.
+obj.updateWorldMatrix(true, true);
+obj.traverse((c) => {
+  if (!c.isMesh) return;
+  const g = c.geometry;
+  if (!g.attributes.normal) return;
+  const n = new THREE.Vector3(
+    g.attributes.normal.getX(0), g.attributes.normal.getY(0), g.attributes.normal.getZ(0));
+  n.transformDirection(c.matrixWorld);
+  say(`  mesh "${c.name}" normal -> z=${n.z.toFixed(2)} (positive = faces camera)`);
+});
+say('DONE');
+</script>
+</body></html>

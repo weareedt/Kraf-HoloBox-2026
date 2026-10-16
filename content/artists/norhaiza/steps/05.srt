@@ -1,0 +1,54 @@
+1
+00:00:01,500 --> 00:00:05,500
+The fifth process is <i>mengikir</i> or filing.
+
+2
+00:00:05,900 --> 00:00:11,900
+<i>Mengikir</i> aims to shave the residue
+
+3
+00:00:13,800 --> 00:00:18,800
+left by the <i>cetar</i> tool
+or grinding machine.
+
+4
+00:00:19,000 --> 00:00:23,000
+The use of <i>kikir</i> file is divided
+into three stages
+
+5
+00:00:23,240 --> 00:00:26,240
+according to our requirements.
+
+6
+00:00:28,500 --> 00:00:31,000
+Namely, coarse file, fine file or
+
+7
+00:00:31,000 --> 00:00:33,000
+step file and its application differ
+
+8
+00:00:34,000 --> 00:00:38,000
+according to the filed area and residue left
+
+9
+00:00:38,724 --> 00:00:43,224
+by the cetar tool or grinding machine.
+
+10
+00:00:44,480 --> 00:00:51,180
+Fine file is used to smoothen areas
+previously filed by the coarse file,
+
+11
+00:00:52,040 --> 00:00:55,040
+while the step file serves to trim areas
+
+12
+00:00:55,064 --> 00:00:57,564
+that cannot be reached
+
+13
+00:00:58,088 --> 00:01:01,588
+by either coarse or fine file.

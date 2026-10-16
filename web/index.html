@@ -1,0 +1,106 @@
+<!doctype html>
+<!-- translate="no" + the notranslate meta stop Chrome offering to translate the
+     Malay UI. The --disable-features=Translate flag alone did not suppress the bar. -->
+<html lang="ms" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Muzium Kraf Kuala Lumpur</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23D99A0B'/><text x='16' y='23' font-size='19' font-family='serif' font-weight='700' text-anchor='middle' fill='%23241A08'>K</text></svg>">
+<link rel="stylesheet" href="app.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/": "./vendor/three/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<!-- Everything is authored against a 1080x1920 design canvas and scaled to fit
+     whatever panel is attached, so the layout is identical on the 4K box and on a
+     laptop during development. -->
+<div id="stage-scaler">
+<div id="canvas" class="canvas">
+
+  <!-- White veil used for every panel transition. Sits above the screens,
+       below nothing else. The walk-in handoff deliberately never raises it. -->
+  <div id="veil"></div>
+
+  <!-- ============================================ LOADING -->
+  <section class="screen" id="screen-loading" data-screen="loading">
+    <header class="brand">
+      <img class="brand-title-img" id="brand-title-1" alt="Muzium Kraf Kuala Lumpur">
+      <img class="brand-logo" id="brand-logo" alt="">
+    </header>
+    <div class="loading-body">
+      <p class="loading-title" id="loading-title">Memuatkan aset…</p>
+      <div class="progress">
+        <div class="progress-fill" id="progress-fill"></div>
+        <span class="progress-label" id="progress-label"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ MAIN MENU -->
+  <section class="screen" id="screen-menu" data-screen="menu" hidden>
+    <header class="brand">
+      <img class="brand-title-img" id="brand-title-2" alt="Muzium Kraf Kuala Lumpur">
+      <img class="brand-logo" alt="" id="brand-logo-2">
+    </header>
+    <!-- Wrapping, self-driving artist carousel. See web/screens/menu.js. -->
+    <div class="artist-carousel" id="artist-carousel"></div>
+  </section>
+
+  <!-- ============================================ ARTIST STAGE -->
+  <section class="screen" id="screen-stage" data-screen="stage" hidden>
+    <div class="video-layer" id="stage-video"></div>
+    <button class="imgbtn btn-back" id="stage-back" aria-label="Kembali"></button>
+    <nav class="stage-menu" id="stage-menu"></nav>
+  </section>
+
+  <!-- ============================================ TALK (Profil / Terangkan Produk)
+       One screen for every to-camera clip. The supers card is an optional overlay
+       held over the picture on a repeating schedule — see video.<clip>.overlay. -->
+  <section class="screen" id="screen-profile" data-screen="profile" hidden>
+    <div class="video-layer" id="profile-video"></div>
+    <img class="talk-overlay" id="profile-overlay" alt="" hidden>
+    <button class="imgbtn btn-back" id="profile-back" aria-label="Kembali"></button>
+    <div class="subtitle-band" id="profile-subs" hidden></div>
+  </section>
+
+  <!-- ============================================ PRODUK -->
+  <section class="screen" id="screen-products" data-screen="products" hidden>
+    <button class="imgbtn btn-back" id="products-back" aria-label="Kembali"></button>
+    <div class="product-meta" id="product-meta"></div>
+    <div class="product-viewport" id="product-viewport"></div>
+    <!-- One right-hand cluster: the product's controls, then (for artists with more
+         than one product) the switcher icons beneath them. -->
+    <div class="product-side" id="product-side">
+      <div class="product-controls" id="product-controls"></div>
+      <div class="product-rail" id="product-rail" hidden></div>
+    </div>
+    <!-- Pulsing markers over the product, and the zoom-in views they open. The overlay
+         is always present so its pictures stay composited; it is opacity, not display,
+         that hides it. See web/screens/hotspots.js. -->
+    <div class="product-hotspots" id="product-hotspots"></div>
+    <div class="product-zoom" id="product-zoom"></div>
+  </section>
+
+  <!-- ============================================ PEMBUATAN -->
+  <section class="screen" id="screen-process" data-screen="process" hidden>
+    <button class="imgbtn btn-back" id="process-back" aria-label="Kembali"></button>
+    <div class="carousel" id="carousel"></div>
+    <div class="dots" id="carousel-dots"></div>
+    <div class="subtitle-band subtitle-band--step" id="process-subs" hidden></div>
+  </section>
+
+</div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

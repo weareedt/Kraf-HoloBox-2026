@@ -1,0 +1,839 @@
+/* =====================================================================
+   KRAF kiosk — Muzium Kraf Kuala Lumpur
+   Authored against a 1080x1920 design canvas, scaled to the real panel.
+
+   The page background is NOT #fff. It is --backdrop, measured from the
+   artist footage (#FCFCFF for Samat). On a semi-transparent panel a pure
+   white page would make the video's rectangle visible as a dim box, which
+   is the one artefact that would break the "he is standing in the box"
+   illusion. Match the page to the video, never the other way round.
+
+   Buttons are the museum's supplied artwork, not CSS shapes. Each PNG
+   carries its own glow in the transparent margin, so the element box is
+   deliberately larger than the visible pill — that margin is the glow, and
+   it also makes a generous touch target.
+   ===================================================================== */
+
+:root {
+  --backdrop: #FCFCFF;
+
+  --ink:        #3A2A18;
+  --ink-soft:   #6B5844;
+  --ink-faint:  #9C8A72;
+  --gold:       #D99A0B;
+  --gold-soft:  #F2C14E;
+  --gold-glow:  rgba(217, 154, 11, .35);
+
+  --band-bg:    rgba(64, 58, 50, .62);
+  --fade-ms:    420ms;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--backdrop);
+  color: var(--ink);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  touch-action: manipulation;
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.kiosk { cursor: none; }
+
+/* --------------------------------------------------------- scaling */
+
+#stage-scaler {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--backdrop);
+}
+
+/* Centred by absolute positioning, NOT by grid/flex alignment.
+   A grid or flex container will not centre an item that is LARGER than itself —
+   it clamps to the start edge — so at any window smaller than 1080x1920 the canvas
+   stayed at 0,0 and then scaled about its own centre, throwing it down and to the
+   right and pushing content off-screen. At exactly 1080x1920 the scale is 1 and the
+   bug is invisible, which is why it only appeared in a window.
+   translate(-50%,-50%) is applied BEFORE scale so the centring is exact at any size. */
+.canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1080px;
+  height: 1920px;
+  transform-origin: center center;
+  transform: translate(-50%, -50%) scale(1);
+  background: var(--backdrop);
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------- screens */
+
+.screen { position: absolute; inset: 0; }
+.screen[hidden] { display: none; }
+
+/* ----------------------------------------------- fade-to-white veil
+   Every panel change crossfades through solid white. The one exception is
+   the walk-in -> idle handoff, which is frame-matched and must stay
+   seamless; fading there would destroy the illusion it exists to create. */
+
+#veil {
+  position: absolute;
+  inset: 0;
+  z-index: 900;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--fade-ms) ease;
+}
+#veil.is-up {
+  opacity: 1;
+  pointer-events: auto;    /* swallow taps mid-transition */
+}
+
+/* --------------------------------------------------------- branding */
+
+.brand {
+  position: absolute;
+  top: 64px;
+  left: 72px;
+  right: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+
+.brand-title-img { width: 620px; height: auto; display: block; }
+.brand-logo { width: 150px; height: 150px; object-fit: contain; flex: none; }
+
+/* --------------------------------------------------------- loading */
+
+.loading-body {
+  position: absolute;
+  left: 110px;
+  right: 110px;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+}
+
+.loading-title {
+  margin: 0 0 34px;
+  font-size: 68px;
+  font-style: italic;
+  font-weight: 700;
+  color: #1A1510;
+}
+
+.progress {
+  position: relative;
+  height: 86px;
+  border-radius: 6px;
+  background: #B9B4AE;
+  overflow: hidden;
+}
+
+.progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0;
+  background: var(--gold);
+  transition: width .18s linear;
+}
+
+.progress-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+  font-style: italic;
+  font-weight: 600;
+  color: #1A1510;
+}
+
+/* --------------------------------------------------------- menu */
+
+/* A wrapping carousel, not a grid: however many artists there are, exactly one is in
+   the middle at full size with its neighbours peeking from behind. That keeps the card
+   large as the roster grows, instead of shrinking everyone to fit (four across had the
+   cards down to 380px and two rows deep).
+
+   Centred at y=980, matching where the old grid sat. */
+.artist-carousel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 300px;
+  bottom: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: pan-y;
+}
+
+/* The card artwork already contains the portrait, frame and glow.
+   The TRANSFORM BELONGS TO THE CAROUSEL — it carries the card's position in the ring,
+   so nothing else may write to it. The press feedback scales .artist-card__inner
+   instead; a :active rule here would drop the translate and stack every card in the
+   middle of the screen. */
+.artist-card {
+  position: absolute;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  display: block;
+  transform-origin: center center;
+  transition: transform .42s cubic-bezier(.22,.7,.3,1), opacity .42s ease;
+  will-change: transform, opacity;
+}
+.artist-card::after { content: none; }
+
+.artist-card__inner {
+  display: block;
+  transition: transform .22s cubic-bezier(.22,.7,.3,1);
+}
+.artist-card:active .artist-card__inner,
+.artist-card.is-pressed .artist-card__inner { transform: scale(.94); }
+
+.artist-card__art {
+  display: block;
+  width: 430px;
+  height: auto;
+}
+
+/* Name plate artwork rides over the card, sitting across the lower third of the
+   portrait rather than hanging off its bottom edge. */
+.artist-card__plate {
+  display: block;
+  width: 462px;
+  height: auto;
+  margin: -137px auto 0;
+  position: relative;
+  z-index: 2;
+}
+
+
+/* --------------------------------------------------------- video layers */
+
+.video-layer { position: absolute; inset: 0; background: var(--backdrop); }
+
+.sp-video,
+.sp-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--backdrop);
+  transform: translateZ(0);
+  will-change: transform;
+  pointer-events: none;   /* stray palm touches must never hit the video */
+  z-index: 1;
+}
+
+.sp-cover {
+  z-index: 3;
+  opacity: 0;
+  transition: opacity .06s linear;
+}
+
+/* --------------------------------------------------------- buttons */
+
+/* Shared behaviour for every artwork-backed button. */
+.imgbtn {
+  position: relative;
+  border: 0;
+  padding: 0;
+  background: transparent no-repeat center / contain;
+  cursor: pointer;
+  display: block;
+  transition: transform .14s ease;
+}
+.imgbtn:active { transform: scale(.94); }
+.imgbtn[disabled] { opacity: .4; pointer-events: none; }
+
+/* -------------------------------------------------- pressed state
+   A 50% dark-brown wash while the button is held.
+
+   The tint is MASKED with the button's own PNG (--btn-img, set alongside the
+   background image in JS) so it follows the artwork's exact silhouette instead
+   of painting a rectangle over the transparent glow margin. `.is-pressed` is
+   added on pointerdown for a minimum visible moment, because a quick tap on a
+   touchscreen can release before :active ever paints. */
+:root { --press-tint: rgba(74, 45, 20, .5); }
+
+/* NOTE: `.artist-card` is deliberately absent here. It must not generate a tint layer
+   at all — see the menu section above. Adding it back would silently re-tint the card,
+   because this rule sits LATER in the file and would win on equal specificity. */
+.imgbtn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--press-tint);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .09s ease;
+  -webkit-mask-image: var(--btn-img);
+  mask-image: var(--btn-img);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.imgbtn:active::after,
+.imgbtn.is-pressed::after { opacity: 1; }
+
+/* Sliders and thumbnails are not artwork-masked, so they take a plain wash. */
+.product-rail button.is-pressed,
+.dots button.is-pressed { filter: brightness(.72) saturate(1.1); }
+
+/* 80% of its old size and pushed to the left edge. Shared by every panel, so a new
+   artist's screens inherit the same placement automatically. */
+.btn-back {
+  position: absolute;
+  top: 548px;
+  left: -6px;
+  width: 106px;
+  height: 119px;
+  z-index: 20;
+}
+
+.zoom-btn { width: 112px; height: 127px; }
+
+/* A pill whose label is drawn over the blank button artwork.
+   Malay large, English small beneath — the English line gets real size and
+   contrast here; in the old build it was effectively illegible. */
+/* The PNG carries its glow in a transparent margin, so only about 52% of the
+   element's height is drawable pill. The box is sized generously and the type
+   kept inside that interior, otherwise the English line clips off the bottom. */
+.pill {
+  position: relative;
+  width: 410px;
+  height: 116px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  line-height: 1;
+}
+.pill__ms {
+  display: block;
+  font-size: 31px;
+  font-weight: 700;
+  color: #4A3A22;
+  line-height: 1.02;
+}
+.pill__en {
+  display: block;
+  margin-top: 1px;
+  font-size: 19px;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--ink-soft);
+  line-height: 1.02;
+}
+
+/* A pill whose label is already baked into the artwork (Reset, Pisahkan). */
+.pill--art { width: 410px; height: 127px; }
+
+/* --------------------------------------------------------- stage menu */
+
+/* Hard against the right edge, as in the original Unity build.
+ *
+ * Each PNG carries ~30px of transparent glow above and below the visible pill at this
+ * scale, so two stacked buttons sit ~64px apart even with no gap. A NEGATIVE gap pulls
+ * that back to roughly half, which is what the tighter cluster asks for, and a negative
+ * right inset lets the glow overhang the edge so the pill itself lands near it. */
+.stage-menu {
+  position: absolute;
+  top: 48%;
+  right: -34px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 20;
+}
+/* `gap` cannot be negative, so the overlap is done with margin. */
+.stage-menu > * + * { margin-top: -30px; }
+
+/* --------------------------------------------------------- subtitles */
+
+.subtitle-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 52%;
+  z-index: 15;
+  padding: 26px 70px;
+  background: var(--band-bg);
+  color: #fff;
+  font-size: 38px;
+  font-weight: 600;
+  line-height: 1.28;
+  text-align: center;
+  text-shadow: 0 2px 6px rgba(0,0,0,.4);
+}
+.subtitle-band[hidden] { display: none; }
+.subtitle-band i { font-style: italic; }
+.subtitle-band--step { top: auto; bottom: 320px; }
+
+/* ------------------------------------------------- supers card (talk screen)
+   A designed caption card held over the picture, dead centre, on the schedule in
+   video.<clip>.overlay. Bangie's Product Explain uses it with placeholder artwork
+   and a placeholder 5s-on/5s-off cycle.
+
+   It cross-dissolves rather than cutting: the schedule is in whole seconds and a
+   350ms dissolve inside it reads as a super rather than as a glitch. The element
+   keeps its src while hidden, so each reappearance is instant. */
+.talk-overlay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: auto;
+  z-index: 16;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+.talk-overlay[hidden] { display: none; }
+.talk-overlay.is-on { opacity: 1; }
+
+/* --------------------------------------------------------- produk */
+
+.product-meta {
+  position: absolute;
+  top: 150px;
+  right: 70px;
+  left: 260px;
+  text-align: right;
+  z-index: 12;
+}
+.product-meta__title { font-size: 56px; font-weight: 700; color: #5A4526; line-height: 1.1; }
+.product-meta__line { margin-top: 8px; font-size: 32px; font-weight: 600; color: var(--ink-soft); }
+
+.product-viewport {
+  position: absolute;
+  inset: 300px 0 340px;
+  touch-action: none;   /* drag/pinch belong to the model, not the page */
+}
+.product-viewport canvas { display: block; width: 100%; height: 100%; }
+
+/* Turntable frames: sized by the sequence viewer to fit the viewport height, then
+   zoomed and slid (for free-space centring) with a transform about their own centre,
+   which is what keeps pinch-zoom anchored on the product rather than a corner. */
+.product-viewport canvas.seq-canvas {
+  position: absolute;
+  width: auto;
+  height: auto;
+  transform-origin: center center;
+  pointer-events: none;     /* the drag belongs to the viewport, not the image */
+}
+
+/* Fast fade when switching between products: the product and its title dip to the
+   backdrop while the swap happens out of sight. Duration: kiosk.productSwapFadeMs. */
+.product-viewport,
+.product-meta {
+  transition: opacity var(--swap-ms, 160ms) ease;
+}
+.product-viewport.is-swapping,
+.product-meta.is-swapping {
+  opacity: 0;
+}
+
+/* A designed title block, supplied as an image, replaces the text lines. */
+.product-meta__image {
+  display: block;
+  margin-left: auto;
+  width: 450px;
+  height: auto;
+}
+
+.product-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 26px;
+  text-align: center;
+  padding: 0 90px;
+}
+.product-placeholder img { width: 300px; height: 300px; object-fit: contain; opacity: .5; }
+.product-placeholder p { margin: 0; font-size: 34px; font-weight: 600; color: var(--ink-soft); }
+.product-placeholder small { font-size: 24px; font-style: italic; color: var(--ink-faint); }
+
+/* ONE cluster: +, −, Pisahkan/Sambung and Set Semula stack together against the right
+   edge. The zoom buttons used to live in a separate absolutely-positioned stack far
+   above the pills; they are now part of the same column so the whole control group
+   reads as one thing and sits within easy thumb reach. */
+.product-side {
+  position: absolute;
+  right: -34px;
+  top: 768px;             /* anchored from the TOP so adding a rail below never lifts the controls */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 14;
+}
+.product-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.product-controls > * + * { margin-top: -30px; }
+
+/* The +/- pair is narrower than the pills, so it gets its own inset to line its
+   visible edge up with theirs, and a tighter internal overlap. */
+.zoom-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right: 68px;
+}
+.zoom-stack > * + * { margin-top: -22px; }
+
+.slider-row {
+  display: block;
+  width: 330px;
+  padding: 10px 0;
+}
+.slider-row__label { display: flex; align-items: baseline; gap: 8px; }
+.slider-row__label b { font-size: 28px; color: #4A3A22; }
+.slider-row__label i { font-size: 18px; color: var(--ink-soft); }
+.slider-row input { width: 100%; accent-color: var(--gold); height: 34px; }
+
+/* Product switcher (e.g. the two keris). Sits in the right-hand cluster directly under
+   the zoom buttons, aligned with them. Each icon is finished artwork with its own frame
+   and glow, so it is an artwork button rather than a bordered thumbnail. */
+.product-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right: 68px;
+  margin-top: 6px;
+}
+.product-rail[hidden] { display: none; }
+.product-rail > * + * { margin-top: -18px; }
+.product-rail .rail-icon { width: 112px; height: 127px; }
+/* Pressed / unpressed. The icon for the keris on screen reads as pushed IN: darker and
+   at 90% size. It is also disabled, so it cannot re-trigger a load. The others sit at
+   full size and brightness as the live choices. The states swap on every switch.
+   The generic `.imgbtn[disabled]` fade is overridden here — a disabled rail icon means
+   "currently shown", not "unavailable". */
+.product-rail .rail-icon {
+  transition: transform .16s ease, filter .16s ease;
+  transform-origin: center center;
+}
+.product-rail .rail-icon[aria-pressed="true"],
+.product-rail .rail-icon[aria-pressed="true"][disabled] {
+  opacity: 1;
+  transform: scale(.9);
+  filter: brightness(.62);
+  pointer-events: none;
+  cursor: default;
+}
+.product-rail .rail-icon[aria-pressed="false"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+/* fallback tile, for products that supply only a plain thumbnail */
+.product-rail button:not(.rail-icon) {
+  width: 118px; height: 118px; padding: 0;
+  border: 3px solid var(--gold-soft); border-radius: 14px;
+  background: #FFFDF7; overflow: hidden; cursor: pointer;
+}
+.product-rail button:not(.rail-icon)[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0 0 0 4px var(--gold-glow); }
+.product-rail img { width: 100%; height: 100%; object-fit: contain; }
+
+/* =====================================================================
+   PRODUK — "explore" layout
+   Bangie's Tenunan Pua. Every number below was measured off the museum's
+   own mockup, "Preview Product Explore (UI placement).png" (1080x1920),
+   by scanning its pixels for ink — not judged by eye:
+
+     title ink     x 601..1018, y 40..196
+                   -> the 900x330 PNG at 489px wide, right 51, top 28
+     cloth         x 170..909,  y 229..1690  (740 x 1462, aspect .5062,
+                   which is view-0's own .5050 — so it is shown untrimmed)
+     thumbnails    x 941..1043, 103px SQUARE, 120px pitch, first top 432
+                   (the first measures 93 tall because the mockup draws it
+                   in the pressed state — 103 x 0.9)
+
+   If the mockup changes, re-measure; do not nudge these by hand.
+   ===================================================================== */
+
+/* One picture, as large as its box allows, centred. The box IS the designed
+   position, so the free-space centring used by the Wau and the keris is not
+   wanted here — and does not fire, because that measurement needs artwork
+   buttons on the right and this layout has plain tiles. */
+.product-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: center center;
+  pointer-events: none;
+}
+
+/* The box is the whole cloth's designed position. The four detail views are wider
+   and shorter, so `contain` centres each one inside it at its own aspect rather
+   than cropping or stretching — the zoom IS the crop, and trimming it again would
+   defeat the point of having five views. */
+.screen[data-layout="explore"] .product-viewport { inset: 229px 171px 230px 170px; }
+.screen[data-layout="explore"] .product-meta     { top: 28px; right: 51px; left: 400px; }
+.screen[data-layout="explore"] .product-meta__image { width: 489px; }
+
+/* The switcher is the whole interaction here, so it sits on its own rather than
+   under a control stack, and its tiles are bare crops of the cloth — no frame, no
+   glow — matching the artwork supplied. */
+.screen[data-layout="explore"] .product-side { right: 37px; top: 432px; }
+.screen[data-layout="explore"] .product-rail { margin-right: 0; margin-top: 0; }
+.screen[data-layout="explore"] .product-rail > * + * { margin-top: 17px; }
+.screen[data-layout="explore"] .product-rail button:not(.rail-icon) {
+  width: 103px;
+  height: 103px;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  transition: transform .16s ease, filter .16s ease;
+  transform-origin: center center;
+}
+/* The supplied crops are square, so cover and contain agree; cover is the safer of
+   the two if a later thumbnail is exported at a different aspect. */
+.screen[data-layout="explore"] .product-rail button:not(.rail-icon) img { object-fit: cover; }
+
+/* Same pressed language as the keris rail: the view on screen reads as pushed IN —
+   darker and at 90% — and is disabled so it cannot re-trigger a load. The others sit
+   at full size and brightness as the live choices. The mockup shows exactly this,
+   with the first thumbnail dimmed and slightly smaller. */
+.screen[data-layout="explore"] .product-rail button[aria-pressed="true"],
+.screen[data-layout="explore"] .product-rail button[aria-pressed="true"][disabled] {
+  opacity: 1;
+  transform: scale(.9);
+  filter: brightness(.62);
+  box-shadow: none;
+  pointer-events: none;
+  cursor: default;
+}
+.screen[data-layout="explore"] .product-rail button[aria-pressed="false"] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* --------------------------------------------------------- pembuatan */
+
+.carousel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 760px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: pan-y;
+}
+
+.slide {
+  position: absolute;
+  width: 800px;
+  border-radius: 34px;
+  background: linear-gradient(180deg, #FFFEFA 0%, #FBEFD4 100%);
+  box-shadow: 0 0 0 3px #fff, 0 16px 50px var(--gold-glow);
+  padding: 26px;
+  transition: transform .34s cubic-bezier(.22,.7,.3,1), opacity .34s ease;
+  will-change: transform, opacity;
+  cursor: pointer;
+}
+.slide video,
+.slide img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 14px;
+  background: #000;
+  pointer-events: none;   /* the click belongs to the slide, not the video */
+}
+/* Step captions live INSIDE the video, across its lower part, as in the old app's
+   Pembuatan screen. The slide's 26px padding is the video's inset, so matching it
+   here keeps the strip exactly the video's width. */
+.slide__subs {
+  position: absolute;
+  left: 26px;
+  right: 26px;
+  bottom: 50px;
+  padding: 10px 28px 12px;
+  background: rgba(40, 36, 30, .58);
+  color: #fff;
+  font-size: 27px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .45);
+  pointer-events: none;
+  z-index: 2;
+}
+.slide__subs[hidden] { display: none; }
+.slide__subs i { font-style: italic; }
+
+.slide__badge {
+  position: absolute;
+  inset: 26px 26px auto auto;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #241A08;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Directly under the active slide rather than parked near the bottom of the screen,
+   so the page indicator reads as belonging to the video above it. */
+.dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 1262px;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  z-index: 12;
+}
+.dots button {
+  width: 30px; height: 30px; padding: 0;
+  border-radius: 50%; border: 3px solid #2B2115;
+  background: #FFFDF7; cursor: pointer;
+}
+.dots button[aria-current="true"] { background: var(--gold); }
+
+/* --------------------------------------------------------- misc */
+
+.fatal {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 18px;
+  padding: 0 100px;
+  text-align: center;
+  font-size: 30px;
+  color: #8A2A1A;
+  background: var(--backdrop);
+  z-index: 999;
+}
+
+/* =====================================================================
+   PRODUCT HOTSPOTS
+   Pulsing markers over a product, each opening a zoom-in view.
+   ===================================================================== */
+
+/* Markers sit in CANVAS coordinates, not viewport ones, so the positions in
+   content.json are the same numbers you read off a screenshot. */
+.product-hotspots {
+  position: absolute;
+  inset: 0;
+  z-index: 18;
+  pointer-events: none;      /* only the markers themselves are tappable */
+}
+
+.hotspot {
+  position: absolute;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.hotspot::after { content: none; }   /* no pressed wash: the pulse is the feedback */
+
+/* The artwork is a white glow ring on transparent, used as a MASK over a coloured box.
+   Tinting it this way is what lets the colour animate — an <img> could only be faded. */
+.hotspot__glow {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: var(--hot-a);
+  -webkit-mask-image: var(--hot-img);
+  mask-image: var(--hot-img);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  will-change: transform;
+  animation: hotspot-pulse 1s ease-in-out infinite;
+}
+
+/* 0.7s of pulse, then 0.3s of rest, looping — the keyframes do the work, so the
+   animation keeps its timing whatever the main thread is busy with.
+   `ease-in-out` applies between each pair of stops, which is what makes the grow and
+   the shrink both soften at the ends rather than snapping. */
+:root { --hot-a: #F59E23; --hot-b: #C2691A; }
+
+@keyframes hotspot-pulse {
+  0%   { transform: scale(1);   background-color: var(--hot-a); }
+  35%  { transform: scale(1.2); background-color: var(--hot-b); }
+  70%  { transform: scale(1);   background-color: var(--hot-a); }
+  100% { transform: scale(1);   background-color: var(--hot-a); }
+}
+
+/* The zoom-in overlay. Always present and always composited — hiding it with `display`
+   would drop its pictures off the compositor and the first tap would show a blank panel
+   while one decoded. Opacity and pointer-events do the hiding instead. */
+.product-zoom {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  /* TRANSPARENT, deliberately. This layer exists only to catch the tap that closes the
+     view; it must not paint anything, or opening a hotspot looks like moving to another
+     panel instead of laying a picture over the one you are on. The page, its title and
+     the back button all stay visible behind it — only the card itself covers the
+     turntable, which is why the card's own white is left opaque. */
+  background: transparent;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .14s ease;
+}
+.product-zoom.is-open {
+  opacity: 1;
+  pointer-events: auto;      /* a tap anywhere closes it */
+  cursor: pointer;
+}
+
+/* 730 x 1092, centred. Taken from the museum's own placement rather than chosen: their
+   mock-up is a 608x1080 document — the app's windowed size — in which the view sits at
+   411 x 615, and 1080/608 scales that to 730 x 1092 on the design canvas. The box matches
+   the artwork's 0.667 aspect, so `contain` has nothing to letterbox. */
+.product-zoom__img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 730px;
+  height: 1092px;
+  margin: -546px 0 0 -365px;
+  object-fit: contain;
+  opacity: 0;
+}
+.product-zoom__img.is-on { opacity: 1; }

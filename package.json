@@ -1,0 +1,21 @@
+{
+  "name": "kraf-kiosk",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Muzium Kraf Kuala Lumpur — offline touchscreen kiosk for the transparent-LCD showcase",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "kiosk": "electron .",
+    "serve": "node server/server.js",
+    "start": "electron .",
+    "prepare-assets": "node tools/transcode.mjs",
+    "prepare-assets:force": "node tools/transcode.mjs --force"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "electron": "^33.4.11"
+  }
+}
