@@ -854,6 +854,37 @@ The fit residual on clean backdrop is printed — **1.8 levels median, 5.9 at p9
 that number is ever large, the backdrop is not polynomial and this approach should not be
 trusted.
 
+### Cues too fast to read are widened at build time
+
+Norhaiza's supplied profile had 20 of its 128 cues above 20 characters per second against a
+median of 10.8 — the worst holding **51 characters for 0.80 s, about 64 ch/s**, roughly six
+times her speaking pace. Samat's had the same fault. This is what showed up on the panel as
+"a long line that was too quick".
+
+`convertSrt` in `tools/transcode.mjs` fixes it on the way in, because the sources are
+masters under `_source/` and should not be edited. Three passes:
+
+1. **Take the dead air.** The cue grows into the gap after it, then the gap before it, never
+   past a neighbour. This costs nothing — the line appears slightly earlier and lingers over
+   silence. Norhaiza's file has 88.5 s of such gaps.
+2. **Borrow from a neighbour with slack.** After pass 1 the worst cues are still boxed in by
+   other cues rather than by silence. A neighbour sitting at 6 ch/s can give up time without
+   becoming hard to read itself. Guards: never push the neighbour past the target rate, never
+   leave a cue shorter than `SRT_MIN_SHOW`, never move a boundary by more than
+   `SRT_MAX_STEAL`.
+3. **Guarantee no overlap.** Also repairs defects already in the supplied files — Maznah's
+   product talk ships with a 20 ms overlap around one of its `### NEW SCRIPT ###` markers.
+
+| | before | after |
+|---|---|---|
+| Norhaiza profile, worst cue | 63.8 ch/s | **21.0** |
+| Samat profile, worst cue | 42.2 ch/s | **28.2** |
+| cues over 30 ch/s, all 16 files | 7 | **0** |
+
+Some cues stay above the 20 ch/s target and that is correct: when a translated line is long
+and the spoken segment is short, the only remaining fixes are shortening the text or letting
+the subtitle overrun the speech. Neither belongs in an automatic pass.
+
 ### Carrying subtitles across a re-cut (`tools/retime-subs.py`)
 
 When a talk is re-edited, the old translation is still correct for everything that survived.
@@ -1204,6 +1235,28 @@ hard timeout.
 **Late playback must not hijack a newer screen.** Each profile visit takes a session number,
 and an abandoned playback that resolves late only auto-returns to the stage if its session is
 still the current one. Without that, a stale visit dragged a *later* one back to the stage.
+
+## The idle watchdog, and the bug worth not reintroducing
+
+Three minutes of no touch returns to the main menu. The countdown is **suspended** while a
+one-shot video plays — the walk-in, a talk, a Pembuatan step — and must NOT be suspended by
+the artist idle loop, which runs forever.
+
+`idle.hold()` returns its own release rather than exposing a bare `release()`. That release
+is idempotent, and it stops working once `clearHolds()` has run. Both properties are
+load-bearing, and the second one fixed a reported fault: watching Norhaiza's seven-minute
+profile, the kiosk jumped to the main menu partway through.
+
+| step | holds |
+|---|---|
+| `enterArtist` takes a hold, schedules its release for the walk-in's 14.96 s | 1 |
+| visitor taps Profil, `showScreen` calls `clearHolds()` | **0** |
+| `enterTalk` takes its own hold | 1 |
+| the walk-in's **stray** timer fires at 14.06 s | **0** |
+| three minutes later the countdown fires, mid-talk | — |
+
+A release must never be able to decrement a hold it did not take. The scenario is covered by
+a test that replays it against both the old and new timer.
 
 ## Operator keys
 

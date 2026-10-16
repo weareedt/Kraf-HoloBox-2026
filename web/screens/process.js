@@ -36,8 +36,13 @@ export async function mountProcess({ steps, manifest, url, assetInfo, idle, els 
 
   // Counted, not boolean: several videos can briefly emit play/pause around a page
   // change, and a boolean would drop a release and hold the timer open for good.
-  const hold = () => { holds += 1; idle?.hold(); };
-  const release = () => { if (holds > 0) { holds -= 1; idle?.release(); } };
+  // `idle.hold()` hands back the matching release rather than exposing a bare
+  // `idle.release()`, so a release can only ever cancel the hold it took — and stops
+  // working once the screen changes. Keeping them on a stack preserves the counted
+  // behaviour this already relied on.
+  const pending = [];
+  const hold = () => { holds += 1; const r = idle?.hold(); if (r) pending.push(r); };
+  const release = () => { if (holds > 0) { holds -= 1; pending.pop()?.(); } };
   const releaseAll = () => { while (holds > 0) release(); };
 
   /* ---------------------------------------------------------- build */

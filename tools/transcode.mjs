@@ -132,12 +132,128 @@ function backdropOf(file, at = 5) {
 }
 
 /** SRT normaliser: strip UTF-8 BOM, CRLF -> LF. Keeps <i> markup intact. */
+/* Subtitle cues that are too fast to read are widened into the silence around them.
+ *
+ * Norhaiza's supplied file had 20 of its 128 cues above 20 characters per second against a
+ * median of 10.8, the worst being 51 characters held for 0.80 s — about 64 ch/s, roughly six
+ * times her normal pace and simply not readable. Samat's had the same fault in two places.
+ *
+ * Only DEAD AIR is used: a cue grows into the gap after it and then the gap before it, never
+ * past a neighbour, always leaving MIN_GAP so two cues cannot touch. The speech it belongs to
+ * is untouched, so nothing drifts out of sync — the line just appears a little earlier and
+ * lingers a little longer. Norhaiza's file has 88.5 s of such dead air.
+ *
+ * The sources are masters under _source/, so this happens at build time rather than by
+ * editing them.
+ */
+const SRT_MAX_RATE = 20;      // characters per second
+const SRT_MIN_GAP = 0.08;     // seconds kept between neighbouring cues
+const SRT_MAX_LEAD = 0.9;     // never start a cue more than this before its own speech
+const SRT_MIN_SHOW = 1.0;     // a cue never shrinks below this when lending time
+const SRT_MAX_STEAL = 0.8;    // and a shared boundary never moves further than this
+
+function parseSrtCues(text) {
+  const out = [];
+  for (const block of text.replace(/\r\n/g, '\n').trim().split(/\n{2,}/)) {
+    const lines = block.split('\n').filter((l) => l.trim() !== '');
+    if (lines.length < 2) continue;
+    const i = /^\d+$/.test(lines[0].trim()) ? 1 : 0;
+    if (!lines[i]?.includes('-->')) continue;
+    const t = (s) => {
+      const m = /(\d{2}):(\d{2}):(\d{2})[,.](\d{3})/.exec(s);
+      return m ? +m[1] * 3600 + +m[2] * 60 + +m[3] + +m[4] / 1000 : null;
+    };
+    const [a, b] = lines[i].split('-->').map(t);
+    if (a === null || b === null) continue;
+    out.push({ a, b, body: lines.slice(i + 1) });
+  }
+  return out;
+}
+
+const srtStamp = (s) => {
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:`
+    + (s % 60).toFixed(3).padStart(6, '0').replace('.', ',');
+};
+
+const cueNeed = (c) => c.body.join(' ').length / SRT_MAX_RATE;
+const cueRate = (c) => c.body.join(' ').length / (c.b - c.a);
+
+function relaxCues(cues) {
+  // Pass 1 — take the dead air. Costs nothing: the cue simply appears a little earlier and
+  // lingers a little longer, over silence.
+  for (let i = 0; i < cues.length; i++) {
+    const c = cues[i];
+    const need = cueNeed(c);
+    if (c.b - c.a >= need) continue;
+
+    c.b = Math.min(i + 1 < cues.length ? cues[i + 1].a - SRT_MIN_GAP : c.b + need,
+                   c.a + need);
+    if (c.b - c.a < need) {
+      const floor = Math.max(i > 0 ? cues[i - 1].b + SRT_MIN_GAP : 0, c.a - SRT_MAX_LEAD);
+      c.a = Math.max(floor, c.b - need);
+    }
+  }
+
+  /* Pass 2 — borrow from a neighbour that has time to spare.
+   *
+   * After pass 1 the worst cues are still unreadable (42 ch/s against a median of 11)
+   * because they are boxed in by neighbours rather than by silence. A neighbour sitting at
+   * 6 ch/s has slack; moving the shared boundary helps the fast cue a lot and costs the
+   * slow one little.
+   *
+   * This does shift a boundary away from the speech by a fraction of a second, which is
+   * ordinary subtitling practice and far better than a line nobody can finish reading. The
+   * guards keep it honest: never push a neighbour past the target rate itself, never leave
+   * one shorter than SRT_MIN_SHOW, and never move a boundary more than SRT_MAX_STEAL.
+   */
+  for (let i = 0; i < cues.length; i++) {
+    const c = cues[i];
+    if (cueRate(c) <= SRT_MAX_RATE) continue;
+
+    for (const side of ['next', 'prev']) {
+      if (cueRate(c) <= SRT_MAX_RATE) break;
+      const n = side === 'next' ? cues[i + 1] : cues[i - 1];
+      if (!n) continue;
+      const slack = (n.b - n.a) - Math.max(cueNeed(n), SRT_MIN_SHOW);
+      const take = Math.min(slack, SRT_MAX_STEAL, cueNeed(c) - (c.b - c.a));
+      if (take <= 0.01) continue;
+      if (side === 'next') { n.a += take; c.b += take; } else { n.b -= take; c.a -= take; }
+    }
+  }
+
+  // Pass 3 — guarantee no two cues are ever on screen together. This also repairs defects
+  // already present in the supplied files: Maznah's product talk ships with a 20 ms overlap
+  // around one of its "### NEW SCRIPT ###" markers.
+  for (let i = 0; i < cues.length - 1; i++) {
+    if (cues[i].b > cues[i + 1].a - SRT_MIN_GAP) {
+      cues[i].b = Math.max(cues[i].a + 0.3, cues[i + 1].a - SRT_MIN_GAP);
+    }
+  }
+  return cues;
+}
+
 function convertSrt(src, dst) {
   let text = readFileSync(src, 'utf8');
   if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
-  writeFileSync(dst, text.replace(/\r\n/g, '\n').trimEnd() + '\n', 'utf8');
-  const cues = (text.match(/-->/g) ?? []).length;
-  return cues;
+  text = text.replace(/\r\n/g, '\n');
+
+  const cues = parseSrtCues(text);
+  let note = '';
+  if (cues.length) {
+    const fast = cues.filter((c) => c.body.join(' ').length / (c.b - c.a) > SRT_MAX_RATE).length;
+    const overlaps = cues.filter((c, i) => i && cues[i - 1].b > c.a).length;
+    if (fast || overlaps) {
+      relaxCues(cues);
+      text = cues.map((c, n) =>
+        `${n + 1}\n${srtStamp(c.a)} --> ${srtStamp(c.b)}\n${c.body.join('\n')}\n`).join('\n');
+      const still = cues.filter((c) => c.body.join(' ').length / (c.b - c.a) > SRT_MAX_RATE).length;
+      note = (fast ? `, ${fast} too fast -> ${still} left` : '')
+           + (overlaps ? `, ${overlaps} overlap fixed` : '');
+    }
+  }
+  writeFileSync(dst, text.trimEnd() + '\n', 'utf8');
+  return { cues: cues.length || (text.match(/-->/g) ?? []).length, note };
 }
 
 /**
@@ -920,7 +1036,8 @@ for (const artist of ARTISTS) {
     const dst = join(OUT, artist.id, sub.to);
     if (!existsSync(src)) { console.log(`  ! missing  ${sub.from}`); continue; }
     mkdirSync(dirname(dst), { recursive: true });
-    console.log(`  > subtitle ${sub.to}  (${convertSrt(src, dst)} cues)`);
+    const r = convertSrt(src, dst);
+    console.log(`  > subtitle ${sub.to}  (${r.cues} cues${r.note})`);
   }
 
   for (const p of artist.posters ?? []) {

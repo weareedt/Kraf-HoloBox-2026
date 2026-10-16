@@ -319,8 +319,8 @@ async function enterArtist(artist, { walkIn = false } = {}) {
     // The walk-in is a one-shot, so it holds the idle countdown for its duration.
     // The idle LOOP must not, or the kiosk would never return to the menu.
     const walk = artist.video.walk;
-    idle.hold();
-    setTimeout(() => idle.release(), Math.max(800, (walk?.durationMs ?? 7840) - 900));
+    const releaseWalk = idle.hold();
+    setTimeout(releaseWalk, Math.max(800, (walk?.durationMs ?? 7840) - 900));
   }
 
   disposeScreen = () => { menu.innerHTML = ''; };
@@ -388,9 +388,7 @@ async function enterTalk(artist, key) {
   const overlay = mountOverlay($('profile-overlay'), cfg.overlay);
 
   // A talk is a one-shot: hold the idle countdown for its duration.
-  idle.hold();
-  let released = false;
-  const release = () => { if (!released) { released = true; idle.release(); } };
+  const release = idle.hold();
 
   disposeScreen = () => { band.hide(); overlay.hide(); release(); };
 
