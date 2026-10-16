@@ -3,6 +3,14 @@
 Offline HTML touchscreen experience for the museum's ~2 m portrait transparent-LCD
 showcase. Replaces the previous Unity build ("KRAF-StellarLink").
 
+> **New here? Read `PROJECT-FLOW.md` first.** This file is the deep reference — why each
+> decision was made and the measurements behind it.
+
+> **The video is not in this repository.** 4.3 GB across 32 files, shared as `HoloBox-media`
+> on Google Drive. Copy its `content` folder into this project and merge; the structure
+> mirrors this one so every file lands where it belongs. The app checks on startup and names
+> anything missing. See `PROJECT-FLOW.md` → *What is NOT in this repository*.
+
 ## Running it
 
 Double-click **`start.bat`**. **Alt+F4** exits, **F11** toggles fullscreen ⇄ a 608×1080

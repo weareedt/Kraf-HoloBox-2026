@@ -141,13 +141,41 @@ keep that constraint or say so loudly.
 
 | | Where it is | Why |
 |---|---|---|
+| **the video** — `content/artists/*/video/`, `steps/*.mp4` | **`HoloBox-media` on Google Drive** | **4.3 GB, 32 files** |
 | `outer assets/` — PSDs, PNGs, Premiere projects, camera masters | shared separately on Google Drive | ~35 GB |
-| `content/artists/*/video/`, `steps/*.mp4` | rebuilt by the pipeline | 4.3 GB |
 | `_source/` — old Unity archive, pipeline caches | original machine | 4.7 GB |
 | `node_modules/` | `npm install` | regenerable |
 
 The repository is about **59 MB**: code, configuration, the manifest, UI artwork and the
 docs.
+
+### Installing the video — do this first
+
+Without it the exhibit loads but no clip ever plays. **The app checks on startup** and tells
+you on screen exactly which files are missing, so you will not be left guessing.
+
+`HoloBox-media` mirrors this project's folder structure on purpose, so nothing has to be
+sorted by hand:
+
+```
+HoloBox-media/content/artists/samat/video/walk.mp4     ->   HoloBox/content/artists/samat/video/walk.mp4
+```
+
+Copy the **`content`** folder out of `HoloBox-media` into your `HoloBox` folder and merge:
+
+```bat
+robocopy "...\HoloBox-media\content" "...\HoloBox\content" /E
+```
+
+```bash
+cp -r ".../HoloBox-media/content/." ".../HoloBox/content/"
+```
+
+Then reload. `HoloBox-media/README.md` has the same instructions and a file manifest.
+
+> These are **generated** files, not masters. With the `outer assets` drop folder you can
+> rebuild every one of them with `npm run prepare-assets` — the Drive copy just saves you
+> hours of encoding.
 
 **You can clone this and read everything, but you cannot rebuild media without
 `outer assets/`.** Ask for the Drive link before starting any video, backdrop or turntable

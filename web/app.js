@@ -488,6 +488,54 @@ function fatal(msg, detail) {
   console.error(msg, detail);
 }
 
+/**
+ * The video is not in the repository — it is 4.3 GB and ships separately (see
+ * PROJECT-FLOW.md). A fresh clone therefore starts with every artist's walk, idle and talk
+ * clips missing, and without this check the symptom is a stage that loads and then simply
+ * never plays anything: no error, nothing in the console, just a blank white box. That is
+ * the worst possible first impression for someone setting the project up.
+ *
+ * The server already stat()s every asset the manifest references and returns `exists` for
+ * each, so this costs nothing extra — it just reads what /api/manifest already said.
+ *
+ * @returns {boolean} true when everything is present and boot may continue
+ */
+function checkMedia() {
+  const assets = manifest.assets ?? {};
+  const missing = Object.entries(assets)
+    .filter(([rel, info]) => /\.(mp4|webm|mov)$/i.test(rel) && !info.exists)
+    .map(([rel]) => rel)
+    .sort();
+  if (!missing.length) return true;
+
+  const total = Object.keys(assets).filter((r) => /\.(mp4|webm|mov)$/i.test(r)).length;
+  const byArtist = {};
+  for (const rel of missing) {
+    const who = rel.split('/')[1] ?? '?';
+    byArtist[who] = (byArtist[who] ?? 0) + 1;
+  }
+  const el = document.createElement('div');
+  el.className = 'fatal fatal--setup';
+  el.innerHTML = `
+    <strong>Video belum dipasang &middot; Video files are not installed</strong>
+    <span>${missing.length} of ${total} video files are missing${
+      Object.keys(byArtist).length
+        ? ` &mdash; ${Object.entries(byArtist).map(([a, n]) => `${a} (${n})`).join(', ')}`
+        : ''}.</span>
+    <span class="fatal__how">
+      The video is not in the Git repository: it is 4.3&nbsp;GB and is shared separately.<br>
+      Copy the <code>content</code> folder from <code>HoloBox-media</code> (Google Drive)
+      into this project and merge, then reload.<br>
+      See <code>PROJECT-FLOW.md</code> &rarr; &ldquo;What is NOT in this repository&rdquo;.
+    </span>
+    <span class="fatal__list">${missing.slice(0, 8).join('<br>')}${
+      missing.length > 8 ? `<br>&hellip; and ${missing.length - 8} more` : ''}</span>`;
+  $('canvas').appendChild(el);
+  console.error(`[media] ${missing.length}/${total} video files missing:\n` +
+                missing.join('\n'));
+  return false;
+}
+
 async function boot() {
   let res;
   try {
@@ -501,6 +549,10 @@ async function boot() {
 
   fitCanvas();
   applyCursorPolicy();                 // re-apply now that the manifest is known
+
+  // Stop here rather than loading into a stage whose clips will never play.
+  if (!checkMedia()) return;
+
   document.documentElement.style.setProperty('--fade-ms', `${fadeMs()}ms`);
   $('loading-title').textContent = manifest.strings?.loading?.ms ?? 'Memuatkan aset…';
   for (const el of [$('brand-logo'), $('brand-logo-2')]) {

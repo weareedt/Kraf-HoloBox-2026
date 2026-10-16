@@ -743,6 +743,31 @@ body.kiosk { cursor: none; }
   z-index: 999;
 }
 
+/* The setup variant carries instructions rather than an error, so it is sized for reading
+   on a dev machine, not for a visitor glancing at the showcase. */
+.fatal--setup {
+  font-size: 26px;
+  align-content: center;
+  gap: 26px;
+}
+.fatal--setup .fatal__how {
+  font-size: 20px;
+  line-height: 1.55;
+  color: #4A4A52;
+}
+.fatal--setup .fatal__list {
+  font-size: 15px;
+  line-height: 1.5;
+  font-family: ui-monospace, Consolas, monospace;
+  color: #7A7A84;
+}
+.fatal--setup code {
+  font-family: ui-monospace, Consolas, monospace;
+  background: #00000010;
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
 /* =====================================================================
    PRODUCT HOTSPOTS
    Pulsing markers over a product, each opening a zoom-in view.
