@@ -183,7 +183,7 @@ cycle*.
 | 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | two keris info blocks are generated placeholders |
 | 3 | Bangie | Tenunan Pua | Profil, Terangkan Produk, 5 image products | **several — see below** |
 | 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | 8 unwritten script gaps in subtitles |
-| 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt | **no artwork at all**; Terokai Produk not built |
+| 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, 2 turntables | no menu card or name plate |
 
 ### Bangie — the one needing most attention
 
@@ -203,21 +203,37 @@ exactly those timecodes.
 **These can now be filled automatically** — see §6. When those placeholders were written
 there was no speech-to-text on this machine; there is now.
 
-### Johnny — complete except for artwork
+### Johnny — complete except for menu artwork
 
-Videos, subtitles and manifest are done and tested. What is missing:
+Videos, subtitles, manifest and **Terokai Produk** are done and tested.
 
-- **No menu card, name plate or stage-button artwork exists.** He runs on the shared buttons
-  and a placeholder portrait cropped from his own idle clip, so his is the only card in the
-  carousel with no name on it. To finish: drop `card.png` and `nameplate.png` into
-  `outer assets/premiere file/johnny/menu/`, add them to his `ARTWORK`/`posters` entries, and
-  add `menuCard` + `menuPlate` to his manifest object.
-- **Terokai Produk is not built**, by agreement. His product stills and turntable videos are
-  refined and staged in `outer assets/premiere file/johnny/product/refined/` awaiting a
-  decision on which to use. Two known defects there: an upright wooden post behind the hilt
-  in several blade stills that cannot be removed automatically (it is the same wood as the
-  hilt — it needs a hand-painted mask), and a hand in shot through almost all of
-  `FullParang.MP4`. The `Parang.MP4` turntable is the stronger of the two.
+**Terokai Produk** is two views of the same object, switched from the rail exactly as
+Norhaiza's two keris are:
+
+| | frames | cropped to | title |
+|---|---|---|---|
+| `full-parang` | 66 | 192 × 1420 | Parang Ilang Bersarung |
+| `parang-only` | 51 | 136 × 1148 | Bilah Parang Ilang |
+
+The counts differ because they are different takes; each covers exactly one revolution, so
+the swipe wraps cleanly on both. The rail icons and the Terokai Produk button are supplied
+artwork — the button is Maznah's, because the shared one reads only "Produk".
+
+> **The white background is deliberately NOT keyed** on these two (`keyWhite: false` in the
+> `SEQUENCES` table). The showcase is a transparent LCD, so white is simply not lit and
+> already reads as empty — the parang appears to float in the case. Verified on the real
+> hardware. Keying would only cost edge quality on a soft silhouette. The other sequences
+> still key, and the default is unchanged.
+
+The per-product `meta` lines were drawn from Johnny's own Terangkan Produk talk, which is the
+best source we have for this object — **worth confirming with the museum** before treating
+them as final.
+
+**What is still missing:** no menu card, name plate or Profil/Terangkan button artwork. He
+runs on the shared buttons and a placeholder portrait cropped from his own idle clip, so his
+is the only card in the carousel with no name on it. To finish: drop `card.png` and
+`nameplate.png` into `outer assets/premiere file/johnny/menu/`, add them to his
+`ARTWORK`/`posters` entries, and add `menuCard` + `menuPlate` to his manifest object.
 
 ---
 

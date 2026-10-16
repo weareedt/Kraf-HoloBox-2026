@@ -72,7 +72,7 @@ Currently five:
 | 2 | Norhaiza | Ukiran Halus (keris) | two turntables |
 | 3 | Bangie | Tenunan Pua (weaving) | five photographs |
 | 4 | Maznah | Anyaman Mah Meri (basketry) | turntable with hotspots |
-| 5 | Johnny | Parang Ilang (blacksmith) | not built yet |
+| 5 | Johnny | Parang Ilang (blacksmith) | two turntables |
 
 Even the stage differs: most artists walk in once and then loop an idle clip, but Maznah has
 no loopable idle, so her walk and dance alternate via an explicit `stageCycle` block.

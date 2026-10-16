@@ -671,6 +671,25 @@ Three things that cost time and are worth knowing before touching this footage a
   1 MB. Stretching 8-bit log bands badly, and the banding is strong enough that the key
   mistakes it for subject. Work from the raw.
 
+### Turntables on a transparent LCD: do NOT key the white (`keyWhite: false`)
+
+Every sequence before Johnny's keys its white background to alpha, because on an ordinary
+panel an opaque-white frame shows as a visible box against the page's `#EFEFEF`.
+
+**On the real showcase that is unnecessary, and it was verified on the hardware.** The panel
+is a transparent LCD: white is simply not lit, so a white background already reads as empty
+and the object appears to float inside the case. Keying there buys nothing and costs edge
+quality on a soft, defocused silhouette. Johnny's two parang sequences therefore carry
+`keyWhite: false` in the `SEQUENCES` table; the keyed path stays the default because the
+earlier sequences depend on it.
+
+One consequence worth knowing: **the crop is still measured through the key even when the
+output is not keyed.** The key is only being used to turn "not background" into an alpha
+channel that `cropdetect` can measure, and the probe frame is discarded. The obvious
+alternative, `negate,cropdetect`, does not work on white-background frames — it reported
+boxes that shrank as it went (`108:84:572:396`) where the real content is 138x1212, which
+produced a 108x84 turntable from a 1080x2048 source.
+
 ### Turntable PNG sequences (`tools/parang-sequence.py`)
 
 Turns a turntable clip into the frame sequence the swipe-rotate viewer wants. Four things

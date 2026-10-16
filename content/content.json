@@ -635,8 +635,14 @@
       "menuPortrait": "artists/johnny/menu/portrait.webp",
       "_note_backdrop": "Measured off the graded walk.mp4 by the transcode tool, not chosen. All four of his clips share one backdrop within 2-4 levels, so a single captured plate grades the whole set. The same value as Maznah, which is the cross-check one wants: both were lifted to the same WHITE=240 target, so they should land together.",
       "backdrop": "#EFEFEF",
-      "_note_ui": "No per-artist button artwork either, so he inherits the shared set from the top-level ui block. Add a ui override here if his own buttons arrive.",
-      "_note_strings": "Default vocabulary: his second talk is Terangkan Produk, which is what the shared button says.",
+      "_note_ui": "Profil and the second talk use the shared buttons. Only Terokai Produk is overridden, with Maznah's artwork: the shared product button reads just \"Produk\", and hers reads \"Terokai Produk\", which is what this panel actually is.",
+      "ui": {
+        "products": "artists/johnny/ui/btn-product.png"
+      },
+      "_note_strings": "Relabelled to match what is printed on that button, so the accessible name and the artwork agree.",
+      "strings": {
+        "products": { "ms": "Terokai Produk", "en": "Product Explore" }
+      },
       "video": {
         "walk": {
           "src": "artists/johnny/video/walk.mp4",
@@ -661,7 +667,60 @@
           "srt": "artists/johnny/video/explain.srt"
         }
       },
-      "_note_products": "Terokai Produk is not built yet, by agreement. With no products array the stage simply does not offer the button, so this is a complete, shippable entry as it stands."
+      "_note_products": "Two views of the one object, switched from the rail exactly as Norhaiza's two keris are. The rail only appears because there are 2+ products; with one it stays hidden.",
+      "products": [
+        {
+          "id": "full-parang",
+          "order": 1,
+          "enabled": true,
+          "title": "Parang Ilang Bersarung",
+          "_note_meta": "Drawn from Johnny's own Terangkan Produk talk, which is the most reliable source we have for this object. Worth confirming with the museum before it is treated as final.",
+          "meta": [
+            "Sarung kayu keras berukir",
+            "Anyaman rotan motif pusat bedus",
+            "Hulu motif burung kenyalang"
+          ],
+          "icon": "artists/johnny/products/full-parang/icon.png",
+          "type": "sequence",
+          "sequence": {
+            "pattern": "artists/johnny/products/full-parang/frames/frame-{i:02}.webp",
+            "start": 0,
+            "count": 66,
+            "_note_count": "66 frames, one complete revolution. The two views come from different takes, so their frame counts differ; each still wraps cleanly because each covers exactly 360 degrees.",
+            "fitHeight": 0.78,
+            "_note_fit": "Fraction of the product viewport height at zoom 1. The parang is long and narrow (192x1420 after cropping to content), so it is given more height than the keris's 0.68 and still leaves room to pinch in on the carving."
+          },
+          "controls": [
+            { "widget": "drag", "binds": "rotation" },
+            { "widget": "pinch", "binds": "zoom", "min": 1, "max": 3 },
+            { "widget": "zoomButtons", "binds": "zoom", "step": 0.25 }
+          ]
+        },
+        {
+          "id": "parang-only",
+          "order": 2,
+          "enabled": true,
+          "title": "Bilah Parang Ilang",
+          "meta": [
+            "Bilah besi tahan lasak",
+            "Ukiran kunding pada bilah",
+            "Motif berilhamkan unsur alam"
+          ],
+          "icon": "artists/johnny/products/parang-only/icon.png",
+          "type": "sequence",
+          "sequence": {
+            "pattern": "artists/johnny/products/parang-only/frames/frame-{i:02}.webp",
+            "start": 0,
+            "count": 51,
+            "fitHeight": 0.78
+          },
+          "controls": [
+            { "widget": "drag", "binds": "rotation" },
+            { "widget": "pinch", "binds": "zoom", "min": 1, "max": 3 },
+            { "widget": "zoomButtons", "binds": "zoom", "step": 0.25 }
+          ]
+        }
+      ]
     }
   ]
 }

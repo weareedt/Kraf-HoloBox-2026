@@ -185,6 +185,8 @@ function remux(src, dst, { silent, retag }) {
 const ZUL = 'premiere file/bangie/Edited';
 const MZN = 'premiere file/maznah/export for claude';
 const MZV = 'premiere file/maznah/product rotate/view preview';
+const JHN = 'premiere file/johnny';
+const JHS = 'premiere file/johnny/product/refinecolor/seq';
 
 const ARTWORK = [
   { from: 'images/1 Button Back.png',          to: '_shared/ui/btn-back.png' },
@@ -290,6 +292,19 @@ const ARTWORK = [
     to: `maznah/products/bakul/zoom-${id}.webp`,
     args: ['-quality', '92'],
   })),
+
+  // --- Johnny -------------------------------------------------------------
+  // Terokai Produk button. Johnny has no artwork of his own, and Maznah's piece is the
+  // right one — it reads "Terokai Produk", where the shared default reads only "Produk".
+  // Taken from her folder rather than promoted to _shared, because the shared button is
+  // what Samat and Norhaiza use and they should keep saying "Produk".
+  { from: `${MZN}/Button Product Explore.png`, to: 'johnny/ui/btn-product.png' },
+
+  // Rail icons for the two parang views, the same role as Norhaiza's keris type buttons.
+  // Supplied as finished artwork, 316x357 with their own frame and glow, so nothing is
+  // drawn over them.
+  { from: `${JHN}/FullParang Button.png`, to: 'johnny/products/full-parang/icon.png' },
+  { from: `${JHN}/ParangOnly Button.png`, to: 'johnny/products/parang-only/icon.png' },
 ];
 
 const MODELS = [
@@ -325,6 +340,25 @@ const SEQUENCES = [
    * `pad: 3` because the frame numbers run past 99. */
   { from: 'premiere file/maznah/product rotate/pngseq', pattern: 'Bakul%03d.png',
     to: 'maznah/products/bakul/frames', pad: 3 },
+
+  /* Johnny's parang, two views switched from the rail exactly as the two keris are.
+   *
+   * These come from `tools/clean-sequence.py`, which reproduces the hand-made Photoshop
+   * mask across the whole turn — object isolated on white, the rotator disc and the
+   * photographer's hands removed.
+   *
+   * `keyWhite: false`: UNLIKE the bakul, the white is LEFT ALONE. The showcase is a
+   * transparent LCD, so white is simply not lit and already reads as empty — the parang
+   * appears to float in the case without any keying. Verified on the real hardware. Keying
+   * here would only cost edge quality on a soft silhouette.
+   *
+   * FullParang is the sheathed parang (hilt and sheath), ParangOnly the bare blade. The
+   * frame counts differ because they are different takes: 66 and 51, each one complete
+   * revolution, so the swipe wraps cleanly in both. */
+  { from: `${JHS}/FullParang/cropped`, pattern: 'FullParang%02d.png',
+    to: 'johnny/products/full-parang/frames', keyWhite: false },
+  { from: `${JHS}/ParangOnly/cropped`, pattern: 'ParangOnly%02d.png',
+    to: 'johnny/products/parang-only/frames', keyWhite: false },
 ];
 const KEY_SIMILARITY = 0.06;
 const KEY_BLEND = 0.04;
@@ -348,9 +382,26 @@ function stageSequences() {
     }
     mkdirSync(dstDir, { recursive: true });
 
+    /* `keyWhite: false` keeps the frames on opaque white instead of keying it to alpha.
+     *
+     * That is the right choice on the real hardware and was verified on it: the showcase is
+     * a TRANSPARENT LCD, where white is simply not lit, so a white background already reads
+     * as empty — the object appears to float inside the case. Keying it to alpha buys
+     * nothing there and costs edge quality on a soft, defocused silhouette.
+     *
+     * The keyed path stays the default because the earlier sequences depend on it. */
+    const keyed = s.keyWhite !== false;
     const key = `colorkey=0xFFFFFF:${KEY_SIMILARITY}:${KEY_BLEND},format=rgba`;
 
-    // Pass 1: union bounding box of the keyed alpha over every frame.
+    /* Pass 1: union bounding box over every frame. The key is applied HERE EVEN WHEN THE
+     * OUTPUT WILL NOT BE KEYED — it is only being used to turn "not background" into an
+     * alpha channel that cropdetect can measure, and it costs nothing because this frame
+     * is thrown away.
+     *
+     * The obvious alternative, `negate,cropdetect`, does not work: on white-background
+     * frames it reported boxes that shrank as it went (108:84:572:396) when the real
+     * content is 138x1212. Measuring the alpha is the path the other sequences already
+     * rely on, so it is the one to trust. */
     const probeRun = run(FFMPEG, ['-hide_banner', '-framerate', '25', '-start_number', '0',
       '-i', join(srcDir, s.pattern),
       '-vf', `${key},alphaextract,cropdetect=limit=10:round=4:reset=0`,
@@ -359,17 +410,19 @@ function stageSequences() {
     const crop = crops.at(-1)?.slice(5);
     if (!crop) { console.log(`  ! could not measure ${s.from}`); continue; }
 
-    // Pass 2: key, crop to the union box, write WebP with alpha.
+    // Pass 2: crop to the union box and write WebP.
     const r = run(FFMPEG, ['-v', 'error', '-y', '-framerate', '25', '-start_number', '0',
       '-i', join(srcDir, s.pattern),
-      '-vf', `${key},crop=${crop}`,
-      '-c:v', 'libwebp', '-pix_fmt', 'yuva420p', '-quality', '90', '-lossless', '0',
+      '-vf', keyed ? `${key},crop=${crop}` : `crop=${crop},format=yuv420p`,
+      '-c:v', 'libwebp', '-pix_fmt', keyed ? 'yuva420p' : 'yuv420p',
+      '-quality', '90', '-lossless', '0',
       '-start_number', '0', join(dstDir, `frame-%0${pad}d.webp`)]);
     if (r.status !== 0) { console.log(`  ! failed ${s.to}\n${r.stderr}`); continue; }
 
     const [w, h] = crop.split(':').map(Number);
     writeFileSync(join(dstDir, 'sequence.json'), JSON.stringify({
-      count, pad, width: w, height: h, crop, keySimilarity: KEY_SIMILARITY,
+      count, pad, width: w, height: h, crop, keyed,
+      keySimilarity: keyed ? KEY_SIMILARITY : null,
       note: 'generated by tools/transcode.mjs — do not edit',
     }, null, 2));
     const bytes = readdirSync(dstDir).filter((f) => f.endsWith('.webp'))

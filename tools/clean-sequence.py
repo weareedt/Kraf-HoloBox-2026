@@ -197,8 +197,12 @@ for n, f in enumerate(pngs):
           f"[base][bandfill]overlay=0:0:format=auto,format=rgb24[out]")
     # -frames:v 1 because two still inputs otherwise make the image2 muxer try to write
     # several frames to the same filename.
+    # -pix_fmt rgb24 is not optional. Without it ffmpeg's PNG encoder picks its own format
+    # and chose an 8-BIT PALETTE: a crop of the sheath went from 28,721 colours to 252,
+    # which bands the wood badly once it is blown up on a 2 m screen. The file still looks
+    # fine in a thumbnail, which is why it went unnoticed.
     run(["-i", src, "-i", maskpng, "-filter_complex", fc, "-map", "[out]",
-         "-frames:v", "1", os.path.join(OUTDIR, f)])
+         "-frames:v", "1", "-pix_fmt", "rgb24", os.path.join(OUTDIR, f)])
 
     if n % 10 == 0 or n == len(pngs) - 1:
         s = report[-1][1]
