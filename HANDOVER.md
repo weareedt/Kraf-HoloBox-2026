@@ -183,7 +183,7 @@ cycle*.
 | 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | two keris info blocks are generated placeholders |
 | 3 | Bangie | Tenunan Pua | Profil, Terangkan Produk, 5 image products | **several — see below** |
 | 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | 8 unwritten script gaps in subtitles |
-| 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, 2 turntables | no menu card or name plate |
+| 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, menu card and name plate | no Terokai Produk |
 
 ### Bangie — the one needing most attention
 
@@ -203,37 +203,18 @@ exactly those timecodes.
 **These can now be filled automatically** — see §6. When those placeholders were written
 there was no speech-to-text on this machine; there is now.
 
-### Johnny — complete except for menu artwork
+### Johnny — no Terokai Produk
 
-Videos, subtitles, manifest and **Terokai Produk** are done and tested.
+Videos, subtitles, menu card and name plate are done and tested. He runs on the shared
+Profil and Terangkan buttons.
 
-**Terokai Produk** is two views of the same object, switched from the rail exactly as
-Norhaiza's two keris are:
-
-| | frames | cropped to | title |
-|---|---|---|---|
-| `full-parang` | 66 | 192 × 1420 | Parang Ilang Bersarung |
-| `parang-only` | 51 | 136 × 1148 | Bilah Parang Ilang |
-
-The counts differ because they are different takes; each covers exactly one revolution, so
-the swipe wraps cleanly on both. The rail icons and the Terokai Produk button are supplied
-artwork — the button is Maznah's, because the shared one reads only "Produk".
-
-> **The white background is deliberately NOT keyed** on these two (`keyWhite: false` in the
-> `SEQUENCES` table). The showcase is a transparent LCD, so white is simply not lit and
-> already reads as empty — the parang appears to float in the case. Verified on the real
-> hardware. Keying would only cost edge quality on a soft silhouette. The other sequences
-> still key, and the default is unchanged.
-
-The per-product `meta` lines were drawn from Johnny's own Terangkan Produk talk, which is the
-best source we have for this object — **worth confirming with the museum** before treating
-them as final.
-
-**What is still missing:** no menu card, name plate or Profil/Terangkan button artwork. He
-runs on the shared buttons and a placeholder portrait cropped from his own idle clip, so his
-is the only card in the carousel with no name on it. To finish: drop `card.png` and
-`nameplate.png` into `outer assets/premiere file/johnny/menu/`, add them to his
-`ARTWORK`/`posters` entries, and add `menuCard` + `menuPlate` to his manifest object.
+**He has no Terokai Produk panel.** A first attempt was built from turntable captures of the
+parang and then removed; it is to be redone from scratch to a fresh brief. Nothing of it is
+left in the repo — no manifest `products`, no frames, no pipeline entries — so his menu
+simply shows two buttons. Adding the panel later is the ordinary content operation: drop the
+frames into the drop folder, add a `SEQUENCES` entry, and add a `products` array to his
+manifest object. The button appears on its own, because the menu derives it from whether the
+artist has any enabled products.
 
 ---
 
@@ -251,8 +232,8 @@ it from scratch.
 | `transcode.mjs` | **the pipeline.** Job tables at the top: `ARTWORK`, `MODELS`, `SEQUENCES`, `ARTISTS`, backdrop-lift jobs. Idempotent |
 | `merge-translation.py` + `split-cues.py` | **subtitles — the current method.** See below |
 | `make-plate.py` | reconstruct a backdrop plate when no empty frame exists |
-| `refine-stills.py` / `refine-parang.py` | grade ARW stills and key their backdrop to white |
-| `refine-parang-video.py` | grade S-Log3 turntable video, lift backdrop, remove the stand |
+| `refine-stills.py` | grade ARW stills and key their backdrop to white |
+| `close-loop.py` | synthesise the missing frame when a turntable does not come back round |
 | `retime-subs.py` | carry existing subtitles across a re-cut |
 | `script-to-subs.py` | **superseded** — spreads a known script across measured speech |
 
