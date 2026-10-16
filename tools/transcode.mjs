@@ -294,6 +294,14 @@ const ARTWORK = [
   })),
 
   // --- Johnny -------------------------------------------------------------
+  // Menu card and name plate, delivered late. Both match the sizes the other four artists
+  // use exactly (749x1080 card, 903x468 plate), so his card finally carries his name and
+  // the carousel row lines up without the aspect-matched placeholder crop.
+  // The supplied filenames both read "Button MainMenu"; the dimensions are what tell them
+  // apart, so they are mapped by size rather than by name.
+  { from: `${JHN}/23 Johnny Button MainMenu.png`, to: 'johnny/menu/card.png' },
+  { from: `${JHN}/22 Johnny Button MainMenu.png`, to: 'johnny/menu/nameplate.png' },
+
   // Terokai Produk button. Johnny has no artwork of his own, and Maznah's piece is the
   // right one — it reads "Terokai Produk", where the shared default reads only "Produk".
   // Taken from her folder rather than promoted to _shared, because the shared button is
