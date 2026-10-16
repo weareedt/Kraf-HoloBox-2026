@@ -964,7 +964,7 @@ Four things that matter:
   terms and Iban words. Transcribing in `ms` and writing the English against that transcript
   keeps *kunding*, *gagung*, *pusat bedus*, *lemetak* and *Adiguru Kraf* intact.
 - **Prime `--prompt` with the proper nouns** from the teleprompter PDF. Without it they come
-  back as "krab" for *kraf*, "adik guru" for *Adiguru*, "Anabrangan" for *anak Barangan*.
+  back as "krab" for *kraf*, "adik guru" for *Adiguru*, "Anabrangan" for *Anak Berangan*.
 - **Do not pass `-ml`.** The max-length splitting does not redistribute timings — every cue
   comes back `00:00:00,000 --> 00:00:00,000`. Take the natural segments and split them with
   `split-cues.py`, which does redistribute.

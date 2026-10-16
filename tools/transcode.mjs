@@ -601,7 +601,7 @@ const BACKDROP_LIFT = [{
     { from: 'Maznah product high bitrate.mp4', to: 'video/explain.mp4', label: 'explain', audio: true },
   ],
 }, {
-  /* Johnny anak Barangan. Easier than Maznah in every respect that matters here: he is
+  /* Johnny Anak Berangan. Easier than Maznah in every respect that matters here: he is
    * standing in all four clips with the same framing, and the backdrop measures within
    * 2-4 levels across them, so ONE captured plate serves the lot — no polynomial fit
    * needed. His walk opens on about a second of empty studio, which is where it comes from.
