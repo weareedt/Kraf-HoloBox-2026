@@ -149,6 +149,21 @@ keep that constraint or say so loudly.
 The repository is about **59 MB**: code, configuration, the manifest, UI artwork and the
 docs.
 
+**`outer assets/` must sit beside the repo, not inside it.**
+
+```
+<anywhere>\
+  HoloBox\          <- this repo
+  outer assets\     <- the drop folder, a SIBLING
+  HoloBox-media\    <- the video, a sibling too
+```
+
+`tools/transcode.mjs` resolves `../outer assets` from the repo root. When the project was
+moved into a deeper folder once, that path stopped resolving and every job reported
+`! missing` while the script still **exited 0** — a successful-looking run that built
+nothing. The script now fails loudly instead, and `--stage=<dir>` or the `KRAF_STAGE`
+environment variable overrides the location if you must put it elsewhere.
+
 ### Installing the video — do this first
 
 Without it the exhibit loads but no clip ever plays. **The app checks on startup** and tells

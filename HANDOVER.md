@@ -102,7 +102,28 @@ and pushing to GitHub does not reduce it.
 It is generated. Change the source in `../outer assets/`, then run `npm run prepare-assets`.
 The one exception is `content/content.json`, which *is* the hand-edited manifest — that file
 is meant to be edited directly and is the main thing you can safely change without the drop
-folder.
+folder. Keep its `_note_*` keys; several are load-bearing explanations of odd-looking values.
+
+### The panel is a transparent LCD, which inverts two instincts
+
+Verified on the real hardware, and worth knowing before you grade anything:
+
+- **White is not lit, so a white background already reads as empty.** The object appears to
+  float inside the case with no keying at all. Keying white to alpha buys nothing there and
+  costs edge quality on a soft silhouette. The earlier sequences are keyed anyway, because
+  they were built before this was known and they look correct either way.
+- **Black is the colour that definitely shows.** This is the one that bites. An alpha channel
+  flattened to `yuv420p` on encode turns transparent padding into solid black bars across the
+  case — the opposite of invisible.
+
+Grey is the bad case: Bangie's footage sits on a grey backdrop, so the panel glows grey
+instead of reading as the artist floating.
+
+### Do not "improve" supplied artwork
+
+If frames arrive with their own alpha, honour it. If they arrive with the table, the rotator
+disc and the photographer's hands in shot, that is what ships until someone says otherwise.
+Cropping or keying delivered frames unasked has been rejected more than once.
 
 ---
 
@@ -179,29 +200,42 @@ cycle*.
 
 | # | Artist | Craft | Has | Outstanding |
 |---|---|---|---|---|
-| 1 | Samat | Wau | Profil +srt, 1 product (3D model), 4 steps | product thumbnail is a screenshot crop (cosmetic) |
-| 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | two keris info blocks are generated placeholders |
+| 1 | Samat | Wau | Profil +srt, 1 product (3D model), 4 steps | walk→idle seam pops (0.871); product thumbnail is a screenshot crop |
+| 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | keris-2 jumps 4× a turn; two info blocks are generated placeholders |
 | 3 | Bangie | Tenunan Pua | Profil, Terangkan Produk, 5 image products | **several — see below** |
-| 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | 8 unwritten script gaps in subtitles |
+| 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | nothing known |
 | 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, menu card and name plate | no Terokai Produk |
+
+Measured 19 Oct 2026, not recalled: every `.srt` in the project was checked for coverage and
+none has a gap over 12 s, so no talk has an unwritten passage left. The turntables were
+checked for jumps and the looping clips for how well they close. Re-run those checks with
+`tools/` after any re-cut — the numbers below came from them.
 
 ### Bangie — the one needing most attention
 
-- **His idle loop does not close.** 0.815 SSIM against 0.99 for the others — a visible jump
-  every 8.86 s. Needs a re-cut or a crossfade at the loop point.
+- **His idle loop does not close.** 0.900 SSIM where Johnny and Norhaiza score 0.99 — a
+  visible jump every 8.9 s, in front of a visitor deciding what to tap. Needs a re-cut or a
+  crossfade at the loop point. His walk→idle seam scores the same 0.900.
 - **His footage is on a grey backdrop**, so the transparent panel will glow grey rather than
   reading as the artist floating. A grading or re-shoot issue, not something the page can fix.
 - No subtitles supplied for either long clip; the band stays off until a `.srt` appears.
 - His supers card and title block are both placeholders (`Text1.png`, "Motif ??? / Teknik ???").
 
-### Maznah — 8 subtitle gaps
+### Samat — the walk-in pops into the idle
 
-Her re-cut talks contain ~39 s (profile, 5 places) and ~14 s (product, 3 places) of speech
-that did not exist in the old cut. The subtitle files carry `### NEW SCRIPT ###` markers at
-exactly those timecodes.
+His idle loop itself is the best of the set (0.998), but the last frame of his WALK scores
+only 0.871 against the first frame of that idle, so the stage twitches once as the visitor
+arrives. Less corrosive than Bangie's, which repeats every 8.9 s, but it is the first thing
+anyone sees of him. A re-cut of the walk's tail, or a short crossfade at that one seam.
 
-**These can now be filled automatically** — see §6. When those placeholders were written
-there was no speech-to-text on this machine; there is now.
+### Norhaiza — keris-2 jumps four times a turn
+
+Her first keris was repaired: `tools/close-loop.py` synthesised the one frame its capture
+never shot, and it now steps evenly with a 1.3x wrap. **The second keris still has four**,
+measured at 2.1-2.3x the median step — between frames 26/27, 27/28, 36/37, and at the wrap
+75->00. The same tool fixes one missing frame at a join; three jumps in the middle of a turn
+are more likely a capture that skipped, and worth re-exporting from the source before
+patching frame by frame.
 
 ### Johnny — no Terokai Produk
 
@@ -319,7 +353,7 @@ on a Tuesday.
    mid-task.
 3. **Get the masters onto a second disk.** They exist on one machine only, and the Drive copy
    does not include them.
-4. Chase the museum for **Johnny's menu artwork** and **Bangie's re-cut idle** — both are
+4. Chase the museum for **Bangie's re-cut idle** and **Bangie's subtitles** — both are
    blocked on someone else, so they are worth starting early.
-5. Fill Maznah's 8 subtitle gaps with Whisper (§6). Needs the drop folder, or at least her
-   two talk videos, but it is otherwise a contained job.
+5. Re-export **Norhaiza's keris-2** turntable, which jumps four times a revolution. Needs the
+   drop folder.

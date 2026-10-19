@@ -714,7 +714,8 @@ masters under `_source/` and should not be edited. Three passes:
    leave a cue shorter than `SRT_MIN_SHOW`, never move a boundary by more than
    `SRT_MAX_STEAL`.
 3. **Guarantee no overlap.** Also repairs defects already in the supplied files — Maznah's
-   product talk ships with a 20 ms overlap around one of its `### NEW SCRIPT ###` markers.
+   product talk shipped with a 20 ms overlap, around what was then a `### NEW SCRIPT ###`
+   marker. Those markers have since been transcribed and filled.
 
 | | before | after |
 |---|---|---|
@@ -1212,8 +1213,8 @@ own, and no Terokai Produk yet.
 
 | Outstanding | Notes |
 |---|---|
-| Maznah's Terokai Produk | assets not ready. `products` is absent, so the button is not built; adding entries is all that is needed |
-| **Maznah's new script has no words yet** | Her re-cut talks contain ~39s (profile, 5 places) and ~14s (product, 3 places) of speech that did not exist in the old cut. `video/profil.srt` and `video/explain.srt` carry `### NEW SCRIPT ###` placeholders at exactly those timecodes; they need someone who can hear them |
+| ~~Maznah's Terokai Produk~~ | **done** — the Sungu Duri turntable with three hotspots |
+| ~~Maznah's new script has no words yet~~ | **done** — the `### NEW SCRIPT ###` placeholders were transcribed and filled. Verified 19 Oct 2026: every `.srt` in the project covers its clip with no gap over 12 s |
 | Re-timed cues want a spot check | 23 of 59 (profile) and 14 of 33 (product) matched below 0.85 correlation. `tools/retime-subs.py` lists them |
 | Maznah's captions are English only | `profile BM.txt` and `product BM.txt` exist beside the English ones and are deliberately unused || Maznah's profil/explain are still 4K | 2160x3840, as chosen — they are one-shot talks, not the attract loop. Her walk/idle/dance are 1296x2304 |
 | `Biografi Bangie Sub.mov` has finished downloading | 7 GB, in `premiere file/bangie/Edited/`. Previously an unusable partial; if it is his profile with burnt-in captions it would settle the "Bangie has no subtitles" row below |
