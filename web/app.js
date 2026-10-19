@@ -496,41 +496,76 @@ function fatal(msg, detail) {
  * The server already stat()s every asset the manifest references and returns `exists` for
  * each, so this costs nothing extra — it just reads what /api/manifest already said.
  *
+ * It also checks the SIZE of each video against content/media-sizes.json. Johnny's
+ * explain.mp4 once arrived 164 KB larger than the master and completely undecodable —
+ * 27,076 NAL errors, every frame broken — and because the file existed, this check passed
+ * and the visitor got a talk screen with a back button and no picture. A length test is not
+ * a checksum and cannot catch a same-length corruption, but it does catch the copy that was
+ * interrupted or mangled, which is the failure that actually happened.
+ *
  * @returns {boolean} true when everything is present and boot may continue
  */
 function checkMedia() {
   const assets = manifest.assets ?? {};
-  const missing = Object.entries(assets)
-    .filter(([rel, info]) => /\.(mp4|webm|mov)$/i.test(rel) && !info.exists)
-    .map(([rel]) => rel)
-    .sort();
-  if (!missing.length) return true;
+  const videos = Object.entries(assets).filter(([rel]) => /\.(mp4|webm|mov)$/i.test(rel));
+  const missing = videos.filter(([, i]) => !i.exists).map(([rel]) => rel).sort();
+  const damaged = videos
+    .filter(([, i]) => i.exists && i.expectedBytes !== undefined && i.bytes !== i.expectedBytes)
+    .map(([rel, i]) => ({ rel, bytes: i.bytes, want: i.expectedBytes }))
+    .sort((a, b) => a.rel.localeCompare(b.rel));
+  if (!missing.length && !damaged.length) return true;
 
-  const total = Object.keys(assets).filter((r) => /\.(mp4|webm|mov)$/i.test(r)).length;
+  const total = videos.length;
   const byArtist = {};
   for (const rel of missing) {
     const who = rel.split('/')[1] ?? '?';
     byArtist[who] = (byArtist[who] ?? 0) + 1;
   }
+  const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
+  const headline = missing.length
+    ? `${missing.length} of ${total} video files are missing${
+      Object.keys(byArtist).length
+        ? ` &mdash; ${Object.entries(byArtist).map(([a, n]) => `${a} (${n})`).join(', ')}`
+        : ''}.`
+    : `${damaged.length} of ${total} video files are the wrong size and will not play.`;
+
   const el = document.createElement('div');
   el.className = 'fatal fatal--setup';
   el.innerHTML = `
-    <strong>Video belum dipasang &middot; Video files are not installed</strong>
-    <span>${missing.length} of ${total} video files are missing${
-      Object.keys(byArtist).length
-        ? ` &mdash; ${Object.entries(byArtist).map(([a, n]) => `${a} (${n})`).join(', ')}`
-        : ''}.</span>
+    <strong>${missing.length
+      ? 'Video belum dipasang &middot; Video files are not installed'
+      : 'Video rosak &middot; Video files are damaged'}</strong>
+    <span>${headline}${
+      missing.length && damaged.length
+        ? ` A further ${damaged.length} ${damaged.length === 1 ? 'is' : 'are'} the wrong size.`
+        : ''}</span>
     <span class="fatal__how">
-      The video is not in the Git repository: it is 4.3&nbsp;GB and is shared separately.<br>
+      The video is not in the Git repository: it ships separately.<br>
       Copy the <code>content</code> folder from <code>HoloBox-media</code> (Google Drive)
       into this project and merge, then reload.<br>
+      ${damaged.length
+        ? 'A file of the wrong length is a copy that did not finish &mdash; delete it and '
+          + 'copy it again.<br>'
+        : ''}
       See <code>PROJECT-FLOW.md</code> &rarr; &ldquo;What is NOT in this repository&rdquo;.
     </span>
-    <span class="fatal__list">${missing.slice(0, 8).join('<br>')}${
-      missing.length > 8 ? `<br>&hellip; and ${missing.length - 8} more` : ''}</span>`;
+    <span class="fatal__list">${
+      [...missing.slice(0, 8),
+        ...damaged.slice(0, 8).map((d) => `${d.rel} &mdash; ${kb(d.bytes)}, expected ${kb(d.want)}`),
+      ].join('<br>')}${
+      missing.length + damaged.length > 8
+        ? `<br>&hellip; and ${missing.length + damaged.length - 8} more` : ''}</span>`;
   $('canvas').appendChild(el);
-  console.error(`[media] ${missing.length}/${total} video files missing:\n` +
-                missing.join('\n'));
+  if (missing.length) {
+    console.error(`[media] ${missing.length}/${total} video files missing:\n` +
+                  missing.join('\n'));
+  }
+  if (damaged.length) {
+    console.error(`[media] ${damaged.length}/${total} video files are the wrong size `
+                  + '(a copy that did not finish will not decode):\n'
+                  + damaged.map((d) => `  ${d.rel}  ${d.bytes} bytes, expected ${d.want}`)
+                    .join('\n'));
+  }
   return false;
 }
 

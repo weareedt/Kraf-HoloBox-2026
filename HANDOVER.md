@@ -234,6 +234,7 @@ it from scratch.
 | `make-plate.py` | reconstruct a backdrop plate when no empty frame exists |
 | `refine-stills.py` | grade ARW stills and key their backdrop to white |
 | `close-loop.py` | synthesise the missing frame when a turntable does not come back round |
+| `media-sizes.mjs` | record each video's exact byte size into `content/media-sizes.json`, so the startup check can spot a damaged copy. Re-run and commit when the masters change |
 | `retime-subs.py` | carry existing subtitles across a re-cut |
 | `script-to-subs.py` | **superseded** — spreads a known script across measured speech |
 

@@ -154,6 +154,13 @@ docs.
 Without it the exhibit loads but no clip ever plays. **The app checks on startup** and tells
 you on screen exactly which files are missing, so you will not be left guessing.
 
+It also checks each file's **size** against `content/media-sizes.json`. A copy that was
+interrupted is worse than one that is absent: the file is there, the check used to pass, and
+the visitor got a screen with a back button and no picture. This happened once — Johnny's
+`explain.mp4` arrived 164 KB over length and would not decode a single frame. If the startup
+screen says a file is the wrong size, delete it and copy it again. (A length test is not a
+checksum; hashing 4.3 GB on every boot would be far too slow for a kiosk.)
+
 `HoloBox-media` mirrors this project's folder structure on purpose, so nothing has to be
 sorted by hand:
 

@@ -60,14 +60,30 @@ function collectAssetPaths(node, out = []) {
   return out;
 }
 
+/**
+ * Expected video sizes, written by tools/media-sizes.mjs from the HoloBox-media master.
+ * Absent is not an error — the app simply falls back to checking existence only.
+ */
+function expectedVideoSizes() {
+  try {
+    return JSON.parse(readFileSync(join(CONTENT, 'media-sizes.json'), 'utf8')).files ?? {};
+  } catch {
+    return {};
+  }
+}
+
 function buildManifest() {
   const raw = JSON.parse(readFileSync(join(CONTENT, 'content.json'), 'utf8'));
+  const expected = expectedVideoSizes();
   const assets = {};
   for (const rel of new Set(collectAssetPaths(raw))) {
     const abs = join(CONTENT, rel);
     let bytes = 0, exists = false;
     try { const s = statSync(abs); bytes = s.size; exists = s.isFile(); } catch { /* absent */ }
     assets[rel] = { bytes, exists };
+    // Only video carries an expected size. A file that is present but the wrong length is a
+    // damaged copy, and the startup check reports it separately from a missing one.
+    if (expected[rel] !== undefined) assets[rel].expectedBytes = expected[rel];
   }
   return { ...raw, assets };
 }
