@@ -825,10 +825,13 @@ body.kiosk { cursor: none; }
 }
 
 /* Marker with its own artwork (`button` in content.json): the face is the supplied PNG,
-   and behind it a rounded square of colour swells outward and fades, shifting from
-   amber to gold as it goes. Amber sits clear of the buttons' dark brown and, unlike
-   white, actually lights on the transparent panel. Same 1s rhythm as the glow ring. */
-.hotspot--art { --hot-halo-a: #F59E23; --hot-halo-b: #FFD15C; }
+   and behind it a rounded square of colour swells outward and fades. The halo starts as
+   the deep brown of the caption cards' stroke (#5E2207) and fades out to the buttons'
+   own ochre fill (#B6823D, measured off the 21 Oct recolour). Dark against light is what
+   reads around an ochre button — the earlier amber was too close to it — and dark is
+   what definitely shows on the transparent panel. Same 1s rhythm as the glow ring. The
+   halo is sized in proportion to the button, so it follows `hotspotSize`. */
+.hotspot--art { --hot-halo-a: #5E2207; --hot-halo-b: #B6823D; }
 
 .hotspot__face {
   position: absolute;

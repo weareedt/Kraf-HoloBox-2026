@@ -40,7 +40,7 @@ const DEFAULT_SIZE = 96;
    730 x 1092 on the design canvas. */
 const VIEW_BOX = [730, 1092];
 
-const INFO_MS = 500;   // each card's scale-in, linear, one after another
+const INFO_MS = 200;   // each card's scale-in, linear, one after another
 
 export function mountHotspots({ product, url, assetInfo, els }) {
   const spots = (product.hotspots ?? []).filter((h) => h.image && assetInfo(h.image).exists);

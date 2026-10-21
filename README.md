@@ -439,7 +439,7 @@ side and bottom — and a tap anywhere closes the view again.
 
 ```jsonc
 "hotspotArt": "…/hotspot.png",      // fallback marker, for a spot with no `button`
-"hotspotSize": 96,
+"hotspotSize": 48,
 "zoomSize": [1334, 2000],           // the zoom images' native size; `info` x/y are in it
 "hotspots": [
   { "id": "top", "label": "Bahagian atas", "x": 536, "y": 799, "image": "…/zoom-top.webp",
@@ -461,9 +461,13 @@ Three things are deliberate:
   `pointer-events` do the hiding instead, so the fade always has a picture to fade to.
 - **A marker is either finished artwork or a mask.** Since 21 Oct 2026 Maznah's markers are
   the museum's lettered squares, A, B and C running top to bottom (`button` on each spot).
-  They are drawn as images, with a rounded amber halo swelling out from behind and fading
-  to gold, while the face itself breathes 1 → 1.1. Amber clears the buttons' dark brown and,
-  unlike white, actually lights on the transparent panel. A spot with no `button` falls back
+  They are drawn as images at `hotspotSize` 48 (halved from 96 on request), with a rounded
+  halo swelling out from behind while the face itself breathes 1 → 1.1. The halo runs from
+  the caption cards' deep-brown stroke (#5E2207) out to the buttons' own ochre (#B6823D,
+  measured off the recoloured artwork). It was amber against the first, dark-brown buttons;
+  once the buttons went ochre, amber no longer stood apart, and dark is what reliably shows
+  on the transparent panel. The halo is sized in proportion to the button, so changing
+  `hotspotSize` scales the pulse with it. A spot with no `button` falls back
   to `hotspotArt`, the older white glow ring used as a `mask-image` over a coloured box, which
   is what lets its colour animate. An `<img>` could only have been faded.
 - **The overlay paints nothing.** It is transparent and exists only to catch the tap that
@@ -501,10 +505,12 @@ document's on-screen width gave the zoom, and each card was found by its straigh
 bottom strokes. A colour mask alone does not work, because the weave contains the same brown.
 Every measured card height matched its PNG to within 2 px, which is the cross-check.
 
-On every open the cards scale in **0 → 1, linear, 0.5 s each, one after another**, from their
-own centres. This is the Web Animations API rather than a CSS class, because it has to
-restart on every open: the previous run is cancelled first, so going back and forth always
-replays it from scale 0. The cards sit above the picture and ignore taps, so tapping a card
+On every open the cards scale in **0 → 1, linear, 0.2 s each, one after another**, from their
+own centres (`INFO_MS` in `hotspots.js`), and play **once**: a single iteration, then they
+hold at full size. Measured in the browser: the first card 0.08 → 0.83 over 48-188 ms, the
+second 0.25 → 1 over 282-421 ms, both still at 1 three seconds later. This is the Web
+Animations API rather than a CSS class, because it has to restart on every open: the
+previous run is cancelled first, so going back and forth always replays it from scale 0. The cards sit above the picture and ignore taps, so tapping a card
 still closes the view.
 
 The artwork is staged from `outer assets/images/` (`button a/b/c.png`,

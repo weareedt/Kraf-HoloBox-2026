@@ -262,7 +262,7 @@ team can translate Iban, so that is the blocker for everything else on this list
 Talks, subtitles, stage cycle and turntable all work. Two things are left:
 
 - **Terokai Produk redesign, in progress.** Done 21 Oct 2026: the glow-ring markers became
-  the lettered **A/B/C buttons** (top, side, bottom) with a pulsing amber halo, and each
+  the lettered **A/B/C buttons** (top, side, bottom; ochre, 48 px) with a pulsing brown halo, and each
   zoom view now carries its **caption cards**, which scale in one by one every time it opens.
   README → *Product hotspots* has the details and the measured positions. Further pieces of
   the new design to follow, one at a time.
