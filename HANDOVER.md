@@ -218,7 +218,7 @@ Status as signed off on 20 Oct 2026:
 | 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | **done** |
 | 3 | Bangie | Tenunan Pua | Profil, Terangkan Produk, 5 image products | **needs the most** — blocked on the museum's translation |
 | 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | almost done — new Terokai Produk design, infotext |
-| 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, menu card and name plate | about half done — no Terokai Produk, infotext |
+| 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, 2 parang turntables | over half done — close-ups, title block, infotext |
 
 Measured 19 Oct 2026, not recalled: every `.srt` in the project was checked for coverage and
 none has a gap over 12 s, so no talk has an unwritten passage left. The turntables were
@@ -271,15 +271,14 @@ Talks, subtitles, stage cycle and turntable all work. Two things are left:
 ### Johnny — about half done
 
 Videos, subtitles, menu card and name plate are done and tested. He runs on the shared
-Profil and Terangkan buttons. Two things are left:
+Profil and Terangkan buttons.
 
-- **No Terokai Produk panel.** A first attempt was built from turntable captures of the
-  parang and then removed; it is to be redone from scratch to a fresh brief. Nothing of it is
-  left in the repo — no manifest `products`, no frames, no pipeline entries — so his menu
-  simply shows two buttons. Adding the panel later is the ordinary content operation: drop the
-  frames into the drop folder, add a `SEQUENCES` entry, and add a `products` array to his
-  manifest object. The button appears on its own, because the menu derives it from whether the
-  artist has any enabled products.
+- **Terokai Produk, first pass done (21 Oct 2026).** Two turntables, with sheath and bare
+  blade, switched by the rail like Norhaiza's keris. Drag to turn, no zoom. The frames ship
+  **exactly as supplied, not keyed or cropped**, per the brief, so the photo's backdrop
+  shows as a light panel. README → *Johnny's parang turntables*. Still to come:
+  - lettered close-up buttons with captions, as on Maznah's basket (assets to follow);
+  - a designed title block: the title and meta are placeholder text for now.
 - **Infotext** during Terangkan Produk (see below). Waiting on the artwork and timings.
 
 ### Infotext — planned, not built yet

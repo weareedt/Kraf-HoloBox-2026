@@ -609,11 +609,11 @@
             "start": 0,
             "count": 126,
             "fitHeight": 0.37,
-            "_note_fit": "Fraction of the product viewport height at zoom 1. Measured off the museum's own mark-up: the outline drawn over a screenshot came to 24.8% of the canvas height, which is 0.37 of the 1280px viewport. That shows the basket at about half its native pixel size, so there is plenty of detail left for the pinch zoom to find."
+            "_note_fit": "Fraction of the product viewport height at zoom 1. Measured off the museum's own mark-up: the outline drawn over a screenshot came to 24.8% of the canvas height, which is 0.37 of the 1280px viewport. That shows the basket at about half its native pixel size. (There is no pinch zoom any more; the A/B/C close-ups carry the detail.)"
           },
+          "_note_controls": "Drag to turn only. Pinch-to-zoom was removed on 21 Oct 2026 at the museum's request; the A/B/C close-ups are how a visitor sees detail.",
           "controls": [
-            { "widget": "drag", "binds": "rotation" },
-            { "widget": "pinch", "binds": "zoom", "min": 1, "max": 3 }
+            { "widget": "drag", "binds": "rotation" }
           ],
           "_note_hotspots": "Markers over the basket, each opening a close-up of that part of the weave. x and y are the marker's CENTRE in design-canvas pixels, measured off the museum's mark-up over a screenshot, so they can be re-read the same way if the artwork moves. They are fixed to the canvas, not to the turntable, so they stay put as the basket spins.",
           "_note_buttons": "Each marker draws its own `button` artwork (lettered A, B, C top to bottom, 21 Oct 2026) with a tinted halo pulsing behind it. 48 px, half the original 96, as asked. hotspotArt is the older glow-ring mask, kept as the fallback for a marker with no `button`.",
@@ -677,7 +677,57 @@
           "fps": 50,
           "srt": "artists/johnny/video/explain.srt"
         }
-      }
+      },
+      "_note_ui": "Terokai Produk artwork, the same file Bangie and Maznah use, so his three buttons match. Profil and Terangkan Produk come from the shared set.",
+      "ui": {
+        "products": "artists/johnny/ui/btn-product.png"
+      },
+      "strings": {
+        "products": {
+          "ms": "Terokai Produk",
+          "en": "Product Explore"
+        }
+      },
+      "_note_products": "Two turntables of the same parang, switched by the rail like Norhaiza's keris: with its sheath, and the bare blade. The frames ship AS SUPPLIED (asSupplied in tools/transcode.mjs): no key, no crop, 1080x2048 with the photographed backdrop, per the brief. Drag to turn, and it loops; no pinch, no zoom buttons. Titles and meta are PLACEHOLDERS until a designed title block (metaImage) arrives. Lettered zoom buttons with captions, as on Maznah's basket, are planned for later.",
+      "products": [
+        {
+          "id": "full-parang",
+          "order": 1,
+          "enabled": true,
+          "title": "Parang Ilang",
+          "meta": ["Bersarung"],
+          "icon": "artists/johnny/products/full-parang/icon.png",
+          "type": "sequence",
+          "sequence": {
+            "pattern": "artists/johnny/products/full-parang/frames/frame-{i:02}.webp",
+            "start": 0,
+            "count": 66,
+            "fitHeight": 0.95,
+            "_note_fit": "Fraction of the product viewport height for the WHOLE uncropped 2048px frame. The parang itself fills about 68% of the frame's height, so it lands near Norhaiza's keris (0.68 of a cropped frame)."
+          },
+          "controls": [
+            { "widget": "drag", "binds": "rotation" }
+          ]
+        },
+        {
+          "id": "parang-only",
+          "order": 2,
+          "enabled": true,
+          "title": "Parang Ilang",
+          "meta": ["Tanpa sarung"],
+          "icon": "artists/johnny/products/parang-only/icon.png",
+          "type": "sequence",
+          "sequence": {
+            "pattern": "artists/johnny/products/parang-only/frames/frame-{i:02}.webp",
+            "start": 0,
+            "count": 51,
+            "fitHeight": 0.95
+          },
+          "controls": [
+            { "widget": "drag", "binds": "rotation" }
+          ]
+        }
+      ]
     }
   ]
 }

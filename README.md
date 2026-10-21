@@ -426,11 +426,51 @@ clean. Cropping to the union box over the whole turn takes each frame from 1000x
 
 `fitHeight` is **0.37**, measured off the museum's own mark-up rather than chosen: an outline
 drawn over a screenshot came to 24.8% of the canvas height, which is 0.37 of the 1280 px
-viewport. The rendered basket measures 24.0% — close enough to call it a match. That shows it
-at about half its native pixel size, so there is plenty of detail left for the zoom to find.
+viewport. The rendered basket measures 24.0% — close enough to call it a match.
+
+**Drag to turn, nothing else.** Pinch-to-zoom was removed on 21 Oct 2026 at the museum's
+request. The lettered A/B/C close-ups (below) are how a visitor sees detail. Removing the
+`pinch` control removes every zoom path, because the desktop stand-ins (wheel and Ctrl+drag)
+only exist for products that declare `pinch`.
 
 Frame numbers run past 99, so the sequence declares `pad: 3` and the pattern is
 `frame-{i:03}.webp`.
+
+### Johnny's parang turntables — shipped as supplied
+
+Two turns of the same Parang Ilang, switched by the rail exactly as Norhaiza's keris are:
+**with its sheath** (66 frames) and **the bare blade** (51 frames). The rail buttons are the
+supplied `FullParang Button.png` / `ParangOnly Button.png`, 316x357 with their own glow — the
+same size as the keris buttons, so they take the rail's artwork-button path unchanged. Drag to
+turn, looping; no pinch and no zoom buttons. His stage gains a Terokai Produk button using the
+artwork Bangie and Maznah share, so his three buttons match.
+
+**The frames are NOT keyed or cropped**, and that is the brief, not an oversight: the
+museum's instruction was explicit. The keris and the basket go through a white key and a
+union-box crop; these go through `asSupplied: true` on their `SEQUENCES` entries, which
+encodes each 1080x2048 frame as it is. Two consequences, both deliberate:
+
+- **The photo's own backdrop shows** as a slightly lighter panel against the page's #EFEFEF,
+  with the edge of the original photograph visible inside it. That is the delivered picture.
+- **Memory is higher:** ~557 MB decoded for the sheathed turn and ~430 MB for the blade, against
+  ~350 MB for a cropped keris. Only the parang on screen is ever resident, so it is one or the
+  other, never both.
+
+Every frame measured **fully opaque** (alpha 255 on all 117), so they encode as plain
+`yuv420p` WebP with no alpha. The pipeline re-checks this each build and refuses to encode a
+sequence that carries any transparency, because flattening real alpha turns it black, the
+colour that shows on the panel. Output was checked against the source: 66 and 51 frames,
+every one distinct, SSIM 0.993-0.997.
+
+The turns step unevenly in places: a measured step of 3.4x the median at sheathed frames
+30→31, and 3.7-4.2x at blade frames 34→36. Looking at the frames, 30→31 is the photographed
+backdrop changing brightness rather than the parang jumping. The wraps, last frame back to
+the first, are 2.4x and 2.6x, a slightly larger turn that is mild in use. Left as delivered.
+
+`fitHeight` is 0.95 of the viewport for the **whole** uncropped frame, which puts the parang,
+about 68% of the frame's height, near the keris's size. Titles and meta are placeholders until
+a designed title block arrives. Lettered close-ups with captions, as on Maznah's basket, are
+planned for later.
 
 ### Product hotspots (`web/screens/hotspots.js`)
 
