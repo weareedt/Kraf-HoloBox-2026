@@ -824,6 +824,45 @@ body.kiosk { cursor: none; }
   100% { transform: scale(1);   background-color: var(--hot-a); }
 }
 
+/* Marker with its own artwork (`button` in content.json): the face is the supplied PNG,
+   and behind it a rounded square of colour swells outward and fades, shifting from
+   amber to gold as it goes. Amber sits clear of the buttons' dark brown and, unlike
+   white, actually lights on the transparent panel. Same 1s rhythm as the glow ring. */
+.hotspot--art { --hot-halo-a: #F59E23; --hot-halo-b: #FFD15C; }
+
+.hotspot__face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+  animation: hotspot-face 1s ease-in-out infinite;
+}
+
+/* Corner radius matches the artwork's own: ~95px on its 512px square, 18.5%. */
+.hotspot__halo {
+  position: absolute;
+  inset: 0;
+  border-radius: 18.5%;
+  background-color: var(--hot-halo-a);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: hotspot-halo 1s ease-out infinite;
+}
+
+@keyframes hotspot-face {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.1); }
+  70%  { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes hotspot-halo {
+  0%   { transform: scale(1);    opacity: .9; background-color: var(--hot-halo-a); }
+  70%  { transform: scale(1.55); opacity: 0;  background-color: var(--hot-halo-b); }
+  100% { transform: scale(1.55); opacity: 0;  background-color: var(--hot-halo-b); }
+}
+
 /* The zoom-in overlay. Always present and always composited — hiding it with `display`
    would drop its pictures off the compositor and the first tap would show a blank panel
    while one decoded. Opacity and pointer-events do the hiding instead. */
@@ -847,18 +886,33 @@ body.kiosk { cursor: none; }
   cursor: pointer;
 }
 
-/* 730 x 1092, centred. Taken from the museum's own placement rather than chosen: their
-   mock-up is a 608x1080 document — the app's windowed size — in which the view sits at
-   411 x 615, and 1080/608 scales that to 730 x 1092 on the design canvas. The box matches
-   the artwork's 0.667 aspect, so `contain` has nothing to letterbox. */
-.product-zoom__img {
+/* One zoom view: the picture and its caption cards in a single box. The box is laid out
+   at the image's NATIVE size (content.json `zoomSize`) and scaled down as a unit into
+   the measured 730 x 1092 view box — hotspots.js sets width, height and the transform —
+   so card positions are the pixels read off the Photoshop layout. */
+.product-zoom__card {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 730px;
-  height: 1092px;
-  margin: -546px 0 0 -365px;
-  object-fit: contain;
+  transform-origin: center;
   opacity: 0;
 }
-.product-zoom__img.is-on { opacity: 1; }
+.product-zoom__card.is-on { opacity: 1; }
+
+.product-zoom__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Caption cards, above the picture. Natural size, top-left at the manifest's x,y. They
+   scale in from their own centre; the animation itself is in hotspots.js, because it has
+   to restart on every open. */
+.product-zoom__info {
+  position: absolute;
+  z-index: 1;
+  transform-origin: center;
+  pointer-events: none;      /* a tap on a card still closes the view */
+}

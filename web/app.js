@@ -195,7 +195,7 @@ function buildMenu() {
 /**
  * Button artwork for this artist: the shared set, with any per-artist overrides on top.
  *
- * Bangie supplies his own three, because two of them carry labels no other artist has
+ * Bangie supplies her own three, because two of them carry labels no other artist has
  * ("Terangkan Produk", "Terokai Produk"). Artists who supply nothing keep the shared
  * artwork, so this costs the first two nothing.
  */

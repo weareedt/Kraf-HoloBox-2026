@@ -407,6 +407,19 @@ const ARTWORK = [
     to: `maznah/products/bakul/zoom-${id}.webp`,
     args: ['-quality', '92'],
   })),
+  /* Lettered markers (21 Oct 2026), replacing the glow ring as the marker art. A, B, C
+   * run top to bottom over the basket. Finished artwork with its own colour, so they are
+   * drawn as images; the pulse is a tinted halo behind them, not a mask. */
+  ...['a', 'b', 'c'].map((l) => ({
+    from: `images/button ${l}.png`,
+    to: `maznah/products/bakul/btn-${l}.png`,
+  })),
+  /* Caption cards laid over each zoom view, positioned in content.json in the view's own
+   * 1334x2000 pixels. The bottom view has two, which scale in one after the other. */
+  ...[['top', 1], ['right', 1], ['bottom', 1], ['bottom', 2]].map(([id, n]) => ({
+    from: `images/zoom-${id} info${n}.png`,
+    to: `maznah/products/bakul/info-${id}-${n}.png`,
+  })),
 
   // --- Johnny -------------------------------------------------------------
   // Menu card and name plate, delivered late. Both match the sizes the other four artists

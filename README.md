@@ -129,7 +129,7 @@ state to design, because the button does not appear.
 ### Per-artist buttons and wording
 
 `artist.ui` and `artist.strings` are layered over the shared `ui` / `strings` blocks, key by
-key. Bangie uses both: he ships his own three stage buttons, because two carry labels no
+key. Bangie uses both: she ships her own three stage buttons, because two carry labels no
 other artist has, and relabels `products` to "Terokai Produk" so the accessible name matches
 what is printed on the artwork. An artist who supplies neither keeps the shared set — Johnny
 does, because no artwork has been delivered for him at all.
@@ -438,10 +438,13 @@ Pulsing markers over a product, each opening a close-up. Maznah's basket has thr
 side and bottom — and a tap anywhere closes the view again.
 
 ```jsonc
-"hotspotArt": "…/hotspot.png",
+"hotspotArt": "…/hotspot.png",      // fallback marker, for a spot with no `button`
 "hotspotSize": 96,
+"zoomSize": [1334, 2000],           // the zoom images' native size; `info` x/y are in it
 "hotspots": [
-  { "id": "top", "label": "Bahagian atas", "x": 536, "y": 799, "image": "…/zoom-top.webp" }
+  { "id": "top", "label": "Bahagian atas", "x": 536, "y": 799, "image": "…/zoom-top.webp",
+    "button": "…/btn-a.png",
+    "info": [ { "image": "…/info-top-1.png", "x": 48, "y": 996 } ] }
 ]
 ```
 
@@ -456,9 +459,13 @@ Three things are deliberate:
   `display: none`. A hidden or not-yet-created `<img>` has nothing on the compositor, so the
   first tap would show a blank panel for as long as the decode took. Opacity and
   `pointer-events` do the hiding instead, so the fade always has a picture to fade to.
-- **The marker artwork is a mask, not an image.** `ButtonHighlight.png` is a white glow ring
-  on transparent, used as a `mask-image` over a coloured box — which is what lets the colour
-  animate. An `<img>` could only have been faded.
+- **A marker is either finished artwork or a mask.** Since 21 Oct 2026 Maznah's markers are
+  the museum's lettered squares, A, B and C running top to bottom (`button` on each spot).
+  They are drawn as images, with a rounded amber halo swelling out from behind and fading
+  to gold, while the face itself breathes 1 → 1.1. Amber clears the buttons' dark brown and,
+  unlike white, actually lights on the transparent panel. A spot with no `button` falls back
+  to `hotspotArt`, the older white glow ring used as a `mask-image` over a coloured box, which
+  is what lets its colour animate. An `<img>` could only have been faded.
 - **The overlay paints nothing.** It is transparent and exists only to catch the tap that
   closes the view. Giving it a background — white or the page colour — was tried, and it makes
   opening a hotspot look like moving to another panel rather than laying a picture over the
@@ -480,6 +487,29 @@ The pulse is one CSS keyframe animation — 0.7s of movement then 0.3s of rest, 
 is keyframes rather than script, it keeps its timing whatever the main thread is doing. The
 three markers are staggered 0.22s apart, or they pulse in lockstep and read as one flashing
 block rather than three separate invitations.
+
+#### Caption cards on the zoom views (`info`)
+
+Each view can carry caption PNGs: the bottom view has two, the others one. The view and its
+cards share one box that is laid out at the image's **native size** (`zoomSize`, 1334x2000)
+and scaled down as a unit into the 730 x 1092 view box. So a card's `x`/`y` is its top-left
+in the zoom image's own pixels, exactly as read off the museum's Photoshop layout, and the
+cards stay registered to the picture whatever the view box becomes.
+
+The positions were **measured, not eyeballed**: from screenshots of the layouts, the
+document's on-screen width gave the zoom, and each card was found by its straight top and
+bottom strokes. A colour mask alone does not work, because the weave contains the same brown.
+Every measured card height matched its PNG to within 2 px, which is the cross-check.
+
+On every open the cards scale in **0 → 1, linear, 0.5 s each, one after another**, from their
+own centres. This is the Web Animations API rather than a CSS class, because it has to
+restart on every open: the previous run is cancelled first, so going back and forth always
+replays it from scale 0. The cards sit above the picture and ignore taps, so tapping a card
+still closes the view.
+
+The artwork is staged from `outer assets/images/` (`button a/b/c.png`,
+`zoom-<view> info<n>.png`) by `tools/transcode.mjs`, which renames it without spaces:
+`btn-a.png`, `info-bottom-2.png` and so on.
 
 ### Zooming while you build it
 
@@ -524,11 +554,11 @@ state, which is the same 0.9 scale the keris rail uses. If the mockup changes, r
 Norhaiza's footage measures **#F4F4F9**, noticeably darker than Samat's #FCFCFF, which is exactly
 why `backdrop` is per artist. The pipeline prints the measured value for each artist.
 
-Bangie is the case that shows the limit of a single colour. His studio backdrop is a **mid grey
+Bangie is the case that shows the limit of a single colour. Her studio backdrop is a **mid grey
 with a vertical vignette** — ~#928E8A at the top, ~#B0A9A4 at the bottom — not a near-white flat
-field. It never shows *behind* the video, because his footage is 1296×2304, exactly the 9:16
+field. It never shows *behind* the video, because her footage is 1296×2304, exactly the 9:16
 design canvas, so it fills the frame edge to edge; `backdrop` therefore only covers the instant
-before a clip paints, and is set to white to match his Explore panel. But on the transparent
+before a clip paints, and is set to white to match her Explore panel. But on the transparent
 panel that grey is what the box will glow, so the artist will not read as floating the way
 Samat and Norhaiza do. **That is a grading issue in the footage, not something the page can fix.**
 
@@ -917,7 +947,7 @@ frame two seconds in (0.827), so it is not a trim that can be nudged. The idle l
 jump **every 8.86 seconds**, for as long as a visitor stands there. If re-shooting or re-cutting
 is not possible, the fallback is a ~300 ms crossfade at the loop point in `SeamlessPlayer`.
 
-His walk→idle handoff measures 0.816, but that one is in line with Samat's 0.834 and happens
+Her walk→idle handoff measures 0.816, but that one is in line with Samat's 0.834 and happens
 once, so it is not a new problem.
 
 ### Step captions sit inside the video
@@ -1213,18 +1243,18 @@ own, and no Terokai Produk yet.
 
 | Outstanding | Notes |
 |---|---|
-| ~~Maznah's Terokai Produk~~ | **done** — the Sungu Duri turntable with three hotspots |
+| Maznah's Terokai Produk | the Sungu Duri turntable with three hotspots works, but is **to be replaced by a better design** (20 Oct 2026) |
 | ~~Maznah's new script has no words yet~~ | **done** — the `### NEW SCRIPT ###` placeholders were transcribed and filled. Verified 19 Oct 2026: every `.srt` in the project covers its clip with no gap over 12 s |
 | Re-timed cues want a spot check | 23 of 59 (profile) and 14 of 33 (product) matched below 0.85 correlation. `tools/retime-subs.py` lists them |
 | Maznah's captions are English only | `profile BM.txt` and `product BM.txt` exist beside the English ones and are deliberately unused || Maznah's profil/explain are still 4K | 2160x3840, as chosen — they are one-shot talks, not the attract loop. Her walk/idle/dance are 1296x2304 |
-| `Biografi Bangie Sub.mov` has finished downloading | 7 GB, in `premiere file/bangie/Edited/`. Previously an unusable partial; if it is his profile with burnt-in captions it would settle the "Bangie has no subtitles" row below |
+| `Biografi Bangie Sub.mov` has finished downloading | 7 GB, in `premiere file/bangie/Edited/`. Previously an unusable partial; if it is her profile with burnt-in captions it would settle the "Bangie has no subtitles" row below |
 | **Bangie's idle loop does not close** | 0.815 SSIM; visible jump every 8.86 s. Needs a re-cut, or a crossfade at the loop point. See "Two measured problems" above |
 | **Bangie's footage is on grey** | the box will glow grey rather than reading as the artist floating. A grade/re-shoot issue |
-| Bangie's supers card | `Text1.png` on a 5s/5s cycle — placeholder artwork *and* placeholder schedule, both awaiting the real design |
-| Bangie has no subtitles | no `.srt` supplied for either long clip; `Biografi Bangie Sub.mov.opdownload` is an unfinished 2.4 GB download. The band stays off until a file appears |
+| Bangie's supers card | `Text1.png` on a 5s/5s cycle — placeholder artwork *and* placeholder schedule. To be replaced by **infotext** (timed images; Maznah, Bangie, Johnny), briefed 20 Oct 2026 and not yet built. See `HANDOVER.md` → *Infotext* |
+| Bangie has no subtitles | her talks are in **Iban**; the museum is to supply a full translation, which the re-edit and subtitles both wait on. The band stays off until a `.srt` appears |
 | Bangie's title block reads "???" | `Title Product Explore.png` ships with placeholder Motif/Teknik text |
-| Norhaiza keris info blocks | `18 Keris 1 Info.png` / `19 Keris 2 Info.png` are still generated placeholders |
-| Wau product thumbnail | still a crop of the old screenshot; only visible behind a missing model or in a 2+ product rail, so cosmetic |
+| Norhaiza keris info blocks | `18 Keris 1 Info.png` / `19 Keris 2 Info.png` are still generated placeholders. Norhaiza was accepted as done on 20 Oct 2026 with these in place |
+| Wau product thumbnail | still a crop of the old screenshot; only visible behind a missing model or in a 2+ product rail, so cosmetic. Samat was accepted as done on 20 Oct 2026 |
 | `9 Logo.png` is fully opaque | a white box, not transparent. The import keys the white out, which costs a little edge quality; a version with real alpha would be cleaner |
 
 ### Main menu artwork

@@ -616,12 +616,28 @@
             { "widget": "pinch", "binds": "zoom", "min": 1, "max": 3 }
           ],
           "_note_hotspots": "Markers over the basket, each opening a close-up of that part of the weave. x and y are the marker's CENTRE in design-canvas pixels, measured off the museum's mark-up over a screenshot, so they can be re-read the same way if the artwork moves. They are fixed to the canvas, not to the turntable, so they stay put as the basket spins.",
+          "_note_buttons": "Each marker draws its own `button` artwork (lettered A, B, C top to bottom, 21 Oct 2026) with a tinted halo pulsing behind it. hotspotArt is the older glow-ring mask, kept as the fallback for a marker with no `button`.",
           "hotspotArt": "artists/maznah/products/bakul/hotspot.png",
           "hotspotSize": 96,
+          "_note_info": "Caption cards over each zoom view. x and y are the card's top-left in the zoom image's OWN pixels (zoomSize, 1334x2000), measured off the museum's Photoshop layouts by finding each card's straight top and bottom strokes; every measured card height matched its PNG to 2 px. Cards scale in 0 -> 1 one after another, 0.5 s each, every time the view opens.",
+          "zoomSize": [1334, 2000],
           "hotspots": [
-            { "id": "top",    "label": "Bahagian atas",   "x": 536, "y": 799,  "image": "artists/maznah/products/bakul/zoom-top.webp" },
-            { "id": "right",  "label": "Bahagian sisi",   "x": 693, "y": 977,  "image": "artists/maznah/products/bakul/zoom-right.webp" },
-            { "id": "bottom", "label": "Bahagian bawah",  "x": 548, "y": 1166, "image": "artists/maznah/products/bakul/zoom-bottom.webp" }
+            { "id": "top",    "label": "Bahagian atas",   "x": 536, "y": 799,  "image": "artists/maznah/products/bakul/zoom-top.webp",
+              "button": "artists/maznah/products/bakul/btn-a.png",
+              "info": [
+                { "image": "artists/maznah/products/bakul/info-top-1.png",    "x": 48,  "y": 996 }
+              ] },
+            { "id": "right",  "label": "Bahagian sisi",   "x": 693, "y": 977,  "image": "artists/maznah/products/bakul/zoom-right.webp",
+              "button": "artists/maznah/products/bakul/btn-b.png",
+              "info": [
+                { "image": "artists/maznah/products/bakul/info-right-1.png",  "x": 364, "y": 513 }
+              ] },
+            { "id": "bottom", "label": "Bahagian bawah",  "x": 548, "y": 1166, "image": "artists/maznah/products/bakul/zoom-bottom.webp",
+              "button": "artists/maznah/products/bakul/btn-c.png",
+              "info": [
+                { "image": "artists/maznah/products/bakul/info-bottom-1.png", "x": 68,  "y": 168 },
+                { "image": "artists/maznah/products/bakul/info-bottom-2.png", "x": 372, "y": 742 }
+              ] }
           ]
         }
       ]

@@ -93,9 +93,21 @@ run still exited successfully, which is the worst kind of failure this project p
 
 Pushing the repo backs up ~59 MB of code and configuration. It does **not** back up the 35 GB
 of masters in `../outer assets/`, nor the 4.7 GB in `_source/`, and `content/` cannot
-substitute — those are compressed, graded, keyed derivatives. Those folders exist on one
-machine. Get them onto a second physical disk; that is the largest single risk on the project
-and pushing to GitHub does not reduce it.
+substitute — those are compressed, graded, keyed derivatives.
+
+Since 20 Oct 2026, `outer assets/` is copied to the EDT shared drive by
+`KRAF\sync-outer-assets.bat`, which sits beside the repo, not in it:
+
+```
+D:\CLAUDE project\KRAF\outer assets
+  -> G:\Shared drives\EDT PROJECT MASTER\EDT_2026\KRAFTANGAN HOLOBOX\04. PROJECTS\outerassets
+```
+
+It runs one way and only adds: new and changed files go up, and **nothing is ever deleted on
+the shared drive**, so a delete on the laptop cannot wipe the backup. Re-run it after adding
+masters. It needs Google Drive for desktop running, and the upload carries on in the
+background after the script finishes, so check the Drive tray icon before you trust it.
+**`_source/` is still on one machine only.**
 
 ### Never hand-edit `content/`
 
@@ -198,57 +210,110 @@ cycle*.
 
 ## 5. Where each artist stands
 
-| # | Artist | Craft | Has | Outstanding |
+Status as signed off on 20 Oct 2026:
+
+| # | Artist | Craft | Has | Status |
 |---|---|---|---|---|
-| 1 | Samat | Wau | Profil +srt, 1 product (3D model), 4 steps | walk→idle seam pops (0.871); product thumbnail is a screenshot crop |
-| 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | keris-2 jumps 4× a turn; two info blocks are generated placeholders |
-| 3 | Bangie | Tenunan Pua | Profil, Terangkan Produk, 5 image products | **several — see below** |
-| 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | nothing known |
-| 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, menu card and name plate | no Terokai Produk |
+| 1 | Samat | Wau | Profil +srt, 1 product (3D model), 4 steps | **done** |
+| 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | **done** |
+| 3 | Bangie | Tenunan Pua | Profil, Terangkan Produk, 5 image products | **needs the most** — blocked on the museum's translation |
+| 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | almost done — new Terokai Produk design, infotext |
+| 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, menu card and name plate | about half done — no Terokai Produk, infotext |
 
 Measured 19 Oct 2026, not recalled: every `.srt` in the project was checked for coverage and
 none has a gap over 12 s, so no talk has an unwritten passage left. The turntables were
 checked for jumps and the looping clips for how well they close. Re-run those checks with
 `tools/` after any re-cut — the numbers below came from them.
 
+### Samat and Norhaiza — done
+
+Both are accepted as finished. Two measured imperfections remain and were judged acceptable,
+recorded here so nobody rediscovers them as new bugs:
+
+- Samat's walk→idle seam scores 0.871 SSIM, so the stage twitches once as he arrives. His
+  idle loop itself is the best of the set (0.998).
+- Norhaiza's keris-2 turntable jumps at 2.1-2.3x the median step between frames 26/27,
+  27/28, 36/37 and at the wrap 75->00. Keris-1 was repaired with `tools/close-loop.py`. Her
+  two keris info blocks are generated placeholders.
+
+Reopen either only if the museum asks.
+
 ### Bangie — the one needing most attention
 
-- **His idle loop does not close.** 0.900 SSIM where Johnny and Norhaiza score 0.99 — a
-  visible jump every 8.9 s, in front of a visitor deciding what to tap. Needs a re-cut or a
-  crossfade at the loop point. His walk→idle seam scores the same 0.900.
-- **His footage is on a grey backdrop**, so the transparent panel will glow grey rather than
+**Her talks are in Iban.** Nothing can be edited or subtitled until **the museum supplies a
+full translation** of both clips. Whisper's Malay model is no use here, and nobody on the
+team can translate Iban, so that is the blocker for everything else on this list:
+
+- **Re-edit the video** once the translation says what is being said where.
+- **Subtitles** for Profil and Terangkan Produk. None exist yet, so the band stays off until
+  a `.srt` appears. Time them to the audio as for the others (§6), with the museum's text
+  as the words.
+- **Infotext** for Terangkan Produk (see *Infotext* below). The current `Text1.png` on a
+  5 s/5 s loop is a placeholder for the artwork *and* the timing.
+- Her **idle loop does not close**: 0.900 SSIM where Johnny and Norhaiza score 0.99, a
+  visible jump every 8.9 s. Fix it in the re-edit, or crossfade at the loop point. Her
+  walk→idle seam scores the same 0.900.
+- Her **footage is on a grey backdrop**, so the transparent panel will glow grey rather than
   reading as the artist floating. A grading or re-shoot issue, not something the page can fix.
-- No subtitles supplied for either long clip; the band stays off until a `.srt` appears.
-- His supers card and title block are both placeholders (`Text1.png`, "Motif ??? / Teknik ???").
+- Her title block is a placeholder ("Motif ??? / Teknik ???").
 
-### Samat — the walk-in pops into the idle
+### Maznah — almost done
 
-His idle loop itself is the best of the set (0.998), but the last frame of his WALK scores
-only 0.871 against the first frame of that idle, so the stage twitches once as the visitor
-arrives. Less corrosive than Bangie's, which repeats every 8.9 s, but it is the first thing
-anyone sees of him. A re-cut of the walk's tail, or a short crossfade at that one seam.
+Talks, subtitles, stage cycle and turntable all work. Two things are left:
 
-### Norhaiza — keris-2 jumps four times a turn
+- **Terokai Produk redesign, in progress.** Done 21 Oct 2026: the glow-ring markers became
+  the lettered **A/B/C buttons** (top, side, bottom) with a pulsing amber halo, and each
+  zoom view now carries its **caption cards**, which scale in one by one every time it opens.
+  README → *Product hotspots* has the details and the measured positions. Further pieces of
+  the new design to follow, one at a time.
+- **Infotext** during Terangkan Produk (see below). Waiting on the artwork and timings.
 
-Her first keris was repaired: `tools/close-loop.py` synthesised the one frame its capture
-never shot, and it now steps evenly with a 1.3x wrap. **The second keris still has four**,
-measured at 2.1-2.3x the median step — between frames 26/27, 27/28, 36/37, and at the wrap
-75->00. The same tool fixes one missing frame at a join; three jumps in the middle of a turn
-are more likely a capture that skipped, and worth re-exporting from the source before
-patching frame by frame.
-
-### Johnny — no Terokai Produk
+### Johnny — about half done
 
 Videos, subtitles, menu card and name plate are done and tested. He runs on the shared
-Profil and Terangkan buttons.
+Profil and Terangkan buttons. Two things are left:
 
-**He has no Terokai Produk panel.** A first attempt was built from turntable captures of the
-parang and then removed; it is to be redone from scratch to a fresh brief. Nothing of it is
-left in the repo — no manifest `products`, no frames, no pipeline entries — so his menu
-simply shows two buttons. Adding the panel later is the ordinary content operation: drop the
-frames into the drop folder, add a `SEQUENCES` entry, and add a `products` array to his
-manifest object. The button appears on its own, because the menu derives it from whether the
-artist has any enabled products.
+- **No Terokai Produk panel.** A first attempt was built from turntable captures of the
+  parang and then removed; it is to be redone from scratch to a fresh brief. Nothing of it is
+  left in the repo — no manifest `products`, no frames, no pipeline entries — so his menu
+  simply shows two buttons. Adding the panel later is the ordinary content operation: drop the
+  frames into the drop folder, add a `SEQUENCES` entry, and add a `products` array to his
+  manifest object. The button appears on its own, because the menu derives it from whether the
+  artist has any enabled products.
+- **Infotext** during Terangkan Produk (see below). Waiting on the artwork and timings.
+
+### Infotext — planned, not built yet
+
+Briefed 20 Oct 2026. **Not implemented: build it once the assets arrive.**
+
+*Infotext* is a set of reference images ("supers") shown while an artist talks in
+**Terangkan Produk**: pictures of whatever they are describing at that moment.
+
+- **Who has it:** Maznah, Bangie and Johnny only. Samat and Norhaiza have none, and need no
+  empty state, because the feature is driven by the manifest like everything else.
+- **Assets:** several `.png` images per artist. For now there is only a basic placeholder.
+- **Timing:** each image has its own start time and duration, e.g. *appears at 18 s, stays
+  4 s, then hides*, measured against the explain video's own clock.
+- **Position:** one fixed spot on screen, the same for every image and every artist. Images
+  just appear and hide. No movement, and no layout per image.
+
+**What already exists to build on:** `mountOverlay()` in `web/app.js` drives Bangie's
+placeholder from the `explain.overlay` block in `content/content.json`. It already shows an
+image over the talk, runs off the video's `currentTime` (so it stays in step if playback
+stalls, with no timers to cancel), and is cleaned up when the visitor leaves. What it lacks
+is a **list** of images with a start and duration each: today it is one image on a repeating
+show/hide cycle. The natural extension is a manifest array along these lines, with the
+overlay updating to whichever entry covers the current time:
+
+```json
+"infotext": [
+  { "image": "artists/maznah/video/info-01.png", "atMs": 18000, "showMs": 4000 }
+]
+```
+
+Keep it a content operation (rule 1): no artist ids in the code, and an artist without the
+array simply shows nothing. Get the timings from the person who briefs the artwork rather
+than guessing from the audio, and check them against the subtitles once built.
 
 ---
 
@@ -351,9 +416,10 @@ on a Tuesday.
 2. **Decide whether you need `outer assets/`** (§2). If your work touches video, backdrops,
    turntables or a new artist, request that transfer now rather than discovering the gap
    mid-task.
-3. **Get the masters onto a second disk.** They exist on one machine only, and the Drive copy
-   does not include them.
-4. Chase the museum for **Bangie's re-cut idle** and **Bangie's subtitles** — both are
-   blocked on someone else, so they are worth starting early.
-5. Re-export **Norhaiza's keris-2** turntable, which jumps four times a revolution. Needs the
-   drop folder.
+3. **Check the masters backup.** `outer assets/` syncs to the shared drive (§2); `_source/`
+   still exists on one machine only.
+4. Chase the museum for **Bangie's full Iban translation**. Her re-edit, subtitles and
+   infotext all wait on it, so start early.
+5. Collect the outstanding artwork: **Maznah's new Terokai Produk design**, **Johnny's
+   Terokai Produk brief**, and the **infotext PNGs and timings** for Maznah, Bangie and
+   Johnny. Then build infotext (§5).
