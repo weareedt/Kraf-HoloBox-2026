@@ -436,36 +436,68 @@ only exist for products that declare `pinch`.
 Frame numbers run past 99, so the sequence declares `pad: 3` and the pattern is
 `frame-{i:03}.webp`.
 
-### Johnny's parang turntables — shipped as supplied
+### Johnny's parang turntables — opaque, uncropped, backdrop repainted
 
 Two turns of the same Parang Ilang, switched by the rail exactly as Norhaiza's keris are:
-**with its sheath** (66 frames) and **the bare blade** (51 frames). The rail buttons are the
-supplied `FullParang Button.png` / `ParangOnly Button.png`, 316x357 with their own glow — the
-same size as the keris buttons, so they take the rail's artwork-button path unchanged. Drag to
-turn, looping; no pinch and no zoom buttons. His stage gains a Terokai Produk button using the
-artwork Bangie and Maznah share, so his three buttons match.
+**with its sheath** (66 frames) and **the bare blade** (50 of the 51 delivered; see below).
+The rail buttons are the supplied `FullParang Button.png` / `ParangOnly Button.png`, 316x357
+with their own glow — the same size as the keris buttons, so they take the rail's
+artwork-button path unchanged. Drag to turn, looping; no pinch and no zoom buttons. His stage
+gains a Terokai Produk button using the artwork Bangie and Maznah share, so his three buttons
+match.
 
-**The frames are NOT keyed or cropped**, and that is the brief, not an oversight: the
-museum's instruction was explicit. The keris and the basket go through a white key and a
-union-box crop; these go through `asSupplied: true` on their `SEQUENCES` entries, which
-encodes each 1080x2048 frame as it is. Two consequences, both deliberate:
+**Never keyed to transparency, never cropped.** The keris and the basket go through a white key
+and a union-box crop; these go through `asSupplied: true` on their `SEQUENCES` entries, which
+keeps each 1080x2048 frame whole and opaque. Every frame measured alpha 255 (all 117), so they
+encode as plain `yuv420p` WebP; the pipeline re-checks this each build and refuses to encode a
+sequence carrying any transparency, because flattening real alpha turns it black, the colour
+that shows on the panel. Memory is ~557 MB decoded for the sheathed turn and ~422 MB for the
+blade, against ~350 MB for a cropped keris; only the parang on screen is ever resident.
 
-- **The photo's own backdrop shows** as a slightly lighter panel against the page's #EFEFEF,
-  with the edge of the original photograph visible inside it. That is the delivered picture.
-- **Memory is higher:** ~557 MB decoded for the sheathed turn and ~430 MB for the blade, against
-  ~350 MB for a cropped keris. Only the parang on screen is ever resident, so it is one or the
-  other, never both.
+**The backdrop is repainted to the page colour** (`backdropFrom: 'johnny'`, asked for on
+21 Oct 2026). As photographed, each frame was a mottled grey photo rectangle with swirl marks
+on a painted near-white surround, so the parang sat in a visible box on the #EFEFEF panel.
+`tools/replace-backdrop.py` repaints everything that is not parang in Johnny's `backdrop` from
+content.json. The frame stays opaque, and the drop-folder PNGs are only read: their checksums
+were verified unchanged after the build. The repainted frames are cached in
+`_source/.backdrop/` and rebuilt when the sources, the colour or the tool change.
 
-Every frame measured **fully opaque** (alpha 255 on all 117), so they encode as plain
-`yuv420p` WebP with no alpha. The pipeline re-checks this each build and refuses to encode a
-sequence that carries any transparency, because flattening real alpha turns it black, the
-colour that shows on the panel. Output was checked against the source: 66 and 51 frames,
-every one distinct, SSIM 0.993-0.997.
+How it protects the parang, and what each step was learned from:
 
-The turns step unevenly in places: a measured step of 3.4x the median at sheathed frames
-30→31, and 3.7-4.2x at blade frames 34→36. Looking at the frames, 30→31 is the photographed
-backdrop changing brightness rather than the parang jumping. The wraps, last frame back to
-the first, are 2.4x and 2.6x, a slightly larger turn that is mild in use. Left as delivered.
+- **Protect first, paint second.** Seed on pixels that are certainly parang (darker than 225, or
+  coloured: chroma over 20, which is what holds the pale rattan); grow only into neighbours
+  still distinctly not backdrop (darker than 238 or chroma over 13). Measured on the frame with
+  the worst backdrop: the wall never goes below luma 240, the blade never above ~207.
+- **Close the mask by 12 px.** The bare blade's spine is a pierced silver filigree almost as
+  light as the wall. Without closing, only its dark piercings survived the thresholds, were
+  dropped as dust, and the whole decorated spine was painted over — caught by checking, not by
+  eye (ParangOnly 22 lost 381 px of piercings). Closing joins them to the blade. The cost: a few
+  tiny pockets of original backdrop in tight concavities keep their colour, a few levels lighter.
+- **Fill holes,** so highlights enclosed by the blade survive however light they are.
+- **Drop anything touching the frame border** (the parang never reaches it). The photo
+  rectangle's darker left edge on sheathed frames 25-30 had been kept as a second "parang" of
+  37-66k px and showed as a light strip down the side.
+- **Feather on the backdrop side only.** Every parang pixel is copied exactly. Blending the
+  parang's own outer ring was tried first and softened its true edge by 100-200 px a frame.
+
+**Every frame is checked, and the build fails if a check fails:** every parang pixel
+byte-identical to the source; every backdrop pixel not touching it exactly the fill colour; at
+least one parang left. Size jumps, extra components and removed specks are reported per frame
+in `report.json`. Independently of the tool, each repainted frame was also compared with its
+source for any pixel that changed by more than the backdrop could have (luma over 30): the
+blade lost 0 px across 50 frames; the sheathed turn lost 112 px across 66, all of it a fixed
+speck of dust on the backdrop and a mark in frame 00's corner. Contrast-stretched contact
+sheets of all frames show a flat field around every parang. In the app, the frame's corners
+decode to exactly 239,239,239, so there is no box.
+
+**ParangOnly35.png is blank as delivered** — every pixel 253, no parang. Shipped as supplied, the
+turn flashed an empty frame between 34 and 36 (the 3.7-4.2x step measured earlier). The build
+skips it (`skip: [35]`, manifest `count` 50), so 34 -> 36 is one double step. When a
+re-export arrives, remove `skip` and set the count back to 51.
+
+Other measured unevenness, left as delivered: a 3.4x step at sheathed 30->31 (on inspection
+the photographed backdrop changing brightness, now painted out anyway), and wraps of 2.4x and
+2.6x, a slightly larger turn that is mild in use.
 
 `fitHeight` is 0.95 of the viewport for the **whole** uncropped frame, which puts the parang,
 about 68% of the frame's height, near the keris's size. Titles and meta are placeholders until

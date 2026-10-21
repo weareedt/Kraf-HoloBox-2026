@@ -32,9 +32,10 @@
  * Idempotent: an output newer than its input is skipped. Pass --force to rebuild.
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync, statSync, readdirSync, copyFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, statSync, readdirSync, copyFileSync, unlinkSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { inflateSync } from 'node:zlib';
+import { createHash } from 'node:crypto';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -479,20 +480,32 @@ const SEQUENCES = [
    * `pad: 3` because the frame numbers run past 99. */
   { from: 'premiere file/maznah/product rotate/pngseq', pattern: 'Bakul%03d.png',
     to: 'maznah/products/bakul/frames', pad: 3 },
-  /* Johnny's two parang turns (21 Oct 2026): with sheath, and the bare blade. `asSupplied`
-   * because the brief was explicit — DO NOT key out or crop. They are 1080x2048, the
-   * backdrop is part of the delivered picture, and every frame is fully opaque (alpha
-   * measured 255 throughout), so they encode without alpha and nothing can flatten to
-   * black. Decoded, a turn is ~584 MB (full) / ~446 MB (blade); only the parang on screen
-   * is ever resident. */
+  /* Johnny's two parang turns (21 Oct 2026): with sheath, and the bare blade. `asSupplied`:
+   * never keyed to transparency, never cropped — 1080x2048, opaque (alpha measured 255
+   * throughout), encoded without alpha. Decoded, a turn is ~557 MB (full) / ~430 MB
+   * (blade); only the parang on screen is ever resident.
+   *
+   * `backdropFrom` (asked for the same day): the photographed backdrop was a mottled photo
+   * rectangle on a painted surround, a visible box on the panel. tools/replace-backdrop.py
+   * repaints everything that is not parang in that artist's `backdrop` from content.json,
+   * so the frame melts into the page. The frame stays opaque; the parang's pixels are
+   * copied untouched (checked per frame); the drop-folder PNGs are only ever read. */
   { from: 'premiere file/johnny/product/use here/1. FullParang', pattern: 'FullParang%02d.png',
-    to: 'johnny/products/full-parang/frames', asSupplied: true },
+    to: 'johnny/products/full-parang/frames', asSupplied: true, backdropFrom: 'johnny' },
+  /* ParangOnly35.png is BLANK as delivered — every pixel 253, no parang — so the turn
+   * flashed an empty frame between 34 and 36. Skipped (51 -> 50 frames, 34 -> 36 becomes
+   * one double step) until a re-export arrives; then delete `skip` and set the manifest
+   * count back to 51. */
   { from: 'premiere file/johnny/product/use here/2. ParangOnly', pattern: 'ParangOnly%02d.png',
-    to: 'johnny/products/parang-only/frames', asSupplied: true },
+    to: 'johnny/products/parang-only/frames', asSupplied: true, backdropFrom: 'johnny', skip: [35] },
 
 ];
 const KEY_SIMILARITY = 0.06;
 const KEY_BLEND = 0.04;
+
+// Any turntable that fails to build makes the whole run exit non-zero. A failure that
+// prints and still exits 0 is how this project has been fooled before.
+let sequenceProblems = 0;
 
 function stageSequences() {
   if (!SEQUENCES.length) return;
@@ -503,11 +516,26 @@ function stageSequences() {
     if (!existsSync(srcDir)) { console.log(`  ! missing  ${s.from}/`); continue; }
 
     const frames = readdirSync(srcDir).filter((f) => /\.png$/i.test(f)).sort();
-    const count = frames.length;
+    if (s.skip?.length && !s.backdropFrom) {
+      // Only the repaint step renumbers; anything else would encode the skipped frame.
+      console.log(`  ! ${s.to}: \`skip\` needs \`backdropFrom\`, which renumbers the frames`);
+      sequenceProblems++;
+      continue;
+    }
+    const count = frames.length - (s.skip?.length ?? 0);
     const pad = s.pad ?? 2;
     const last = join(dstDir, `frame-${String(count - 1).padStart(pad, '0')}.webp`);
     const newestSrc = Math.max(...frames.map((f) => statSync(join(srcDir, f)).mtimeMs));
-    if (!FORCE && existsSync(last) && statSync(last).mtimeMs > newestSrc) {
+    // A repainted backdrop is only current if it was made with the same colour and the
+    // same version of the tool: the cache key includes its inputs, not just timestamps.
+    const recipe = s.backdropFrom ? backdropRecipe(s) : null;
+    let recipeMatches = true;
+    if (recipe) {
+      try {
+        recipeMatches = JSON.parse(readFileSync(join(dstDir, 'sequence.json'), 'utf8')).recipe === recipe.key;
+      } catch { recipeMatches = false; }
+    }
+    if (!FORCE && recipeMatches && existsSync(last) && statSync(last).mtimeMs > newestSrc) {
       console.log(`  = ${s.to}  (${count} frames, up to date)`);
       continue;
     }
@@ -560,20 +588,37 @@ function stageSequences() {
  * transparency to yuv420p turns it solid black, which is the colour that shows on the
  * transparent panel. If that ever fires, the frames need an alpha-carrying encode, not a
  * workaround here. */
+/* The fill colour for a repainted backdrop is the artist's own `backdrop` in content.json,
+ * so the turntable and the page it sits on cannot drift apart. The key also hashes the
+ * tool, so changing a threshold rebuilds the frames. */
+function backdropRecipe(s) {
+  const manifest = JSON.parse(readFileSync(join(ROOT, 'content', 'content.json'), 'utf8'));
+  const hex = manifest.artists.find((a) => a.id === s.backdropFrom)?.backdrop;
+  if (!/^#[0-9a-f]{6}$/i.test(hex ?? '')) {
+    throw new Error(`${s.to}: artist "${s.backdropFrom}" has no #RRGGBB backdrop in content.json`);
+  }
+  const fill = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+  const tool = join(ROOT, 'tools', 'replace-backdrop.py');
+  const toolHash = createHash('sha1').update(readFileSync(tool)).digest('hex').slice(0, 12);
+  return { hex, fill, tool, key: `${hex}/${toolHash}` };
+}
+
 function stageSequenceAsSupplied(s, srcDir, dstDir, frames, count, pad) {
-  const input = ['-framerate', '25', '-start_number', '0', '-i', join(srcDir, s.pattern)];
+  let input = ['-framerate', '25', '-start_number', '0', '-i', join(srcDir, s.pattern)];
 
   const alpha = run(FFMPEG, ['-hide_banner', ...input, '-vf',
     'alphaextract,signalstats,metadata=print:key=lavfi.signalstats.YMIN:file=-',
     '-f', 'null', '-']);
   const mins = (alpha.stdout.match(/YMIN=\d+/g) ?? []).map((m) => +m.slice(5));
-  if (mins.length !== count) {
-    console.log(`  ! ${s.to}: alpha measured on ${mins.length} of ${count} frames — not encoding`);
+  if (mins.length !== frames.length) {
+    console.log(`  ! ${s.to}: alpha measured on ${mins.length} of ${frames.length} frames — not encoding`);
+    sequenceProblems++;
     return;
   }
   const lowest = Math.min(...mins);
   if (lowest < 255) {
     console.log(`  ! ${s.to}: frames carry transparency (alpha down to ${lowest}) — not encoding`);
+    sequenceProblems++;
     return;
   }
 
@@ -581,24 +626,55 @@ function stageSequenceAsSupplied(s, srcDir, dstDir, frames, count, pad) {
     'stream=width,height', '-of', 'csv=p=0', join(srcDir, frames[0])]);
   const [w, h] = probe.stdout.trim().split(',').map(Number);
 
+  // Repaint the backdrop into a cache outside the drop folder, then encode from there.
+  let recipe = null;
+  if (s.backdropFrom) {
+    recipe = backdropRecipe(s);
+    const cache = join(ROOT, '_source', '.backdrop', s.to);
+    console.log(`    repainting backdrop ${recipe.hex} on ${count} frames (tools/replace-backdrop.py)…`);
+    const t0 = Date.now();
+    const rb = spawnSync('python', [recipe.tool, srcDir, s.pattern, cache, '--fill', recipe.fill.join(','),
+      ...(s.skip?.length ? ['--skip', s.skip.join(',')] : [])],
+      { encoding: 'utf8', maxBuffer: 1 << 26 });
+    for (const line of (rb.stdout ?? '').trim().split('\n')) if (line.trim()) console.log(`    ${line.trim()}`);
+    if (rb.status !== 0) {
+      console.log(`  ! ${s.to}: backdrop repaint failed or a frame failed its check — not encoding` +
+        `${rb.stderr ? `\n${rb.stderr}` : ''}\n    see ${join(cache, 'report.json')}`);
+      sequenceProblems++;
+      return;
+    }
+    console.log(`    repainted in ${((Date.now() - t0) / 1000).toFixed(0)}s`);
+    input = ['-framerate', '25', '-start_number', '0', '-i', join(cache, `frame-%0${pad}d.png`)];
+  }
+
   const r = run(FFMPEG, ['-v', 'error', '-y', ...input,
     '-c:v', 'libwebp', '-pix_fmt', 'yuv420p', '-quality', '90', '-lossless', '0',
     '-start_number', '0', join(dstDir, `frame-%0${pad}d.webp`)]);
-  if (r.status !== 0) { console.log(`  ! failed ${s.to}\n${r.stderr}`); return; }
+  if (r.status !== 0) { console.log(`  ! failed ${s.to}\n${r.stderr}`); sequenceProblems++; return; }
 
+  // A smaller set (a skipped frame) must not leave a stale last frame behind.
+  for (const f of readdirSync(dstDir)) {
+    const m = f.match(/^frame-(\d+)\.webp$/);
+    if (m && +m[1] >= count) unlinkSync(join(dstDir, f));
+  }
   const written = readdirSync(dstDir).filter((f) => f.endsWith('.webp')).length;
   if (written !== count) {
     console.log(`  ! ${s.to}: wrote ${written} frames for ${count} sources`);
+    sequenceProblems++;
     return;
   }
   writeFileSync(join(dstDir, 'sequence.json'), JSON.stringify({
     count, pad, width: w, height: h, asSupplied: true,
-    note: 'generated by tools/transcode.mjs — do not edit. Frames as delivered: no key, no crop.',
+    ...(s.skip?.length ? { skippedSourceFrames: s.skip } : {}),
+    ...(recipe ? { backdrop: recipe.hex, recipe: recipe.key } : {}),
+    note: recipe
+      ? 'generated by tools/transcode.mjs — do not edit. Not keyed to alpha, not cropped; backdrop repainted opaque by tools/replace-backdrop.py.'
+      : 'generated by tools/transcode.mjs — do not edit. Frames as delivered: no key, no crop.',
   }, null, 2));
   const bytes = readdirSync(dstDir).filter((f) => f.endsWith('.webp'))
     .reduce((n, f) => n + statSync(join(dstDir, f)).size, 0);
   console.log(`  > ${s.to}  ${count} frames  ${w}x${h}  ${mb(bytes).trim()}` +
-    `  (as supplied, opaque; ~${Math.round(count * w * h * 4 / 1048576)} MB decoded)`);
+    `  (${recipe ? `backdrop ${recipe.hex}` : 'as supplied'}, opaque; ~${Math.round(count * w * h * 4 / 1048576)} MB decoded)`);
 }
 
 /* ---------- backdrop lift ------------------------------------------------
@@ -1113,3 +1189,8 @@ for (const [label, i, o, note] of report)
 console.log('-'.repeat(58));
 console.log(`  ${'TOTAL'.padEnd(9)} ${mb(totalIn)} -> ${mb(totalOut)}` +
   `   (${(100 - (totalOut / totalIn) * 100).toFixed(0)}% smaller)`);
+
+if (sequenceProblems) {
+  console.log(`\n  ! ${sequenceProblems} turntable(s) failed to build — see the lines marked ! above`);
+  process.exitCode = 1;
+}

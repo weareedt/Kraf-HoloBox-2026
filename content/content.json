@@ -720,7 +720,8 @@
           "sequence": {
             "pattern": "artists/johnny/products/parang-only/frames/frame-{i:02}.webp",
             "start": 0,
-            "count": 51,
+            "count": 50,
+            "_note_count": "50, not the 51 delivered: ParangOnly35.png is blank (every pixel 253, no parang), so the build skips it rather than flash an empty frame mid-turn. Back to 51 when a re-export arrives — and remove `skip` from its SEQUENCES entry.",
             "fitHeight": 0.95
           },
           "controls": [

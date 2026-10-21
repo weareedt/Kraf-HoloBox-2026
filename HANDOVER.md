@@ -274,9 +274,11 @@ Videos, subtitles, menu card and name plate are done and tested. He runs on the 
 Profil and Terangkan buttons.
 
 - **Terokai Produk, first pass done (21 Oct 2026).** Two turntables, with sheath and bare
-  blade, switched by the rail like Norhaiza's keris. Drag to turn, no zoom. The frames ship
-  **exactly as supplied, not keyed or cropped**, per the brief, so the photo's backdrop
-  shows as a light panel. README → *Johnny's parang turntables*. Still to come:
+  blade, switched by the rail like Norhaiza's keris. Drag to turn, no zoom. Frames are never
+  keyed to transparency or cropped; their photographed backdrop is **repainted opaque to the
+  page's #EFEFEF** by `tools/replace-backdrop.py`, every frame checked, so the parang sits on
+  the panel with no box. **ParangOnly35.png is blank as delivered** and is skipped (50 of 51
+  frames). Ask for a re-export. README → *Johnny's parang turntables*. Still to come:
   - lettered close-up buttons with captions, as on Maznah's basket (assets to follow);
   - a designed title block: the title and meta are placeholder text for now.
 - **Infotext** during Terangkan Produk (see below). Waiting on the artwork and timings.
@@ -332,6 +334,7 @@ it from scratch.
 | `make-plate.py` | reconstruct a backdrop plate when no empty frame exists |
 | `refine-stills.py` | grade ARW stills and key their backdrop to white |
 | `close-loop.py` | synthesise the missing frame when a turntable does not come back round |
+| `replace-backdrop.py` | repaint a turntable's backdrop to one flat colour, opaque, leaving the object's pixels untouched and checking every frame. Driven by `backdropFrom` in `transcode.mjs` |
 | `media-sizes.mjs` | record each video's exact byte size into `content/media-sizes.json`, so the startup check can spot a damaged copy. Re-run and commit when the masters change |
 | `retime-subs.py` | carry existing subtitles across a re-cut |
 | `script-to-subs.py` | **superseded** — spreads a known script across measured speech |
