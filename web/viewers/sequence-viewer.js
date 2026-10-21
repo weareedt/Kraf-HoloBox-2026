@@ -46,6 +46,10 @@ export async function mountSequence({ product, viewport, url }) {
   const seq = product.sequence ?? {};
   const count = seq.count ?? 1;
   const fit = seq.fitHeight ?? 0.92;          // fraction of the viewport height
+  // The frame column the object's middle sits on, in SOURCE pixels. Absent, the frame's own
+  // middle. Set it when a turn was shot off-centre in an uncropped frame (Johnny's bare
+  // blade sits 87 px right of its frame's centre), so the object, not the frame, is centred.
+  const centreX = Number.isFinite(seq.centreX) ? seq.centreX : null;
 
   /* ------------------------------------------------------------- stage */
 
@@ -59,6 +63,7 @@ export async function mountSequence({ product, viewport, url }) {
   let frame = 0;
   let zoom = 1;
   let shiftPx = 0;
+  let centreShift = 0;                         // CSS px that bring centreX to the middle
 
   /* ------------------------------------------------------------- layout */
 
@@ -72,11 +77,14 @@ export async function mountSequence({ product, viewport, url }) {
     canvas.style.height = `${cssH}px`;
     canvas.style.left = `${(vw - cssW) / 2}px`;
     canvas.style.top = `${(vh - cssH) / 2}px`;
+    // Only once frame 0 has given the real width; before that natW is a placeholder 1.
+    centreShift = centreX === null || natW <= 1 ? 0 : (natW / 2 - centreX) * (cssW / natW);
     applyTransform();
   }
 
   function applyTransform() {
-    canvas.style.transform = `translateX(${shiftPx}px) scale(${zoom})`;
+    // The scale is about the canvas centre, so the object's offset from it scales too.
+    canvas.style.transform = `translateX(${shiftPx + centreShift * zoom}px) scale(${zoom})`;
   }
 
   /** Nearest frame that has actually decoded, so scrubbing never shows a blank. */

@@ -500,7 +500,15 @@ the photographed backdrop changing brightness, now painted out anyway), and wrap
 2.6x, a slightly larger turn that is mild in use.
 
 `fitHeight` is 0.95 of the viewport for the **whole** uncropped frame, which puts the parang,
-about 68% of the frame's height, near the keris's size. Titles and meta are placeholders until
+about 68% of the frame's height, near the keris's size.
+
+**The blade was shot off-centre.** Measured over all 50 repainted frames, its middle averages
+x 627 of the 1080-wide frame (608..654), 87 px right of centre; the sheathed turn averages 543
+and needs nothing. Since the frames are not cropped, the viewer centres the object rather
+than the frame via `sequence.centreX` (source pixels; absent = the frame's middle). It shifts
+the canvas by `(frameWidth/2 - centreX)` scaled to the drawn size, multiplied by zoom so the
+object stays anchored when a product does zoom. Checked in the app: both parangs now land on
+the same free-space centre. Titles and meta are placeholders until
 a designed title block arrives. Lettered close-ups with captions, as on Maznah's basket, are
 planned for later.
 
