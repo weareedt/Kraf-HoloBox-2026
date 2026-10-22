@@ -268,7 +268,7 @@ Talks, subtitles, stage cycle and turntable all work. Two things are left:
   the new design to follow, one at a time.
 - **Infotext** during Terangkan Produk (see below). Waiting on the artwork and timings.
 
-### Johnny — about half done
+### Johnny — mostly done
 
 Videos, subtitles, menu card and name plate are done and tested. He runs on the shared
 Profil and Terangkan buttons.
