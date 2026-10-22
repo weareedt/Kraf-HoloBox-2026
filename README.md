@@ -508,9 +508,21 @@ and needs nothing. Since the frames are not cropped, the viewer centres the obje
 than the frame via `sequence.centreX` (source pixels; absent = the frame's middle). It shifts
 the canvas by `(frameWidth/2 - centreX)` scaled to the drawn size, multiplied by zoom so the
 object stays anchored when a product does zoom. Checked in the app: both parangs now land on
-the same free-space centre. Titles and meta are placeholders until
-a designed title block arrives. Lettered close-ups with captions, as on Maznah's basket, are
-planned for later.
+the same free-space centre.
+
+Titles and meta are placeholders until a designed title block arrives.
+
+**Close-ups (22 Oct 2026), Maznah's pattern unchanged.** Each parang declares its own
+`hotspots`, and the products screen re-mounts them on every switch, so the rail swaps the
+markers with the parang and no code was needed. Sheathed: A head (*Hulu*), B rattan binding
+on the hilt (*Temurak*), C binding on the sheath (*Pusat Bedus*). Blade: A near the hilt
+(*Butuh Kunding* motif), B the blade. The markers are the same A/B/C artwork as Maznah's, at
+68 px rather than her 48, because that is their size in the museum's mock-ups. Their centres
+were measured off those mock-ups (the ochre squares, scaled by the app page's width to 1080),
+the caption positions off the Photoshop layouts by their straight strokes (every height
+matched its PNG to within 2 px). The zoom views are 1334x2000 and opaque, like hers, so
+`zoomSize` and the view box are shared. Checked in the app: each of the five markers opens
+its view with its caption at the measured spot, scaling in over 0.2 s.
 
 ### Product hotspots (`web/screens/hotspots.js`)
 

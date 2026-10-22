@@ -218,7 +218,7 @@ Status as signed off on 20 Oct 2026:
 | 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | **done** |
 | 3 | Bangie | Tenunan Pua | Profil, Terangkan Produk, 5 image products | **needs the most** — blocked on the museum's translation |
 | 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | almost done — new Terokai Produk design, infotext |
-| 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, 2 parang turntables | over half done — close-ups, title block, infotext |
+| 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, 2 parang turntables with close-ups | mostly done — title block, infotext, blank frame 35 |
 
 Measured 19 Oct 2026, not recalled: every `.srt` in the project was checked for coverage and
 none has a gap over 12 s, so no talk has an unwritten passage left. The turntables were
@@ -278,8 +278,9 @@ Profil and Terangkan buttons.
   keyed to transparency or cropped; their photographed backdrop is **repainted opaque to the
   page's #EFEFEF** by `tools/replace-backdrop.py`, every frame checked, so the parang sits on
   the panel with no box. **ParangOnly35.png is blank as delivered** and is skipped (50 of 51
-  frames). Ask for a re-export. README → *Johnny's parang turntables*. Still to come:
-  - lettered close-up buttons with captions, as on Maznah's basket (assets to follow);
+  frames). Ask for a re-export. README → *Johnny's parang turntables*.
+  **Close-ups done (22 Oct 2026):** lettered A/B/C markers with captions, as on Maznah's
+  basket — three on the sheathed parang, two on the blade. Still to come:
   - a designed title block: the title and meta are placeholder text for now.
 - **Infotext** during Terangkan Produk (see below). Waiting on the artwork and timings.
 
