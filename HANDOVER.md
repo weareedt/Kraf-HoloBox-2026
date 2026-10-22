@@ -112,9 +112,15 @@ background after the script finishes, so check the Drive tray icon before you tr
 ### Never hand-edit `content/`
 
 It is generated. Change the source in `../outer assets/`, then run `npm run prepare-assets`.
-The one exception is `content/content.json`, which *is* the hand-edited manifest — that file
-is meant to be edited directly and is the main thing you can safely change without the drop
-folder. Keep its `_note_*` keys; several are load-bearing explanations of odd-looking values.
+Two exceptions. `content/content.json` *is* the hand-edited manifest — that file is meant to
+be edited directly and is the main thing you can safely change without the drop folder. Keep
+its `_note_*` keys; several are load-bearing explanations of odd-looking values.
+
+And **the subtitles (`.srt`) are corrected in place**, in Subtitle Edit against the built
+video. The pipeline never overwrites a subtitle that is newer than its source (since 22 Oct
+2026; before that it rewrote them on every run and reverted Maznah's and Johnny's corrected
+subtitles). So: edit the project copy freely; to rebuild one from a changed source, make the
+source the newer file. They are tracked in git, so a correction is safe once committed.
 
 ### The panel is a transparent LCD, which inverts two instincts
 

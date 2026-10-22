@@ -1187,6 +1187,16 @@ for (const artist of ARTISTS) {
     const src = join(artist.root ?? join(RAW, artist.raw), sub.from);
     const dst = join(OUT, artist.id, sub.to);
     if (!existsSync(src)) { console.log(`  ! missing  ${sub.from}`); continue; }
+    /* NEVER overwrite a subtitle that is newer than its source, not even with --force.
+     * Subtitles are corrected by hand in content/ (in Subtitle Edit, against the built
+     * video), and this loop used to rewrite them from the source on EVERY run: on 21-22 Oct
+     * 2026 it silently reverted Maznah's and Johnny's corrected subtitles, and put Maznah's
+     * "### NEW SCRIPT ###" placeholders back on screen. A newer project copy is an edit;
+     * keep it. To rebuild from a changed source, the source has to be the newer file. */
+    if (existsSync(dst) && statSync(dst).mtimeMs > statSync(src).mtimeMs) {
+      console.log(`  = subtitle ${sub.to}  kept (edited after its source; not overwritten)`);
+      continue;
+    }
     mkdirSync(dirname(dst), { recursive: true });
     const r = convertSrt(src, dst);
     console.log(`  > subtitle ${sub.to}  (${r.cues} cues${r.note})`);
