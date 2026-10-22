@@ -1065,12 +1065,18 @@ const ARTISTS = [{
    * but with a caption card scheduled over it. To this script it is just another remux.
    */
   id: 'bangie',
-  root: join(STAGE, ZUL),
+  /* Since 22 Oct 2026 her sources are the REFINED videos, not the Edited/ exports: new cuts
+   * (walk-in 12.54 s, idle 7.62 s, talks 468.04 s / 508.96 s) with the grey backdrop
+   * lifted to 240 and her warm cast graded out by tools/refine-video.py, from the
+   * originals in highbitrate/. They are already at the app's spec (1296x2304, 50 fps,
+   * BT.709), so this stays a plain remux. Re-running refine-video.py is how they change;
+   * refined/_working/HOW.txt has the exact commands and plates. */
+  root: join(STAGE, 'premiere file', 'bangie', 'highbitrate', 'refined'),
   jobs: [
-    { from: '1 - Walk.mp4',           to: 'video/walk.mp4',    silent: true,  retag: false, label: 'walk' },
-    { from: '2 - Idle.mp4',           to: 'video/idle.mp4',    silent: true,  retag: false, label: 'idle' },
-    { from: '3 - Profil.mp4',         to: 'video/profil.mp4',  silent: false, retag: false, label: 'profil' },
-    { from: '4 - ProductExplain.mp4', to: 'video/explain.mp4', silent: false, retag: false, label: 'explain' },
+    { from: 'Bangie Walkin refined.mp4',          to: 'video/walk.mp4',    silent: true,  retag: false, label: 'walk' },
+    { from: 'Bangie Idle refined.mp4',            to: 'video/idle.mp4',    silent: true,  retag: false, label: 'idle' },
+    { from: 'Bangie Profile refined.mp4',         to: 'video/profil.mp4',  silent: false, retag: false, label: 'profil' },
+    { from: 'Bangie Product Explain refined.mp4', to: 'video/explain.mp4', silent: false, retag: false, label: 'explain' },
   ],
   backdropFrom: 'video/idle.mp4',
 }, {

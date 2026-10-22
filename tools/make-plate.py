@@ -23,7 +23,12 @@ is exactly the kind of field a low-order 2-D polynomial describes well, so:
 The fit residual on the unmasked pixels is printed; if it is not small, the backdrop is
 not polynomial and this approach should not be trusted.
 
-Usage: make-plate.py <clip> <out.png> [sample-seconds...]
+Usage: make-plate.py <clip> <out.png> [sample-seconds...] [--degree N]
+
+--degree (default 4) is the polynomial order. Bangie's cyclorama has a stronger vignette than
+Maznah's: at degree 4 her refined backdrop still spread 26 levels (the top-left corner landed
+on 218); degree 6 brought it to 13 and the fit residual from 2.5 to 1.5 levels, with no seams,
+because the error stays a smooth gradient.
 """
 import os
 import subprocess
@@ -35,11 +40,17 @@ BIN = ffmpeg()
 
 CLIP = sys.argv[1]
 OUT = sys.argv[2]
-TIMES = sys.argv[3:] or ["20", "60", "100"]
+ARGS = sys.argv[3:]
+DEGREE = 4
+if "--degree" in ARGS:
+    k = ARGS.index("--degree")
+    DEGREE = int(ARGS[k + 1])
+    del ARGS[k:k + 2]
+TIMES = ARGS or ["20", "60", "100"]
 
 W, H = 270, 480          # the falloff is low-frequency; this is ample
 FULL_W, FULL_H = 2160, 3840
-DEG = 4                  # polynomial degree per axis-sum
+DEG = DEGREE             # polynomial degree per axis-sum (4 unless --degree)
 
 
 def frame(t):

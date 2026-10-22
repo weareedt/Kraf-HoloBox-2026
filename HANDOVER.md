@@ -55,7 +55,7 @@ CLAUDE project/KRAF/
 | | Size | In git? |
 |---|---|---|
 | `web/`, `server/`, `electron/`, `tools/`, `content/*.json`, docs | ~59 MB | **yes** — this is the repo |
-| `content/artists/*/video/`, `steps/*.mp4` | 4.3 GB | no — rebuilt by the pipeline |
+| `content/artists/*/video/`, `steps/*.mp4` | 4.9 GB | no — rebuilt by the pipeline |
 | `node_modules/` | 276 MB | no — `npm install` |
 | `_source/` — old Unity masters, pipeline caches | 4.7 GB | no |
 | `../outer assets/` — every supplied master | **35 GB** | no, and it is not even inside |
@@ -216,7 +216,7 @@ Status as signed off on 20 Oct 2026:
 |---|---|---|---|---|
 | 1 | Samat | Wau | Profil +srt, 1 product (3D model), 4 steps | **done** |
 | 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | **done** |
-| 3 | Bangie | Tenunan Pua | Profil, Terangkan Produk, 5 image products | **needs the most** — blocked on the museum's translation |
+| 3 | Bangie | Tenunan Pua | Profil, Terangkan Produk, 5 image products; refined footage | **needs the most** — blocked on the museum's translation |
 | 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | almost done — new Terokai Produk design, infotext |
 | 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, 2 parang turntables with close-ups | mostly done — title block, infotext, blank frame 35 |
 
@@ -250,11 +250,13 @@ team can translate Iban, so that is the blocker for everything else on this list
   as the words.
 - **Infotext** for Terangkan Produk (see *Infotext* below). The current `Text1.png` on a
   5 s/5 s loop is a placeholder for the artwork *and* the timing.
-- Her **idle loop does not close**: 0.900 SSIM where Johnny and Norhaiza score 0.99, a
-  visible jump every 8.9 s. Fix it in the re-edit, or crossfade at the loop point. Her
-  walk→idle seam scores the same 0.900.
-- Her **footage is on a grey backdrop**, so the transparent panel will glow grey rather than
-  reading as the artist floating. A grading or re-shoot issue, not something the page can fix.
+- **New cuts, refined (22 Oct 2026).** Walk-in, idle and both talks come from
+  `highbitrate/`, refined by `tools/refine-video.py`: the grey backdrop is lifted to white
+  (#F2F2F2, like Maznah and Johnny) and her warm cast graded out. README → *Bangie's refined
+  footage*. Re-run that tool if the edit changes; the pipeline then remuxes the result.
+- Her **idle still does not loop** (0.779 SSIM at its seam, in the edit itself). Her
+  `stageCycle` cross-dissolves it for 500 ms at each loop; a re-cut that returns to its
+  opening pose would be the proper fix. Walk-in → idle is now clean (0.983).
 - Her title block is a placeholder ("Motif ??? / Teknik ???").
 
 ### Maznah — almost done

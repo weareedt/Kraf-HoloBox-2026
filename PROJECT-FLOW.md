@@ -141,7 +141,7 @@ keep that constraint or say so loudly.
 
 | | Where it is | Why |
 |---|---|---|
-| **the video** — `content/artists/*/video/`, `steps/*.mp4` | **`HoloBox-media` on Google Drive** | **4.3 GB, 32 files** |
+| **the video** — `content/artists/*/video/`, `steps/*.mp4` | **`HoloBox-media` on Google Drive** | **4.9 GB, 32 files** |
 | `outer assets/` — PSDs, PNGs, Premiere projects, camera masters | shared separately on Google Drive | ~35 GB |
 | `_source/` — old Unity archive, pipeline caches | original machine | 4.7 GB |
 | `node_modules/` | `npm install` | regenerable |
@@ -174,7 +174,7 @@ interrupted is worse than one that is absent: the file is there, the check used 
 the visitor got a screen with a back button and no picture. This happened once — Johnny's
 `explain.mp4` arrived 164 KB over length and would not decode a single frame. If the startup
 screen says a file is the wrong size, delete it and copy it again. (A length test is not a
-checksum; hashing 4.3 GB on every boot would be far too slow for a kiosk.)
+checksum; hashing 4.9 GB on every boot would be far too slow for a kiosk.)
 
 `HoloBox-media` mirrors this project's folder structure on purpose, so nothing has to be
 sorted by hand:

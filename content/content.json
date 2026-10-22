@@ -410,8 +410,8 @@
       "honorific": "Tenunan Pua",
       "menuCard": "artists/bangie/menu/card.png",
       "menuPlate": "artists/bangie/menu/nameplate.png",
-      "_note_backdrop": "Measured from his footage, and unlike the first two it is NOT near-white: his studio backdrop is a mid grey with a vertical vignette (~#928E8A at the top, ~#B0A9A4 at the bottom). It never shows behind the video — his footage is 1296x2304, exactly the 9:16 design canvas, so it fills the frame edge to edge. This colour therefore only covers the instant before a clip paints. The Terokai Produk panel is white, per the museum's own mockup.",
-      "backdrop": "#FFFFFF",
+      "_note_backdrop": "Measured by the transcode tool from the REFINED idle (22 Oct 2026): her grey studio backdrop was lifted to 240 by tools/refine-video.py, the same target as Maznah and Johnny (both #EFEFEF), and lands at #F2F2F2. It is also the page colour of her Terokai Produk panel; the pua photographs are full-bleed cloth with no white of their own, so nothing shows a box against it. Before the refine this was #FFFFFF over a mid-grey (~#928E8A to ~#B0A9A4) backdrop.",
+      "backdrop": "#F2F2F2",
       "_note_ui": "Per-artist button artwork, layered over the shared set. Two of the three carry labels no other artist has.",
       "ui": {
         "profile": "artists/bangie/ui/btn-profile.png",
@@ -426,13 +426,19 @@
         }
       },
       "productsLayout": "explore",
+      "_note_cycle": "Measured on the refined clips (22 Oct 2026): walk END -> idle START scores 0.983 SSIM, a clean hard cut; the idle's OWN loop scores only 0.779 (0.786 in the original cut, so it is the edit, not the refine), and no frame in its second half comes near the first (best mean difference 5.1 against 0.23 for one ordinary frame step), so no trim can close it. Until a re-cut that returns to its opening pose, the idle cross-dissolves into itself (blendMs) at every loop, while the walk-in still hard-cuts into the first idle. resumeFrom 1: back from a panel she is simply standing, no replayed walk-in.",
+      "stageCycle": {
+        "steps": [{ "clip": "walk" }, { "clip": "idle" }, { "clip": "idle", "blendMs": 500 }],
+        "loopFrom": 2,
+        "resumeFrom": 1
+      },
       "video": {
         "_note_fps": "50 fps throughout, not 25 — the seamless player's early swap is timed in frames, so this has to be right.",
         "walk": {
           "src": "artists/bangie/video/walk.mp4",
           "fps": 50,
           "muted": true,
-          "durationMs": 25500
+          "durationMs": 12540
         },
         "idle": {
           "src": "artists/bangie/video/idle.mp4",

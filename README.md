@@ -6,7 +6,7 @@ showcase. Replaces the previous Unity build ("KRAF-StellarLink").
 > **New here? Read `PROJECT-FLOW.md` first.** This file is the deep reference — why each
 > decision was made and the measurements behind it.
 
-> **The video is not in this repository.** 4.3 GB across 32 files, shared as `HoloBox-media`
+> **The video is not in this repository.** 4.9 GB across 32 files, shared as `HoloBox-media`
 > on Google Drive. Copy its `content` folder into this project and merge; the structure
 > mirrors this one so every file lands where it belongs. The app checks on startup and names
 > anything missing. See `PROJECT-FLOW.md` → *What is NOT in this repository*.
@@ -274,8 +274,9 @@ reaches ±713 px — proof that cards slide fully out and in rather than fading 
 
 What the stage plays is an ordered list, not a clip plus a loop. Most artists are the
 degenerate case — `[walk, idle]`, repeating from index 1 — and that is what `stageCycle()`
-in `app.js` builds when the manifest says nothing, so Samat, Norhaiza, Bangie and Johnny need
-no entry at all. Johnny's measured seams are 0.990 both for walk END → idle START and for the
+in `app.js` builds when the manifest says nothing, so Samat, Norhaiza and Johnny need
+no entry at all. (Bangie has one since 22 Oct 2026, to cross-dissolve an idle that does not
+loop; see *Bangie's refined footage*.) Johnny's measured seams are 0.990 both for walk END → idle START and for the
 idle's own loop — better than the 0.977 median of an ordinary one-frame step inside a clip, so
 there is nothing for a crossfade to hide.
 
@@ -1030,23 +1031,49 @@ corrected turntable, so the stills and the product panel agree.
 Output: `outer assets/premiere file/maznah/images/refined/`, 10 PNGs, 98 MB. Re-run the
 script over the whole `images/` folder to pick up new raws; it is idempotent.
 
-### Two measured problems in Bangie's footage
+### Bangie's refined footage (22 Oct 2026)
 
-Both are in the source, both are prototype material, and both need new exports rather than code:
+Her video sources are now new cuts from `premiere file/bangie/highbitrate/` (walk-in 12.54 s,
+idle 7.62 s, Profil 468.04 s, Terangkan Produk 508.96 s), refined by `tools/refine-video.py`
+into `highbitrate/refined/`, which the pipeline remuxes without re-encoding. The originals
+are only read (checksums verified unchanged).
 
-| | SSIM to idle frame 0 | |
-|---|---|---|
-| Samat idle loop | 0.995 | closes cleanly |
-| Norhaiza idle loop | 0.992 | closes cleanly |
-| **Bangie idle loop** | **0.815** | **does not close** |
+**The grey backdrop is fixed.** Same backdrop lift as Maznah and Johnny: a soft difference
+matte against a plate of the empty wall, then `(240 - plate)` added to the wall only, so
+clean backdrop lands on 240 whatever its vignette and her cast shadows keep their depth. The
+measured page colour is now #F2F2F2 (theirs: #EFEFEF). Backdrop spread across nine spots
+after refining: standing 13, Profil 8, Terangkan Produk 7 levels; theirs measure 13-19.
 
-Bangie's idle clip ends nowhere near where it began — 0.815, which is no closer than a random
-frame two seconds in (0.827), so it is not a trim that can be nudged. The idle loop will visibly
-jump **every 8.86 seconds**, for as long as a visitor stands there. If re-shooting or re-cutting
-is not possible, the fallback is a ~300 ms crossfade at the loop point in `SeamlessPlayer`.
+Plates, and what each taught:
 
-Her walk→idle handoff measures 0.816, but that one is in line with Samat's 0.834 and happens
-once, so it is not a new problem.
+- **The walk-in is two shots** joined by a dissolve at 3.38-3.80 s, each with its own
+  backdrop. Its first frames are empty, so they are the plate for shot one; the standing
+  shot's plate takes over, and the plate cross-fades with the dissolve. During the dissolve
+  the frame mixes two shots that neither plate describes: the top-right corner dips ~20
+  levels for ~0.3 s.
+- **The idle and both talks never show an empty frame**, so their plates are fitted
+  (`tools/make-plate.py --degree 6`). Degree 4, which served Maznah, left Bangie's standing
+  backdrop with a 26-level spread (top-left corner at 218); degree 6 brings it to 13 with no
+  seams, because the error stays a smooth gradient. A hybrid tried in between (real wall
+  where visible, fit behind her) left visible seams where the two met, and was dropped.
+- **The supplied `empty.png` was not used**: it carries horizontal smears that the lift would
+  print into every frame.
+
+**She is graded, the wall is not.** The camera's warm cast (the wall measured R192/G183/B179
+where it should be neutral) is taken out of her with matching channel gains, plus contrast
+1.06 and saturation 1.10. Her hair, glasses and the jacket's grey-and-white pattern were
+checked at full size: no halo, nothing lifted.
+
+**Her idle still does not loop**, and that is the edit, not the refine: 0.779 SSIM last frame
+to first (0.786 in the original), and no frame in its second half comes near the first (best
+mean difference 5.1, against 0.23 for one ordinary frame step), so no trim closes it. Her
+`stageCycle` therefore hard-cuts walk → idle (0.983, a clean join) and cross-dissolves the idle
+into itself for 500 ms at every loop. A re-cut that returns to its opening pose is the real
+fix. (The earlier cut's idle scored 0.815 and was never fixed.)
+
+The refine runs at ~11 fps at 1296x2304 (a talk takes 30-40 minutes); lifting at full 4K was
+measured at 0.8 fps. `highbitrate/refined/_working/HOW.txt` has the exact commands and keeps
+the plates.
 
 ### Step captions sit inside the video
 
@@ -1346,8 +1373,8 @@ own, and no Terokai Produk yet.
 | Re-timed cues want a spot check | 23 of 59 (profile) and 14 of 33 (product) matched below 0.85 correlation. `tools/retime-subs.py` lists them |
 | Maznah's captions are English only | `profile BM.txt` and `product BM.txt` exist beside the English ones and are deliberately unused || Maznah's profil/explain are still 4K | 2160x3840, as chosen — they are one-shot talks, not the attract loop. Her walk/idle/dance are 1296x2304 |
 | `Biografi Bangie Sub.mov` has finished downloading | 7 GB, in `premiere file/bangie/Edited/`. Previously an unusable partial; if it is her profile with burnt-in captions it would settle the "Bangie has no subtitles" row below |
-| **Bangie's idle loop does not close** | 0.815 SSIM; visible jump every 8.86 s. Needs a re-cut, or a crossfade at the loop point. See "Two measured problems" above |
-| **Bangie's footage is on grey** | the box will glow grey rather than reading as the artist floating. A grade/re-shoot issue |
+| Bangie's idle loop does not close | new cut, still 0.779 SSIM at its own seam; cross-dissolved by her `stageCycle` until a re-cut. See *Bangie's refined footage* |
+| ~~Bangie's footage is on grey~~ | **done** (22 Oct 2026) — lifted to #F2F2F2 by `tools/refine-video.py`, and she is colour-graded |
 | Bangie's supers card | `Text1.png` on a 5s/5s cycle — placeholder artwork *and* placeholder schedule. To be replaced by **infotext** (timed images; Maznah, Bangie, Johnny), briefed 20 Oct 2026 and not yet built. See `HANDOVER.md` → *Infotext* |
 | Bangie has no subtitles | her talks are in **Iban**; the museum is to supply a full translation, which the re-edit and subtitles both wait on. The band stays off until a `.srt` appears |
 | Bangie's title block reads "???" | `Title Product Explore.png` ships with placeholder Motif/Teknik text |
