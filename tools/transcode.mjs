@@ -438,6 +438,24 @@ const ARTWORK = [
   // size as Norhaiza's keris buttons, so they take the rail's artwork-button path.
   { from: `${JHN}/product/use here/FullParang Button.png`, to: 'johnny/products/full-parang/icon.png' },
   { from: `${JHN}/product/use here/ParangOnly Button.png`, to: 'johnny/products/parang-only/icon.png' },
+  /* Terokai Produk close-ups (22 Oct 2026), Maznah's pattern: lettered markers open a zoom
+   * card with a caption. The A/B/C artwork is the same file Maznah's markers use, staged
+   * once for both parangs. The zoom views arrive 1334x2000, opaque white (alpha measured
+   * 255), so they encode like Maznah's; the captions carry alpha round their corners and
+   * stay PNG. Sheathed: top / mid / bottom. Blade: hilt / blade. */
+  ...['a', 'b', 'c'].map((l) => ({ from: `images/button ${l}.png`, to: `johnny/products/btn-${l}.png` })),
+  ...['top', 'mid', 'bottom'].flatMap((id) => [
+    { from: `${JHN}/product/use here/1.1 FullParang Zoom/johnny zoom-${id}.png`,
+      to: `johnny/products/full-parang/zoom-${id}.webp`, args: ['-quality', '92'] },
+    { from: `${JHN}/product/use here/1.1 FullParang Zoom/johnny zoom-${id} info1.png`,
+      to: `johnny/products/full-parang/info-${id}-1.png` },
+  ]),
+  ...['hilt', 'blade'].flatMap((id) => [
+    { from: `${JHN}/product/use here/2.2 ParangOnly Zoom/johnny zoom parangonly ${id}.png`,
+      to: `johnny/products/parang-only/zoom-${id}.webp`, args: ['-quality', '92'] },
+    { from: `${JHN}/product/use here/2.2 ParangOnly Zoom/johnny zoom parangonly ${id} info1.png`,
+      to: `johnny/products/parang-only/info-${id}-1.png` },
+  ]),
 
 ];
 

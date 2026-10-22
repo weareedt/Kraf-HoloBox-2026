@@ -705,6 +705,20 @@
             "fitHeight": 0.95,
             "_note_fit": "Fraction of the product viewport height for the WHOLE uncropped 2048px frame. The parang itself fills about 68% of the frame's height, so it lands near Norhaiza's keris (0.68 of a cropped frame)."
           },
+          "_note_hotspots": "Close-ups as on Maznah's basket: lettered markers open a zoom card whose caption scales in each time. Marker x,y are their CENTRES in design-canvas pixels, measured off the museum's app mock-ups (the ochre squares, scaled by the page width to 1080); 68 px is the size the buttons have in those mock-ups. Caption x,y are top-left in the zoom image's own 1334x2000 pixels, measured from the Photoshop layouts by the cards' straight strokes; every measured height matched its PNG to 2 px.",
+          "hotspotSize": 68,
+          "zoomSize": [1334, 2000],
+          "hotspots": [
+            { "id": "top", "label": "Hulu", "x": 635, "y": 535, "image": "artists/johnny/products/full-parang/zoom-top.webp",
+              "button": "artists/johnny/products/btn-a.png",
+              "info": [ { "image": "artists/johnny/products/full-parang/info-top-1.png", "x": 254, "y": 1031 } ] },
+            { "id": "mid", "label": "Temurak", "x": 420, "y": 672, "image": "artists/johnny/products/full-parang/zoom-mid.webp",
+              "button": "artists/johnny/products/btn-b.png",
+              "info": [ { "image": "artists/johnny/products/full-parang/info-mid-1.png", "x": 261, "y": 1030 } ] },
+            { "id": "bottom", "label": "Pusat Bedus", "x": 635, "y": 850, "image": "artists/johnny/products/full-parang/zoom-bottom.webp",
+              "button": "artists/johnny/products/btn-c.png",
+              "info": [ { "image": "artists/johnny/products/full-parang/info-bottom-1.png", "x": 202, "y": 1027 } ] }
+          ],
           "controls": [
             { "widget": "drag", "binds": "rotation" }
           ]
@@ -726,6 +740,17 @@
             "_note_count": "50, not the 51 delivered: ParangOnly35.png is blank (every pixel 253, no parang), so the build skips it rather than flash an empty frame mid-turn. Back to 51 when a re-export arrives — and remove `skip` from its SEQUENCES entry.",
             "fitHeight": 0.95
           },
+          "_note_hotspots": "Close-ups as on Maznah's basket: lettered markers open a zoom card whose caption scales in each time. Marker x,y are their CENTRES in design-canvas pixels, measured off the museum's app mock-ups (the ochre squares, scaled by the page width to 1080); 68 px is the size the buttons have in those mock-ups. Caption x,y are top-left in the zoom image's own 1334x2000 pixels, measured from the Photoshop layouts by the cards' straight strokes; every measured height matched its PNG to 2 px.",
+          "hotspotSize": 68,
+          "zoomSize": [1334, 2000],
+          "hotspots": [
+            { "id": "hilt", "label": "Bahagian hulu bilah", "x": 416, "y": 739, "image": "artists/johnny/products/parang-only/zoom-hilt.webp",
+              "button": "artists/johnny/products/btn-a.png",
+              "info": [ { "image": "artists/johnny/products/parang-only/info-hilt-1.png", "x": 203, "y": 1093 } ] },
+            { "id": "blade", "label": "Bilah", "x": 626, "y": 999, "image": "artists/johnny/products/parang-only/zoom-blade.webp",
+              "button": "artists/johnny/products/btn-b.png",
+              "info": [ { "image": "artists/johnny/products/parang-only/info-blade-1.png", "x": 203, "y": 1247 } ] }
+          ],
           "controls": [
             { "widget": "drag", "binds": "rotation" }
           ]
