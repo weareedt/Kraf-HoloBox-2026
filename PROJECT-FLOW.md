@@ -141,7 +141,7 @@ keep that constraint or say so loudly.
 
 | | Where it is | Why |
 |---|---|---|
-| **the video** — `content/artists/*/video/`, `steps/*.mp4` | **`HoloBox-media` on Google Drive** | **4.9 GB, 32 files** |
+| **the video** — `content/artists/*/video/*.mp4`, `steps/*.mp4` | **`HoloBox-media` on Google Drive** | **4.9 GB, 32 files** (the subtitles and caption cards beside them ARE in the repo) |
 | `outer assets/` — PSDs, PNGs, Premiere projects, camera masters | shared separately on Google Drive | ~35 GB |
 | `_source/` — old Unity archive, pipeline caches | original machine | 4.7 GB |
 | `node_modules/` | `npm install` | regenerable |

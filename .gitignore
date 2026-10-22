@@ -12,7 +12,13 @@ outer assets/
 outer-assets/
 
 # Prepared media: rebuilt by `npm run prepare-assets` from "outer assets/"
-content/artists/*/video/
+# The VIDEO is too large for git and ships separately (HoloBox-media). The subtitles and
+# caption cards beside it are tiny and were being dropped with it: a fresh clone plus the
+# Drive copy had talks with no subtitles. So the folder's contents are ignored, not the
+# folder, and the small files are let back in (git cannot re-include inside an ignored folder).
+content/artists/*/video/*
+!content/artists/*/video/*.srt
+!content/artists/*/video/*.png
 content/artists/*/steps/*.mp4
 
 # AI-assistant workspace files — deliberately not shared. Each person's assistant setup is
