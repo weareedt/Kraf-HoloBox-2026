@@ -1073,8 +1073,15 @@ const ARTISTS = [{
    * refined/_working/HOW.txt has the exact commands and plates. */
   root: join(STAGE, 'premiere file', 'bangie', 'highbitrate', 'refined'),
   jobs: [
+    /* The walk-in stays the refined 12.54 s cut. "Bangie Walkin refined 2.mp4" (22 Oct, the
+     * editor's shadow fix) was exported from the IDLE sequence: same 29.14 s, 1457 frames,
+     * SSIM 0.998 against the new idle, no walk-in in it. Point this row at it once it is
+     * re-exported from the walk sequence, then re-run media-sizes. */
     { from: 'Bangie Walkin refined.mp4',          to: 'video/walk.mp4',    silent: true,  retag: false, label: 'walk' },
-    { from: 'Bangie Idle refined.mp4',            to: 'video/idle.mp4',    silent: true,  retag: false, label: 'idle' },
+    /* The editor's own idle (22 Oct): re-cut to loop (last -> first frame 0.987 SSIM, an
+     * ordinary step is 0.997), backdrop already whitened in the edit, so it is NOT run
+     * through refine-video.py. Exported colour-untagged, hence retag. */
+    { from: 'Bangie Idle refined 2.mp4',          to: 'video/idle.mp4',    silent: true,  retag: true,  label: 'idle' },
     { from: 'Bangie Profile refined.mp4',         to: 'video/profil.mp4',  silent: false, retag: false, label: 'profil' },
     { from: 'Bangie Product Explain refined.mp4', to: 'video/explain.mp4', silent: false, retag: false, label: 'explain' },
   ],

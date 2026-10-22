@@ -426,12 +426,7 @@
         }
       },
       "productsLayout": "explore",
-      "_note_cycle": "Measured on the refined clips (22 Oct 2026): walk END -> idle START scores 0.983 SSIM, a clean hard cut; the idle's OWN loop scores only 0.779 (0.786 in the original cut, so it is the edit, not the refine), and no frame in its second half comes near the first (best mean difference 5.1 against 0.23 for one ordinary frame step), so no trim can close it. Until a re-cut that returns to its opening pose, the idle cross-dissolves into itself (blendMs) at every loop, while the walk-in still hard-cuts into the first idle. resumeFrom 1: back from a panel she is simply standing, no replayed walk-in.",
-      "stageCycle": {
-        "steps": [{ "clip": "walk" }, { "clip": "idle" }, { "clip": "idle", "blendMs": 500 }],
-        "loopFrom": 2,
-        "resumeFrom": 1
-      },
+      "_note_cycle": "No stageCycle, so the default walk -> idle loop. Her idle is the editor's re-cut of 22 Oct 2026, which closes on itself (last -> first frame 0.987 SSIM, against 0.997 for an ordinary step); the earlier cut did not (0.779) and was cross-dissolved by a stageCycle that is now gone. Walk END -> idle START 0.979, a clean hard cut.",
       "video": {
         "_note_fps": "50 fps throughout, not 25 — the seamless player's early swap is timed in frames, so this has to be right.",
         "walk": {

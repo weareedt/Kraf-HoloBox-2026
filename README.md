@@ -274,9 +274,8 @@ reaches ±713 px — proof that cards slide fully out and in rather than fading 
 
 What the stage plays is an ordered list, not a clip plus a loop. Most artists are the
 degenerate case — `[walk, idle]`, repeating from index 1 — and that is what `stageCycle()`
-in `app.js` builds when the manifest says nothing, so Samat, Norhaiza and Johnny need
-no entry at all. (Bangie has one since 22 Oct 2026, to cross-dissolve an idle that does not
-loop; see *Bangie's refined footage*.) Johnny's measured seams are 0.990 both for walk END → idle START and for the
+in `app.js` builds when the manifest says nothing, so Samat, Norhaiza, Bangie and Johnny need
+no entry at all. Johnny's measured seams are 0.990 both for walk END → idle START and for the
 idle's own loop — better than the 0.977 median of an ordinary one-frame step inside a clip, so
 there is nothing for a crossfade to hide.
 
@@ -1064,12 +1063,23 @@ where it should be neutral) is taken out of her with matching channel gains, plu
 1.06 and saturation 1.10. Her hair, glasses and the jacket's grey-and-white pattern were
 checked at full size: no halo, nothing lifted.
 
-**Her idle still does not loop**, and that is the edit, not the refine: 0.779 SSIM last frame
-to first (0.786 in the original), and no frame in its second half comes near the first (best
-mean difference 5.1, against 0.23 for one ordinary frame step), so no trim closes it. Her
-`stageCycle` therefore hard-cuts walk → idle (0.983, a clean join) and cross-dissolves the idle
-into itself for 500 ms at every loop. A re-cut that returns to its opening pose is the real
-fix. (The earlier cut's idle scored 0.815 and was never fixed.)
+**Her idle is the editor's own re-cut** (`Bangie Idle refined 2.mp4`, 29.14 s), made the same
+day because the refined 7.62 s idle did not loop (0.779 SSIM last frame to first, in the edit
+itself; no frame in its second half came near the first). The re-cut closes: last → first
+0.987, against 0.997 for an ordinary step. Its backdrop was whitened in the edit, so it skips
+`refine-video.py` and is only remuxed, with `retag` because it was exported colour-untagged;
+its decoded frames are identical to the editor's file. It is a little less even than the
+refined clips (the top-right corner sits at 219 and the floor at the right at 229, against
+236-244 elsewhere). Walk-in END → this idle START: 0.979, a clean hard cut, so Bangie needs no
+`stageCycle`. A crossfade cycle that briefly covered the old idle is gone.
+
+**The editor's re-exported walk-in is not used yet.** `Bangie Walkin refined 2.mp4` (the
+background-shadow fix) was exported from the idle sequence: 29.14 s and 1457 frames like the
+idle, SSIM 0.998 against it, no walk-in in it. The app keeps the refined 12.54 s walk-in until
+a correct export replaces it; then point the `walk` row at it and re-run `media-sizes.mjs`.
+That file had also been dropped straight into `content/`, where the pipeline's
+modified-time check took it for up to date and skipped the rebuild: when a hand-placed file
+is newer than its source, delete it before re-running.
 
 The refine runs at ~11 fps at 1296x2304 (a talk takes 30-40 minutes); lifting at full 4K was
 measured at 0.8 fps. `highbitrate/refined/_working/HOW.txt` has the exact commands and keeps
@@ -1373,7 +1383,8 @@ own, and no Terokai Produk yet.
 | Re-timed cues want a spot check | 23 of 59 (profile) and 14 of 33 (product) matched below 0.85 correlation. `tools/retime-subs.py` lists them |
 | Maznah's captions are English only | `profile BM.txt` and `product BM.txt` exist beside the English ones and are deliberately unused || Maznah's profil/explain are still 4K | 2160x3840, as chosen — they are one-shot talks, not the attract loop. Her walk/idle/dance are 1296x2304 |
 | `Biografi Bangie Sub.mov` has finished downloading | 7 GB, in `premiere file/bangie/Edited/`. Previously an unusable partial; if it is her profile with burnt-in captions it would settle the "Bangie has no subtitles" row below |
-| Bangie's idle loop does not close | new cut, still 0.779 SSIM at its own seam; cross-dissolved by her `stageCycle` until a re-cut. See *Bangie's refined footage* |
+| ~~Bangie's idle loop does not close~~ | **done** — the editor's 29.14 s re-cut loops (0.987). See *Bangie's refined footage* |
+| Bangie's walk-in re-export | the shadow-fixed walk was exported from the idle sequence; the 12.54 s refined walk-in stays until a correct export |
 | ~~Bangie's footage is on grey~~ | **done** (22 Oct 2026) — lifted to #F2F2F2 by `tools/refine-video.py`, and she is colour-graded |
 | Bangie's supers card | `Text1.png` on a 5s/5s cycle — placeholder artwork *and* placeholder schedule. To be replaced by **infotext** (timed images; Maznah, Bangie, Johnny), briefed 20 Oct 2026 and not yet built. See `HANDOVER.md` → *Infotext* |
 | Bangie has no subtitles | her talks are in **Iban**; the museum is to supply a full translation, which the re-edit and subtitles both wait on. The band stays off until a `.srt` appears |

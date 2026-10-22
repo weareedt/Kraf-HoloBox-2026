@@ -254,9 +254,13 @@ team can translate Iban, so that is the blocker for everything else on this list
   `highbitrate/`, refined by `tools/refine-video.py`: the grey backdrop is lifted to white
   (#F2F2F2, like Maznah and Johnny) and her warm cast graded out. README → *Bangie's refined
   footage*. Re-run that tool if the edit changes; the pipeline then remuxes the result.
-- Her **idle still does not loop** (0.779 SSIM at its seam, in the edit itself). Her
-  `stageCycle` cross-dissolves it for 500 ms at each loop; a re-cut that returns to its
-  opening pose would be the proper fix. Walk-in → idle is now clean (0.983).
+- Her **idle is the editor's re-cut** (29.14 s) and loops cleanly (0.987); the walk-in hands
+  over to it cleanly (0.979). Used as exported, no refine.
+- **Her walk-in needs re-exporting.** The shadow-fixed walk (`Bangie Walkin refined 2.mp4`)
+  was exported from the idle sequence and has no walk-in in it, so the app keeps the refined
+  12.54 s walk-in for now. When a correct export lands, point the `walk` row in
+  `transcode.mjs` at it, delete `content/artists/bangie/video/walk.mp4`, re-run the pipeline
+  and `media-sizes.mjs`, and copy the result into `HoloBox-media`.
 - Her title block is a placeholder ("Motif ??? / Teknik ???").
 
 ### Maznah — almost done
