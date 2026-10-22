@@ -149,6 +149,21 @@ keep that constraint or say so loudly.
 The repository is about **59 MB**: code, configuration, the manifest, UI artwork and the
 docs.
 
+### Where to get the two Drive copies
+
+Both live on the EDT shared drive, in
+**Shared drives › EDT PROJECT MASTER › EDT_2026 › KRAFTANGAN HOLOBOX › 04. PROJECTS**
+(https://drive.google.com/drive/folders/10UXAlQP0QCr8Lr2t1KoAQ5T5MCfKBfQf). Ask EDT for access if a link will not open: they are not public files.
+
+| | Link | Size | Updated |
+|---|---|---|---|
+| **`HoloBox-media.zip`** — the video, subtitles and caption cards, laid out like this repo | https://drive.google.com/file/d/1EfFQQ6eYLqWL2Ne0skg1237mAU0qu1C2/view?usp=drive_link | ~5.0 GB unzipped, 50 files | 22 Oct 2026 |
+| **`outerassets/`** — the drop folder (masters, PSDs, Premiere projects) | the `outerassets` folder inside `04. PROJECTS`, link above | ~35 GB | kept in sync from the original laptop |
+
+Unzip `HoloBox-media.zip` so that `HoloBox-media\` sits **beside** this repo, then copy its
+`content` folder in as described below. Put `outerassets` beside the repo too, renamed to
+`outer assets` (with the space), or point the pipeline at it with `--stage=` / `KRAF_STAGE`.
+
 **`outer assets/` must sit beside the repo, not inside it.**
 
 ```

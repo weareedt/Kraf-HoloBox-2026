@@ -6,10 +6,12 @@ showcase. Replaces the previous Unity build ("KRAF-StellarLink").
 > **New here? Read `PROJECT-FLOW.md` first.** This file is the deep reference — why each
 > decision was made and the measurements behind it.
 
-> **The video is not in this repository.** 4.9 GB across 32 files, shared as `HoloBox-media`
-> on Google Drive. Copy its `content` folder into this project and merge; the structure
-> mirrors this one so every file lands where it belongs. The app checks on startup and names
-> anything missing. See `PROJECT-FLOW.md` → *What is NOT in this repository*.
+> **The video is not in this repository.** 4.9 GB across 32 files, shared as
+> [`HoloBox-media.zip`](https://drive.google.com/file/d/1EfFQQ6eYLqWL2Ne0skg1237mAU0qu1C2/view?usp=drive_link) on the EDT shared drive (access on request). Copy its `content`
+> folder into this project and merge; the structure mirrors this one so every file lands where
+> it belongs. The app checks on startup and names anything missing, or any file of the wrong
+> size. The masters (`outerassets`) sit in the same Drive folder. See `PROJECT-FLOW.md` →
+> *Where to get the two Drive copies*.
 
 ## Running it
 

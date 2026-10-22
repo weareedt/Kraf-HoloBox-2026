@@ -109,6 +109,11 @@ masters. It needs Google Drive for desktop running, and the upload carries on in
 background after the script finishes, so check the Drive tray icon before you trust it.
 **`_source/` is still on one machine only.**
 
+On Drive, the same folder is **04. PROJECTS** (https://drive.google.com/drive/folders/10UXAlQP0QCr8Lr2t1KoAQ5T5MCfKBfQf), which also holds
+[`HoloBox-media.zip`](https://drive.google.com/file/d/1EfFQQ6eYLqWL2Ne0skg1237mAU0qu1C2/view?usp=drive_link), the video for installing the exhibit (22 Oct 2026, ~5.0 GB
+unzipped). Both need EDT shared-drive access. If you change any video, refresh the zip there
+too, or new installs will fail the startup size check.
+
 ### Never hand-edit `content/`
 
 It is generated. Change the source in `../outer assets/`, then run `npm run prepare-assets`.
