@@ -268,8 +268,9 @@ talks in English in Premiere (`bangie.prproj`; watermarked review exports in
   (`01. DOCS/BANGIES_VIDEO_TRANSCRIPTION_with_BM.xlsx`, 29 Oct, which also adds Bahasa
   Melayu) has the right line, now in the source `profil EN.srt` (113 cues). The Premiere
   project still has the error, so fix it there before ever re-extracting.
-- **Infotext** for Terangkan Produk (see *Infotext* below). The current `Text1.png` on a
-  5 s/5 s loop is a placeholder for the artwork *and* the timing.
+- **Infotext** for Terangkan Produk (see *Infotext* below). Built; waiting on the client's
+  choice of 3-5 pua details on the Content Approval slide, then the PNGs and their timings.
+  The old 5 s blinking placeholder is removed.
 - **New cuts, refined (22 Oct 2026).** Walk-in, idle and both talks come from
   `highbitrate/`, refined by `tools/refine-video.py`: the grey backdrop is lifted to white
   (#F2F2F2, like Maznah and Johnny) and her warm cast graded out. README → *Bangie's refined
@@ -292,7 +293,7 @@ Talks, subtitles, stage cycle and turntable all work. Two things are left:
   zoom view now carries its **caption cards**, which scale in one by one every time it opens.
   README → *Product hotspots* has the details and the measured positions. Further pieces of
   the new design to follow, one at a time.
-- **Infotext** during Terangkan Produk (see below). Waiting on the artwork and timings.
+- **Infotext** during Terangkan Produk (see below). Built; waiting on the artwork and timings.
 
 ### Johnny — mostly done
 
@@ -308,40 +309,55 @@ Profil and Terangkan buttons.
   **Close-ups done (22 Oct 2026):** lettered A/B/C markers with captions, as on Maznah's
   basket — three on the sheathed parang, two on the blade. Still to come:
   - a designed title block: the title and meta are placeholder text for now.
-- **Infotext** during Terangkan Produk (see below). Waiting on the artwork and timings.
+- **Infotext** during Terangkan Produk (see below). Built; waiting on the artwork and timings.
 
-### Infotext — planned, not built yet
+### Infotext — built, waiting on artwork
 
-Briefed 20 Oct 2026. **Not implemented: build it once the assets arrive.**
+Briefed 20 Oct 2026, **built 2 Nov 2026**. Nothing shows yet because no artist has a list.
 
-*Infotext* is a set of reference images ("supers") shown while an artist talks in
-**Terangkan Produk**: pictures of whatever they are describing at that moment.
+*Infotext* is a set of reference images shown while an artist talks in **Terangkan
+Produk**: pictures of whatever they are describing at that moment.
 
-- **Who has it:** Maznah, Bangie and Johnny only. Samat and Norhaiza have none, and need no
-  empty state, because the feature is driven by the manifest like everything else.
-- **Assets:** several `.png` images per artist. For now there is only a basic placeholder.
-- **Timing:** each image has its own start time and duration, e.g. *appears at 18 s, stays
-  4 s, then hides*, measured against the explain video's own clock.
-- **Position:** one fixed spot on screen, the same for every image and every artist. Images
-  just appear and hide. No movement, and no layout per image.
+- **Who has it:** Maznah, Bangie and Johnny. Samat and Norhaiza have none and need nothing:
+  an explain clip without an `infotext` list shows nothing.
+- **Assets:** 3-5 PNGs per artist, named `infotext1.png`, `infotext2.png`, ... For Bangie
+  they follow the client's choice on the *Content Approval* slide: 3-5 of the pua detail
+  areas A-H, each with its motif and meaning.
+- **Timing:** each image has its own start and duration against the explain video's clock,
+  e.g. *appears at 18 s, stays 4 s*. Get them from whoever briefs the artwork, not from
+  the audio, and check them against the subtitles.
+- **Position:** one fixed box, the same for every image and artist, just above the subtitle
+  band and to the right: 490 x 372 px on the 1080 x 1920 canvas, 32 px from the right
+  edge, 18 px above the band. Measured from the annotated screenshot (the circle spans
+  x 558-1048, y 595-967). Each image is fitted inside it, centred, sitting on its bottom
+  edge. No animation: an image appears and hides.
 
-**What already exists to build on:** `mountOverlay()` in `web/app.js` drives Bangie's
-placeholder from the `explain.overlay` block in `content/content.json`. It already shows an
-image over the talk, runs off the video's `currentTime` (so it stays in step if playback
-stalls, with no timers to cancel), and is cleaned up when the visitor leaves. What it lacks
-is a **list** of images with a start and duration each: today it is one image on a repeating
-show/hide cycle. The natural extension is a manifest array along these lines, with the
-overlay updating to whichever entry covers the current time:
+**To add one artist's set:**
+
+1. Put the PNGs in the drop folder and add one `ARTWORK` row per image to
+   `tools/transcode.mjs`, staging them to `content/artists/<id>/infotext/infotext1.png` and
+   so on (rule: nothing under `content/artists/` is hand-placed). These are small and are
+   committed; only `video/` is kept out of git.
+2. Add the list to that artist's `video.explain` in `content/content.json`:
 
 ```json
 "infotext": [
-  { "image": "artists/maznah/video/info-01.png", "atMs": 18000, "showMs": 4000 }
+  { "image": "artists/bangie/infotext/infotext1.png", "atMs": 18000, "showMs": 4000 },
+  { "image": "artists/bangie/infotext/infotext2.png", "atMs": 41000, "showMs": 5000 }
 ]
 ```
 
-Keep it a content operation (rule 1): no artist ids in the code, and an artist without the
-array simply shows nothing. Get the timings from the person who briefs the artwork rather
-than guessing from the audio, and check them against the subtitles once built.
+3. Run `npm run prepare-assets`, open the talk and check each image comes in at its time.
+
+`mountInfotext()` in `web/app.js` does the work. It runs off the video's `currentTime`, so
+it stays in step if playback stalls and has no timers to cancel. An entry whose file is
+missing is skipped. If two overlap, the one that started later wins. It works on any
+talk clip (Profil too), although only Terangkan Produk is briefed.
+
+**Removed (2 Nov 2026):** the placeholder that preceded it, Bangie's `explain.overlay`,
+which blinked `Text1.png` on a 5 s show / 5 s hide loop. The code, the manifest block, the
+two `explain-supers.png` files (Bangie's and an unused one for Maznah) and their pipeline
+rows are all gone.
 
 ---
 
@@ -452,4 +468,4 @@ on a Tuesday.
    infotext all wait on it, so start early.
 5. Collect the outstanding artwork: **Maznah's new Terokai Produk design**, **Johnny's
    Terokai Produk brief**, and the **infotext PNGs and timings** for Maznah, Bangie and
-   Johnny. Then build infotext (§5).
+   Johnny. Infotext is built; adding a set is a manifest edit (§5).

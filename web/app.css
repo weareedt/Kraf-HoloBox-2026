@@ -392,27 +392,34 @@ body.kiosk { cursor: none; }
 .subtitle-band i { font-style: italic; }
 .subtitle-band--step { top: auto; bottom: 320px; }
 
-/* ------------------------------------------------- supers card (talk screen)
-   A designed caption card held over the picture, dead centre, on the schedule in
-   video.<clip>.overlay. Bangie's Product Explain uses it with placeholder artwork
-   and a placeholder 5s-on/5s-off cycle.
-
-   It cross-dissolves rather than cutting: the schedule is in whole seconds and a
-   350ms dissolve inside it reads as a super rather than as a glitch. The element
-   keeps its src while hidden, so each reappearance is instant. */
-.talk-overlay {
+/* ------------------------------------------------- infotext (talk screen)
+   Reference images shown at set moments of a talk (video.<clip>.infotext). They live in
+   one fixed box, measured off the museum's mark-up over a screenshot (2 Nov 2026): the
+   circled area is x 558-1048, y 595-967 on the 1080x1920 canvas, i.e. 490 px wide, 32 px
+   in from the right, ending ~18 px above the subtitle band (which starts at 52%). Each
+   image is scaled to fit inside the box, centred, resting on its bottom edge so it sits
+   right above the subtitles whatever its shape. They simply appear and hide. */
+.talk-infotext {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  height: auto;
+  right: 32px;
+  bottom: calc(48% + 18px);
+  width: 490px;
+  height: 372px;
   z-index: 16;
-  opacity: 0;
   pointer-events: none;
-  transition: opacity .35s ease;
 }
-.talk-overlay[hidden] { display: none; }
-.talk-overlay.is-on { opacity: 1; }
+.talk-infotext[hidden] { display: none; }
+.talk-infotext__img {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  opacity: 0;
+}
+.talk-infotext__img.is-on { opacity: 1; }
 
 /* --------------------------------------------------------- produk */
 

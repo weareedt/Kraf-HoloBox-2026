@@ -336,37 +336,47 @@ async function enterArtist(artist, { walkIn = false } = {}) {
  * holds the idle countdown, can carry subtitles, and returns to the idle stage when
  * it ends. What differs is per-clip manifest data, not code.
  *
- * `overlay` is the one addition: a "supers" card held over the picture on a repeating
- * schedule. It is driven from the video's own currentTime rather than a wall clock, so
- * it stays in step if playback stalls, and it needs no timers to cancel on the way out.
+ * `infotext` is the one addition: reference images that appear at set moments of the talk
+ * (`[{ image, atMs, showMs }]`), each shown from atMs for showMs, then hidden. Driven from
+ * the video's own currentTime rather than a wall clock, so it stays in step if playback
+ * stalls, and there are no timers to cancel on the way out. A talk without the list shows
+ * nothing. (It replaced a placeholder "supers" card that blinked on a 5 s loop, removed
+ * 2 Nov 2026.)
  */
 
 let profileSession = 0;
 
-function mountOverlay(el, cfg) {
-  if (!cfg?.image || !assetInfo(cfg.image).exists) {
-    el.hidden = true;
-    return { update() {}, hide() { el.hidden = true; } };
-  }
-  const showMs = cfg.showMs ?? 5000;
-  const hideMs = cfg.hideMs ?? 5000;
-  const period = (showMs + hideMs) / 1000;
-  const startAt = (cfg.startAtMs ?? 0) / 1000;
-
-  el.src = url(cfg.image);
-  el.style.width = `${cfg.width ?? 900}px`;
-  el.hidden = false;
-  el.classList.remove('is-on');
-
-  let on = null;
+/**
+ * Mount every infotext image up front, hidden, so each appears instantly when its moment
+ * comes (a not-yet-decoded <img> would show blank for as long as its decode took).
+ * Entries whose file is missing are skipped. update(t) shows the entry whose window
+ * contains t -- the latest-starting one if windows overlap -- and hides the rest.
+ */
+function mountInfotext(box, list) {
+  box.innerHTML = '';
+  const items = (list ?? [])
+    .filter((e) => e?.image && assetInfo(e.image).exists && Number.isFinite(e.atMs) && Number.isFinite(e.showMs))
+    .map((e) => {
+      const img = document.createElement('img');
+      img.className = 'talk-infotext__img';
+      img.src = url(e.image);
+      img.alt = '';
+      img.decoding = 'async';
+      box.appendChild(img);
+      return { from: e.atMs / 1000, to: (e.atMs + e.showMs) / 1000, img };
+    });
+  box.hidden = !items.length;
+  let shown = null;
   return {
     update(t) {
-      // Position within one show+hide cycle. Visible for the first `showMs` of it.
-      const phase = ((t - startAt) % period + period) % period;
-      const next = t >= startAt && phase < showMs / 1000;
-      if (next !== on) { on = next; el.classList.toggle('is-on', next); }
+      let pick = null;
+      for (const it of items) if (t >= it.from && t < it.to && (!pick || it.from >= pick.from)) pick = it;
+      if (pick === shown) return;
+      if (shown) shown.img.classList.remove('is-on');
+      if (pick) pick.img.classList.add('is-on');
+      shown = pick;
     },
-    hide() { el.hidden = true; el.classList.remove('is-on'); el.removeAttribute('src'); },
+    hide() { box.hidden = true; box.innerHTML = ''; shown = null; },
   };
 }
 
@@ -385,12 +395,12 @@ async function enterTalk(artist, key) {
     try { band.setCues(await loadSrt(url(cfg.srt))); }
     catch (e) { console.warn('subtitles unavailable', e); }
   }
-  const overlay = mountOverlay($('profile-overlay'), cfg.overlay);
+  const infotext = mountInfotext($('profile-infotext'), cfg.infotext);
 
   // A talk is a one-shot: hold the idle countdown for its duration.
   const release = idle.hold();
 
-  disposeScreen = () => { band.hide(); overlay.hide(); release(); };
+  disposeScreen = () => { band.hide(); infotext.hide(); release(); };
 
   // Await only the FIRST FRAME, so the caller's fade can lift onto a painted picture.
   // Awaiting the whole clip here would hold the white veil up for the entire talk.
@@ -399,7 +409,7 @@ async function enterTalk(artist, key) {
     ({ done } = await profilePlayer.playOnce(url(cfg.src), {
       fps: cfg.fps ?? 25,
       muted: false,
-      onTime: (t) => { band.update(t); overlay.update(t); },
+      onTime: (t) => { band.update(t); infotext.update(t); },
     }));
   } catch (e) {
     console.error(`${key} playback failed`, e);
@@ -410,7 +420,7 @@ async function enterTalk(artist, key) {
   // The rest of the talk runs on its own; this function has already returned.
   done.then(() => {
     release();
-    overlay.hide();
+    infotext.hide();
     // Returning to the idle stage when the talk ends is the documented behaviour.
     // Both guards matter: the session check stops an abandoned playback from dragging
     // a LATER visit back to the stage, and the screen check covers the ordinary case

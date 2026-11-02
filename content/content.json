@@ -451,14 +451,7 @@
           "fps": 50,
           "_note_srt": "English, from the editor's Iban translation, carried onto this cut the same way as the profile. 113 cues.",
           "srt": "artists/bangie/video/explain.srt",
-          "_note_overlay": "PLACEHOLDER, both the artwork and the schedule. The real supers are not designed yet; Text1.png stands in, centred over the picture, on a 5s-on/5s-off cycle driven from the video's own clock.",
-          "overlay": {
-            "image": "artists/bangie/video/explain-supers.png",
-            "width": 900,
-            "showMs": 5000,
-            "hideMs": 5000,
-            "startAtMs": 0
-          }
+          "_note_infotext": "Waiting on artwork: 3-5 images (infotext1, infotext2, ...) on the pua motifs the client picks, each with a start time and how long it stays. Add them as \"infotext\": [{ \"image\": \"artists/bangie/infotext/infotext1.png\", \"atMs\": 18000, \"showMs\": 4000 }, ...]. The placeholder 5 s blinking supers card was removed on 2 Nov 2026."
         }
       },
       "products": [
@@ -588,7 +581,7 @@
         "explain": {
           "src": "artists/maznah/video/explain.mp4",
           "fps": 50,
-          "_note_srt": "Unlike Bangie, her Terangkan Produk has real captions, so it runs a subtitle band rather than a placeholder supers card.",
+          "_note_srt": "Her Terangkan Produk has real captions, so it runs the subtitle band.",
           "srt": "artists/maznah/video/explain.srt"
         }
       },

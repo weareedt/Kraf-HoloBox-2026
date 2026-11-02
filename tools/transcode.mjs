@@ -351,9 +351,6 @@ const ARTWORK = [
   { from: `${ZUL}/Button Profile.png`,         to: 'bangie/ui/btn-profile.png' },
   { from: `${ZUL}/Button Product Explain.png`, to: 'bangie/ui/btn-explain.png' },
   { from: `${ZUL}/Button Product Explore.png`, to: 'bangie/ui/btn-product.png' },
-  // "Supers" card shown over the Product Explain video. Placeholder: the real
-  // caption design is not settled, so the schedule and the artwork are both dummies.
-  { from: `${ZUL}/Text1.png`,                  to: 'bangie/video/explain-supers.png' },
   // One designed title block, shared by all five views of the cloth.
   { from: `${ZUL}/Title Product Explore.png`,  to: 'bangie/products/tenunan-pua/info.png' },
 
@@ -388,7 +385,6 @@ const ARTWORK = [
   // entries in content.json the button is not built, so these sit unused.
   { from: `${MZN}/Button Product Explore.png`,    to: 'maznah/ui/btn-product.png' },
   { from: `${MZN}/Title Product Explore.png`,     to: 'maznah/products/bakul/info.png' },
-  { from: `${MZN}/Text1.png`,                     to: 'maznah/video/explain-supers.png' },
 
   /* Terokai Produk hotspots: the pulsing marker and the three zoom-in views it opens.
    * The marker is a white glow ring on transparent, so it is tinted in CSS rather than

@@ -148,17 +148,25 @@ subtitles, and returns to the idle stage when it ends. `explain` exists because 
 second to-camera clip about the work rather than about himself; it sits between Profil and
 the product panel.
 
-`video.<clip>.overlay` puts a "supers" card over the picture on a repeating schedule:
+`video.<clip>.infotext` shows reference images at set moments of a talk, each with its
+own start and duration:
 
 ```jsonc
-"overlay": { "image": "…/explain-supers.png", "width": 900,
-             "showMs": 5000, "hideMs": 5000, "startAtMs": 0 }
+"infotext": [
+  { "image": "artists/bangie/infotext/infotext1.png", "atMs": 18000, "showMs": 4000 }
+]
 ```
 
-It is driven from the **video's own currentTime**, not a wall clock, so it stays in step if
-playback stalls and there are no timers to cancel on the way out. Bangie's is a placeholder
-in both respects — the artwork is `Text1.png` and the 5s/5s cycle is a stand-in. Maznah's
-Terangkan Produk has real captions instead, so it runs a subtitle band and no supers.
+They all appear in one fixed box just above the subtitle band, on the right: 490 x 372 px,
+32 px from the right edge and 18 px above the band (`.talk-infotext` in `web/app.css`),
+measured from the user's annotated screenshot. An image is fitted inside it, sitting on its
+bottom edge, and simply appears and hides. It is driven from the **video's own
+currentTime**, not a wall clock, so it stays in step if playback stalls and there are no
+timers to cancel on the way out. No artist has a list yet; `HANDOVER.md` → *Infotext* has
+how to add one.
+
+It replaced a placeholder "supers" card (`video.explain.overlay`, `Text1.png` blinking on a
+5 s/5 s loop), removed on 2 Nov 2026.
 
 ### The main menu is a carousel
 
@@ -1399,7 +1407,7 @@ own, and no Terokai Produk yet.
 | ~~Bangie's idle loop does not close~~ | **done** — the editor's 29.14 s re-cut loops (0.987). See *Bangie's refined footage* |
 | Bangie's walk-in re-export | the shadow-fixed walk was exported from the idle sequence; the 12.54 s refined walk-in stays until a correct export |
 | ~~Bangie's footage is on grey~~ | **done** (22 Oct 2026) — lifted to #F2F2F2 by `tools/refine-video.py`, and she is colour-graded |
-| Bangie's supers card | `Text1.png` on a 5s/5s cycle — placeholder artwork *and* placeholder schedule. To be replaced by **infotext** (timed images; Maznah, Bangie, Johnny), briefed 20 Oct 2026 and not yet built. See `HANDOVER.md` → *Infotext* |
+| ~~Bangie's supers card~~ | **removed** (2 Nov 2026) — replaced by **infotext**, built and waiting on the PNGs (`infotext1..N`) and timings for Maznah, Bangie and Johnny. See `HANDOVER.md` → *Infotext* |
 | ~~Bangie has no subtitles~~ | **done** (2 Nov 2026) — the editor's English captions from Premiere, carried onto the refined cut by audio. See *Bangie's refined footage* |
 | Bangie's title block reads "???" | `Title Product Explore.png` ships with placeholder Motif/Teknik text |
 | Norhaiza keris info blocks | `18 Keris 1 Info.png` / `19 Keris 2 Info.png` are still generated placeholders. Norhaiza was accepted as done on 20 Oct 2026 with these in place |
