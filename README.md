@@ -1075,6 +1075,17 @@ refined clips (the top-right corner sits at 219 and the floor at the right at 22
 236-244 elsewhere). Walk-in END → this idle START: 0.979, a clean hard cut, so Bangie needs no
 `stageCycle`. A crossfade cycle that briefly covered the old idle is gone.
 
+**Her subtitles (2 Nov 2026)** come from the editor's Iban translation. The editor captioned
+both talks in English in Premiere on the OLD cut and exported only burnt-in review videos,
+so `tools/prproj-captions.py` reads the caption tracks straight out of `bangie.prproj`
+(225 captions; one had its data de-duplicated elsewhere in the project and first came out
+empty). `tools/retime-subs.py` then moved each caption onto the refined cut by matching the
+soundtracks: shifts of -1.0 to +0.9 s, consistent with small trims in the new edit. Each
+talk's last line, at the very end where there is no audio left to match, went back exactly
+where the local shift puts it; the tool's "### NEW SCRIPT ###" placeholders marked stretches
+the editor's captions also leave uncovered, and were removed. Verified in the app against
+the review exports at seven points.
+
 **The editor's re-exported walk-in is not used yet.** `Bangie Walkin refined 2.mp4` (the
 background-shadow fix) was exported from the idle sequence: 29.14 s and 1457 frames like the
 idle, SSIM 0.998 against it, no walk-in in it. The app keeps the refined 12.54 s walk-in until
@@ -1389,7 +1400,7 @@ own, and no Terokai Produk yet.
 | Bangie's walk-in re-export | the shadow-fixed walk was exported from the idle sequence; the 12.54 s refined walk-in stays until a correct export |
 | ~~Bangie's footage is on grey~~ | **done** (22 Oct 2026) — lifted to #F2F2F2 by `tools/refine-video.py`, and she is colour-graded |
 | Bangie's supers card | `Text1.png` on a 5s/5s cycle — placeholder artwork *and* placeholder schedule. To be replaced by **infotext** (timed images; Maznah, Bangie, Johnny), briefed 20 Oct 2026 and not yet built. See `HANDOVER.md` → *Infotext* |
-| Bangie has no subtitles | her talks are in **Iban**; the museum is to supply a full translation, which the re-edit and subtitles both wait on. The band stays off until a `.srt` appears |
+| ~~Bangie has no subtitles~~ | **done** (2 Nov 2026) — the editor's English captions from Premiere, carried onto the refined cut by audio. See *Bangie's refined footage* |
 | Bangie's title block reads "???" | `Title Product Explore.png` ships with placeholder Motif/Teknik text |
 | Norhaiza keris info blocks | `18 Keris 1 Info.png` / `19 Keris 2 Info.png` are still generated placeholders. Norhaiza was accepted as done on 20 Oct 2026 with these in place |
 | Wau product thumbnail | still a crop of the old screenshot; only visible behind a missing model or in a 2+ product rail, so cosmetic. Samat was accepted as done on 20 Oct 2026 |

@@ -1085,6 +1085,17 @@ const ARTISTS = [{
     { from: 'Bangie Profile refined.mp4',         to: 'video/profil.mp4',  silent: false, retag: false, label: 'profil' },
     { from: 'Bangie Product Explain refined.mp4', to: 'video/explain.mp4', silent: false, retag: false, label: 'explain' },
   ],
+  /* Her English subtitles (2 Nov 2026), from the editor's Iban translation. The editor
+   * captioned the OLD cut in Premiere (bangie.prproj, 23 Oct; review exports in Captioned/);
+   * the caption text and timings were read out of the project file, then carried onto these
+   * refined cuts by tools/retime-subs.py, which matches the two soundtracks per caption
+   * (shifts of -1.0 to +0.9 s; 223 of 225 placed by audio, the last line of each talk put
+   * back where its audio sits at the very end). The text is the editor's, word for word.
+   * subs/_premiere-captions ... (old cut).srt keep the untouched originals. */
+  subs: [
+    { from: 'subs/profil EN.srt',  to: 'video/profil.srt' },
+    { from: 'subs/explain EN.srt', to: 'video/explain.srt' },
+  ],
   backdropFrom: 'video/idle.mp4',
 }, {
   /* Fourth artist. Only her two TALK clips are remuxed here — walk, idle and dance are

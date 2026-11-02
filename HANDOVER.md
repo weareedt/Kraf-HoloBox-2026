@@ -227,7 +227,7 @@ Status as signed off on 20 Oct 2026:
 |---|---|---|---|---|
 | 1 | Samat | Wau | Profil +srt, 1 product (3D model), 4 steps | **done** |
 | 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | **done** |
-| 3 | Bangie | Tenunan Pua | Profil, Terangkan Produk, 5 image products; refined footage | **needs the most** — blocked on the museum's translation |
+| 3 | Bangie | Tenunan Pua | Profil +srt, Terangkan +srt, 5 image products; refined footage | walk-in re-export, infotext, title block |
 | 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | almost done — new Terokai Produk design, infotext |
 | 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, 2 parang turntables with close-ups | mostly done — title block, infotext, blank frame 35 |
 
@@ -251,14 +251,18 @@ Reopen either only if the museum asks.
 
 ### Bangie — the one needing most attention
 
-**Her talks are in Iban.** Nothing can be edited or subtitled until **the museum supplies a
-full translation** of both clips. Whisper's Malay model is no use here, and nobody on the
-team can translate Iban, so that is the blocker for everything else on this list:
+**Her talks are in Iban, and the translation is now in.** On 23 Oct 2026 the editor finished
+`BANGIE'S VIDEO TRANSCRIPTION.xlsx` (Iban beside English for both talks) and captioned both
+talks in English in Premiere (`bangie.prproj`; watermarked review exports in
+`premiere file/bangie/Captioned/`).
 
-- **Re-edit the video** once the translation says what is being said where.
-- **Subtitles** for Profil and Terangkan Produk. None exist yet, so the band stays off until
-  a `.srt` appears. Time them to the audio as for the others (§6), with the museum's text
-  as the words.
+- **Subtitles: done (2 Nov 2026).** The captions were read out of the Premiere project
+  (`tools/prproj-captions.py`), carried from the old cut they were made on to the app's
+  refined cut by audio (`tools/retime-subs.py`), and staged by the pipeline: Profil 112
+  cues, Terangkan Produk 113, the editor's words untouched. Checked in the app at seven
+  points against the review exports. Sources: `highbitrate/refined/subs/`. The editor's
+  timing leaves 18 and 10 cues faster than 20 characters a second with no gap to widen
+  into; worth a read on the panel. If the captions change in Premiere, re-run both tools.
 - **Infotext** for Terangkan Produk (see *Infotext* below). The current `Text1.png` on a
   5 s/5 s loop is a placeholder for the artwork *and* the timing.
 - **New cuts, refined (22 Oct 2026).** Walk-in, idle and both talks come from
@@ -355,6 +359,7 @@ it from scratch.
 | `replace-backdrop.py` | repaint a turntable's backdrop to one flat colour, opaque, leaving the object's pixels untouched and checking every frame. Driven by `backdropFrom` in `transcode.mjs` |
 | `media-sizes.mjs` | record each video's exact byte size into `content/media-sizes.json`, so the startup check can spot a damaged copy. Re-run and commit when the masters change |
 | `retime-subs.py` | carry existing subtitles across a re-cut |
+| `prproj-captions.py` | read caption tracks (text and timing) out of a Premiere project as `.srt`; how Bangie's translation got into the app |
 | `script-to-subs.py` | **superseded** — spreads a known script across measured speech |
 
 ### Subtitles: transcribe, do not spread
