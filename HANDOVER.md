@@ -263,6 +263,11 @@ talks in English in Premiere (`bangie.prproj`; watermarked review exports in
   points against the review exports. Sources: `highbitrate/refined/subs/`. The editor's
   timing leaves 18 and 10 cues faster than 20 characters a second with no gap to widen
   into; worth a read on the panel. If the captions change in Premiere, re-run both tools.
+  **One correction was made outside Premiere:** at 5:05-5:22 of the Profil the captions
+  repeated an earlier line and then read "NO TRNSLATION". The editor's later transcription
+  (`01. DOCS/BANGIES_VIDEO_TRANSCRIPTION_with_BM.xlsx`, 29 Oct, which also adds Bahasa
+  Melayu) has the right line, now in the source `profil EN.srt` (113 cues). The Premiere
+  project still has the error, so fix it there before ever re-extracting.
 - **Infotext** for Terangkan Produk (see *Infotext* below). The current `Text1.png` on a
   5 s/5 s loop is a placeholder for the artwork *and* the timing.
 - **New cuts, refined (22 Oct 2026).** Walk-in, idle and both talks come from
