@@ -227,7 +227,7 @@ Status as signed off on 20 Oct 2026:
 |---|---|---|---|---|
 | 1 | Samat | Wau | Profil +srt, 1 product (3D model), 4 steps | **done** |
 | 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | **done** |
-| 3 | Bangie | Tenunan Pua | Profil +srt, Terangkan +srt, 5 image products; refined footage | walk-in re-export, infotext, title block |
+| 3 | Bangie | Tenunan Pua | Profil +srt, Terangkan +srt, 5 image products; refined footage | title block |
 | 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | almost done — new Terokai Produk design, infotext |
 | 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, 2 parang turntables with close-ups | mostly done — title block, infotext, blank frame 35 |
 
@@ -268,20 +268,25 @@ talks in English in Premiere (`bangie.prproj`; watermarked review exports in
   (`01. DOCS/BANGIES_VIDEO_TRANSCRIPTION_with_BM.xlsx`, 29 Oct, which also adds Bahasa
   Melayu) has the right line, now in the source `profil EN.srt` (113 cues). The Premiere
   project still has the error, so fix it there before ever re-extracting.
-- **Infotext** for Terangkan Produk (see *Infotext* below). Built; waiting on the client's
-  choice of 3-5 pua details on the Content Approval slide, then the PNGs and their timings.
-  The old 5 s blinking placeholder is removed.
+- **Infotext** for Terangkan Produk: **all five images in, 3 Nov 2026** (the whole pua,
+  Beji, Tree, Tree Broke, Beji Follower), tested in the app. See *Infotext* below.
 - **New cuts, refined (22 Oct 2026).** Walk-in, idle and both talks come from
   `highbitrate/`, refined by `tools/refine-video.py`: the grey backdrop is lifted to white
   (#F2F2F2, like Maznah and Johnny) and her warm cast graded out. README → *Bangie's refined
   footage*. Re-run that tool if the edit changes; the pipeline then remuxes the result.
-- Her **idle is the editor's re-cut** (29.14 s) and loops cleanly (0.987); the walk-in hands
-  over to it cleanly (0.979). Used as exported, no refine.
-- **Her walk-in needs re-exporting.** The shadow-fixed walk (`Bangie Walkin refined 2.mp4`)
-  was exported from the idle sequence and has no walk-in in it, so the app keeps the refined
-  12.54 s walk-in for now. When a correct export lands, point the `walk` row in
-  `transcode.mjs` at it, delete `content/artists/bangie/video/walk.mp4`, re-run the pipeline
-  and `media-sizes.mjs`, and copy the result into `HoloBox-media`.
+- **Walk-in and idle: the user's re-edit (3 Nov 2026), cut out by the pipeline.** The user
+  dropped `walk.mp4` and `idle.mp4` into `content/artists/bangie/video/` (copies in
+  `highbitrate/refined/`). Both are the SAME 61.16 s export, frame for frame: idle 0-15.24 s |
+  black | walk-in 16.60-29.14 | black | idle | black | walk-in. Used whole, picking her from
+  the menu showed 15 s of standing before any walk (it looked as if she did not walk in
+  again) and the idle "loop" had walk-ins and black in it. The `walk` and `idle` rows now
+  take `trim: [start, end]` (new in `transcode.mjs`, frame-exact, re-encoded at the refined
+  clips' x264 CRF 17): walk-in 627 frames / 12.54 s, idle 762 frames / 15.24 s. Measured:
+  no dark frames, no decode errors, idle loop 0.998, walk -> idle 0.998; in the app she
+  walks in once, the idle loops into itself, and she walks in again on every visit from the
+  menu. Her backdrop is re-measured as #EFF1F0. If clean single-clip exports arrive, drop
+  the trims, delete the two files in `content/`, re-run the pipeline and `media-sizes.mjs`,
+  and copy them into `HoloBox-media`.
 - Her title block is a placeholder ("Motif ??? / Teknik ???").
 
 ### Maznah — almost done
@@ -311,9 +316,31 @@ Profil and Terangkan buttons.
   - a designed title block: the title and meta are placeholder text for now.
 - **Infotext** during Terangkan Produk (see below). Built; waiting on the artwork and timings.
 
-### Infotext — built, waiting on artwork
+### Infotext — built; Bangie's set is in
 
-Briefed 20 Oct 2026, **built 2 Nov 2026**. Nothing shows yet because no artist has a list.
+Briefed 20 Oct 2026, built 2 Nov 2026. **Bangie's five images went in on 3 Nov 2026**;
+Maznah and Johnny have none yet.
+
+**Bangie's set.** Source: `outer assets/premiere file/bangie/product/`. The designer writes
+each image's timing into its file name as **minutes.seconds**, e.g. `1 - Beji (0.37-0.42)`
+is 0:37-0:42. Each lands on the subtitle that names it:
+
+| # | Source file | Shows | Subtitle it matches |
+|---|---|---|---|
+| 0 | `0 - Title (0.2-0.7).png` | 2-9 s | "So, this pattern here is the Tangga Beji [Beji's Ladder] pattern" (2.65 s) |
+| 1 | `1 - Beji (0.37-0.42).png` | 37-44 s | "This is Beji, who is going to climb this tree." (37.6 s) |
+| 2 | `2 - Tree (0.46-0.51).png` | 46-53 s | "...it was an Entepung tree..." (46.9 s) |
+| 3 | `3 - Tree Broke (1.22).png` | 82-89 s | "But then the entepung pillar broke." (82.2-86.9 s) |
+| 4 | `4 - Beji Follower(1.36-1.41).png` | 96-103 s | "...Beji and his followers..." (97.5 s) |
+
+The file names give 5 s each (`Tree Broke` has no end time and was given the same). The
+user then asked for **every image held 2 s longer, added at the end** (3 Nov 2026), so each
+shows 7 s from the designer's start time: the table above is what plays. They still do not
+overlap. `0 - Title` is the whole pua, opaque and tall (2400 x 4699, 28 MB) where the others
+are 512 x 512 squares. In the shared box it fits at 190 x 372 design px, in the same
+bottom-right corner and at the same height as the squares (x 858-1048, y 608-980), so its
+`ARTWORK` row scales it to 380 x 744, exactly that size on the 4K panel (0.78 MB). Checked in
+the app at 540 x 960: each image is on inside its window and off either side of it. If the designer renames a file, update its `ARTWORK` row.
 
 *Infotext* is a set of reference images shown while an artist talks in **Terangkan
 Produk**: pictures of whatever they are describing at that moment.
@@ -329,8 +356,10 @@ Produk**: pictures of whatever they are describing at that moment.
 - **Position:** one fixed box, the same for every image and artist, just above the subtitle
   band and to the right: 490 x 372 px on the 1080 x 1920 canvas, 32 px from the right
   edge, 18 px above the band. Measured from the annotated screenshot (the circle spans
-  x 558-1048, y 595-967). Each image is fitted inside it, centred, sitting on its bottom
-  edge. No animation: an image appears and hides.
+  x 558-1048, y 595-967). Each image is fitted inside it and sits in its **bottom-right
+  corner**, so it is near the screen edge whatever its shape: Bangie's 512 x 512 squares
+  show at 372 x 372, x 676-1048. (They were centred, at 617-989, until the user's mark-up
+  of 3 Nov 2026 moved them right.) No animation: an image appears and hides.
 
 **To add one artist's set:**
 

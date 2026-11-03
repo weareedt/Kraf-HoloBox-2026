@@ -286,6 +286,28 @@ function remux(src, dst, { silent, retag }) {
   return meta;
 }
 
+/* A job with `trim: [startS, endS]` takes only that span of its source. Stream copy
+ * can only cut on a keyframe, and a cut that is off by one frame shows as a jump at the
+ * walk -> idle handover or the idle's loop seam, so this re-encodes (trim is frame-exact:
+ * start inclusive, end exclusive) at the refined clips' settings: x264 CRF 17, yuv420p,
+ * BT.709-tagged. Built for Bangie's 3 Nov 2026 export, which holds her walk-in and idle
+ * twice over with black between them, in one 61 s file. */
+function cut(src, dst, { trim: [t0, t1] }) {
+  const meta = probe(src);
+  const args = [
+    '-v', 'error', '-stats', '-y', '-i', src,
+    '-map', '0:v:0', '-an',
+    '-vf', `trim=start=${t0}:end=${t1},setpts=PTS-STARTPTS`, '-fps_mode', 'passthrough',
+    '-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 'yuv420p',
+    '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709',
+    '-movflags', '+faststart',
+    dst,
+  ];
+  const r = run(FFMPEG, args);
+  if (r.status !== 0) throw new Error(`ffmpeg failed for ${src}\n${r.stderr}`);
+  return meta;
+}
+
 /* ---------- artwork + model staging --------------------------------------
  * "outer assets/" is the drop folder: new artwork and models land there, and this
  * step copies them into the served content tree under stable names. Keeping it here
@@ -353,6 +375,17 @@ const ARTWORK = [
   { from: `${ZUL}/Button Product Explore.png`, to: 'bangie/ui/btn-product.png' },
   // One designed title block, shared by all five views of the cloth.
   { from: `${ZUL}/Title Product Explore.png`,  to: 'bangie/products/tenunan-pua/info.png' },
+  // Infotext for Terangkan Produk: 512x512 opaque crops of the pua, the motif framed in
+  // yellow. The source names carry the designer's timing (m.ss) — the manifest's atMs/showMs
+  // are taken from them. "0 - Title" is the whole pua, opaque, 2400x4699 (28 MB): in the
+  // shared 490x372 infotext box it shows at 190x372 design px, i.e. 380x744 on the 4K panel,
+  // so it is scaled to exactly that (format pinned, or ffmpeg may palettise the PNG).
+  { from: 'premiere file/bangie/product/0 - Title (0.2-0.7).png',          to: 'bangie/infotext/infotext0.png',
+    vf: 'scale=380:744:flags=lanczos,format=rgb24' },
+  { from: 'premiere file/bangie/product/1 - Beji (0.37-0.42).png',          to: 'bangie/infotext/infotext1.png' },
+  { from: 'premiere file/bangie/product/2 - Tree (0.46-0.51).png',          to: 'bangie/infotext/infotext2.png' },
+  { from: 'premiere file/bangie/product/3 - Tree Broke (1.22).png',         to: 'bangie/infotext/infotext3.png' },
+  { from: 'premiere file/bangie/product/4 - Beji Follower(1.36-1.41).png', to: 'bangie/infotext/infotext4.png' },
 
   // Switcher thumbnails. Bare crops of the cloth — no frame, no glow — so they take
   // the products rail's plain-tile path rather than the artwork-button path.
@@ -1069,15 +1102,17 @@ const ARTISTS = [{
    * refined/_working/HOW.txt has the exact commands and plates. */
   root: join(STAGE, 'premiere file', 'bangie', 'highbitrate', 'refined'),
   jobs: [
-    /* The walk-in stays the refined 12.54 s cut. "Bangie Walkin refined 2.mp4" (22 Oct, the
-     * editor's shadow fix) was exported from the IDLE sequence: same 29.14 s, 1457 frames,
-     * SSIM 0.998 against the new idle, no walk-in in it. Point this row at it once it is
-     * re-exported from the walk sequence, then re-run media-sizes. */
-    { from: 'Bangie Walkin refined.mp4',          to: 'video/walk.mp4',    silent: true,  retag: false, label: 'walk' },
-    /* The editor's own idle (22 Oct): re-cut to loop (last -> first frame 0.987 SSIM, an
-     * ordinary step is 0.997), backdrop already whitened in the edit, so it is NOT run
-     * through refine-video.py. Exported colour-untagged, hence retag. */
-    { from: 'Bangie Idle refined 2.mp4',          to: 'video/idle.mp4',    silent: true,  retag: true,  label: 'idle' },
+    /* Walk-in and idle: the user's re-edit of 3 Nov 2026 (walk.mp4 / idle.mp4 here). Both
+     * files are the SAME 61.16 s export, frame for frame: idle 0-15.24 | black | walk-in
+     * 16.60-29.14 | black | idle again | black | walk-in again (blackdetect + per-frame
+     * compare; the repeats match at >= 0.998). Used whole, the walk opened with 15 s of
+     * standing and the idle loop had walk-ins and black in it. So each row trims out one
+     * piece: walk-in 627 frames (12.54 s, the old walk's length; a light regrade of it,
+     * ~3 levels), idle 762 frames (15.24 s; last -> first frame 0.9988, an ordinary step
+     * is 0.9996). Walk end -> idle start 0.9979. If a clean export of each arrives, drop
+     * the trims. Before: "Bangie Walkin refined.mp4" and "Bangie Idle refined 2.mp4". */
+    { from: 'walk.mp4', to: 'video/walk.mp4', silent: true, trim: [16.60, 29.14], label: 'walk' },
+    { from: 'idle.mp4', to: 'video/idle.mp4', silent: true, trim: [0, 15.24],     label: 'idle' },
     { from: 'Bangie Profile refined.mp4',         to: 'video/profil.mp4',  silent: false, retag: false, label: 'profil' },
     { from: 'Bangie Product Explain refined.mp4', to: 'video/explain.mp4', silent: false, retag: false, label: 'explain' },
   ],
@@ -1180,9 +1215,9 @@ for (const artist of ARTISTS) {
       continue;
     }
 
-    process.stdout.write(`  > ${job.label.padEnd(8)} remuxing… `);
+    process.stdout.write(`  > ${job.label.padEnd(8)} ${job.trim ? `cutting ${job.trim.join('-')} s…` : 'remuxing…'} `);
     const t0 = Date.now();
-    const meta = remux(src, dst, job);
+    const meta = job.trim ? cut(src, dst, job) : remux(src, dst, job);
     const outSize = statSync(dst).size;
     totalIn += inSize; totalOut += outSize;
     report.push([job.label, inSize, outSize,

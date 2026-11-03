@@ -159,11 +159,12 @@ own start and duration:
 
 They all appear in one fixed box just above the subtitle band, on the right: 490 x 372 px,
 32 px from the right edge and 18 px above the band (`.talk-infotext` in `web/app.css`),
-measured from the user's annotated screenshot. An image is fitted inside it, sitting on its
-bottom edge, and simply appears and hides. It is driven from the **video's own
+measured from the user's annotated screenshot. An image is fitted inside it, sitting in its
+bottom-right corner (moved there from centred on the user's mark-up, 3 Nov 2026), and
+simply appears and hides. It is driven from the **video's own
 currentTime**, not a wall clock, so it stays in step if playback stalls and there are no
-timers to cancel on the way out. No artist has a list yet; `HANDOVER.md` → *Infotext* has
-how to add one.
+timers to cancel on the way out. Bangie has five (3 Nov 2026), timed from the designer's
+file names; `HANDOVER.md` → *Infotext* lists them and how to add a set.
 
 It replaced a placeholder "supers" card (`video.explain.overlay`, `Text1.png` blinking on a
 5 s/5 s loop), removed on 2 Nov 2026.
@@ -1073,7 +1074,12 @@ where it should be neutral) is taken out of her with matching channel gains, plu
 1.06 and saturation 1.10. Her hair, glasses and the jacket's grey-and-white pattern were
 checked at full size: no halo, nothing lifted.
 
-**Her idle is the editor's own re-cut** (`Bangie Idle refined 2.mp4`, 29.14 s), made the same
+**Superseded 3 Nov 2026: her walk-in and idle are now the user's re-edit**, cut by the
+pipeline out of one 61.16 s export that holds each twice with black between (`trim` on the
+`walk` and `idle` rows; walk-in 12.54 s, idle 15.24 s, loop 0.998, handover 0.998;
+`HANDOVER.md` has the detail). The two paragraphs below describe what it replaced.
+
+**Her idle was the editor's own re-cut** (`Bangie Idle refined 2.mp4`, 29.14 s), made the same
 day because the refined 7.62 s idle did not loop (0.779 SSIM last frame to first, in the edit
 itself; no frame in its second half came near the first). The re-cut closes: last → first
 0.987, against 0.997 for an ordinary step. Its backdrop was whitened in the edit, so it skips
@@ -1094,7 +1100,7 @@ where the local shift puts it; the tool's "### NEW SCRIPT ###" placeholders mark
 the editor's captions also leave uncovered, and were removed. Verified in the app against
 the review exports at seven points.
 
-**The editor's re-exported walk-in is not used yet.** `Bangie Walkin refined 2.mp4` (the
+**The editor's re-exported walk-in was never used.** `Bangie Walkin refined 2.mp4` (the
 background-shadow fix) was exported from the idle sequence: 29.14 s and 1457 frames like the
 idle, SSIM 0.998 against it, no walk-in in it. The app keeps the refined 12.54 s walk-in until
 a correct export replaces it; then point the `walk` row at it and re-run `media-sizes.mjs`.
@@ -1405,9 +1411,9 @@ own, and no Terokai Produk yet.
 | Maznah's captions are English only | `profile BM.txt` and `product BM.txt` exist beside the English ones and are deliberately unused || Maznah's profil/explain are still 4K | 2160x3840, as chosen — they are one-shot talks, not the attract loop. Her walk/idle/dance are 1296x2304 |
 | `Biografi Bangie Sub.mov` has finished downloading | 7 GB, in `premiere file/bangie/Edited/`. Previously an unusable partial; if it is her profile with burnt-in captions it would settle the "Bangie has no subtitles" row below |
 | ~~Bangie's idle loop does not close~~ | **done** — the editor's 29.14 s re-cut loops (0.987). See *Bangie's refined footage* |
-| Bangie's walk-in re-export | the shadow-fixed walk was exported from the idle sequence; the 12.54 s refined walk-in stays until a correct export |
+| ~~Bangie's walk-in re-export~~ | **done** (3 Nov 2026) — the user's re-edit, trimmed out of a 61 s export that held walk-in and idle twice. See *Bangie's refined footage* |
 | ~~Bangie's footage is on grey~~ | **done** (22 Oct 2026) — lifted to #F2F2F2 by `tools/refine-video.py`, and she is colour-graded |
-| ~~Bangie's supers card~~ | **removed** (2 Nov 2026) — replaced by **infotext**, built and waiting on the PNGs (`infotext1..N`) and timings for Maznah, Bangie and Johnny. See `HANDOVER.md` → *Infotext* |
+| ~~Bangie's supers card~~ | **removed** (2 Nov 2026) — replaced by **infotext**. Bangie's five images are in (3 Nov 2026); Maznah's and Johnny's sets are still to come. See `HANDOVER.md` → *Infotext* |
 | ~~Bangie has no subtitles~~ | **done** (2 Nov 2026) — the editor's English captions from Premiere, carried onto the refined cut by audio. See *Bangie's refined footage* |
 | Bangie's title block reads "???" | `Title Product Explore.png` ships with placeholder Motif/Teknik text |
 | Norhaiza keris info blocks | `18 Keris 1 Info.png` / `19 Keris 2 Info.png` are still generated placeholders. Norhaiza was accepted as done on 20 Oct 2026 with these in place |

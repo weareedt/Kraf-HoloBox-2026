@@ -410,8 +410,8 @@
       "honorific": "Tenunan Pua",
       "menuCard": "artists/bangie/menu/card.png",
       "menuPlate": "artists/bangie/menu/nameplate.png",
-      "_note_backdrop": "Measured by the transcode tool from the REFINED idle (22 Oct 2026): her grey studio backdrop was lifted to 240 by tools/refine-video.py, the same target as Maznah and Johnny (both #EFEFEF), and lands at #F2F2F2. It is also the page colour of her Terokai Produk panel; the pua photographs are full-bleed cloth with no white of their own, so nothing shows a box against it. Before the refine this was #FFFFFF over a mid-grey (~#928E8A to ~#B0A9A4) backdrop.",
-      "backdrop": "#F2F2F2",
+      "_note_backdrop": "Measured by the transcode tool from her idle. #EFF1F0 since 3 Nov 2026, from the user's re-edited idle (a light regrade, ~3 levels); it was #F2F2F2 from the refined idle of 22 Oct, whose grey studio backdrop tools/refine-video.py had lifted to 240, the same target as Maznah and Johnny (both #EFEFEF). It is also the page colour of her Terokai Produk panel; the pua photographs are full-bleed cloth with no white of their own, so nothing shows a box against it. Before the refine this was #FFFFFF over a mid-grey (~#928E8A to ~#B0A9A4) backdrop.",
+      "backdrop": "#EFF1F0",
       "_note_ui": "Per-artist button artwork, layered over the shared set. Two of the three carry labels no other artist has.",
       "ui": {
         "profile": "artists/bangie/ui/btn-profile.png",
@@ -451,7 +451,14 @@
           "fps": 50,
           "_note_srt": "English, from the editor's Iban translation, carried onto this cut the same way as the profile. 113 cues.",
           "srt": "artists/bangie/video/explain.srt",
-          "_note_infotext": "Waiting on artwork: 3-5 images (infotext1, infotext2, ...) on the pua motifs the client picks, each with a start time and how long it stays. Add them as \"infotext\": [{ \"image\": \"artists/bangie/infotext/infotext1.png\", \"atMs\": 18000, \"showMs\": 4000 }, ...]. The placeholder 5 s blinking supers card was removed on 2 Nov 2026."
+          "_note_infotext": "Timings are the designer's, written in the source file names as m.ss (e.g. 'Beji (0.37-0.42)' = 0:37-0:42), and each lands on the subtitle that names it: the whole pua ('0 - Title (0.2-0.7)') on 'this pattern here is the Tangga Beji pattern' 2.65 s, Beji 37.6 s, the Entepung tree 46.9 s, 'the pillar broke' 82.2 s, 'Beji and his followers' 97.5 s. 'Tree Broke (1.22)' has no end time, so it got the same 5 s as the others. Then each was held 2 s longer at the end, by request (7 s; start times unchanged): 2-9, 37-44, 46-53, 82-89, 96-103 s, no overlaps. The title (tall, 2400x4699) is staged at 380x744 and shows at 190x372 in the same bottom-right corner as the squares (3 Nov 2026).",
+          "infotext": [
+            { "image": "artists/bangie/infotext/infotext0.png", "atMs": 2000, "showMs": 7000 },
+            { "image": "artists/bangie/infotext/infotext1.png", "atMs": 37000, "showMs": 7000 },
+            { "image": "artists/bangie/infotext/infotext2.png", "atMs": 46000, "showMs": 7000 },
+            { "image": "artists/bangie/infotext/infotext3.png", "atMs": 82000, "showMs": 7000 },
+            { "image": "artists/bangie/infotext/infotext4.png", "atMs": 96000, "showMs": 7000 }
+          ]
         }
       },
       "products": [

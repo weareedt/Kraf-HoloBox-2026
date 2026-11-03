@@ -397,8 +397,11 @@ body.kiosk { cursor: none; }
    one fixed box, measured off the museum's mark-up over a screenshot (2 Nov 2026): the
    circled area is x 558-1048, y 595-967 on the 1080x1920 canvas, i.e. 490 px wide, 32 px
    in from the right, ending ~18 px above the subtitle band (which starts at 52%). Each
-   image is scaled to fit inside the box, centred, resting on its bottom edge so it sits
-   right above the subtitles whatever its shape. They simply appear and hide. */
+   image is scaled to fit inside the box and rests on its bottom-RIGHT corner, so it sits
+   right above the subtitles, near the screen edge, whatever its shape. Centred, Bangie's
+   square images sat 91 px in from the edge; the user's mark-up (3 Nov 2026) moved them
+   right, to ~1045-1058 px (measured: the marked frame spans screenshot x 388-611 on a
+   canvas 16-622 wide), which right-alignment gives at 1048. They simply appear and hide. */
 .talk-infotext {
   position: absolute;
   right: 32px;
@@ -416,7 +419,7 @@ body.kiosk { cursor: none; }
   width: 100%;
   height: 100%;
   object-fit: contain;
-  object-position: center bottom;
+  object-position: right bottom;
   opacity: 0;
 }
 .talk-infotext__img.is-on { opacity: 1; }
