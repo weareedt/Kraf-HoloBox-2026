@@ -22,6 +22,9 @@
  *   - otherwise `hotspotArt` on the product: a white glow ring on transparent, used as a
  *     MASK over a coloured box rather than as an image, so its colour can animate.
  *
+ * With `hotspotPulse: "blink"` on the product, a `button` marker drops the halo and the
+ * artwork itself blinks fast and swells 1.0 -> 1.1 (Bangie's yellow rectangles, 6 Nov 2026).
+ *
  * Either way the pulse is CSS keyframes on transform, opacity and background-color, so
  * it costs nothing per frame and keeps running whatever JavaScript is doing.
  *
@@ -53,9 +56,27 @@ export function mountHotspots({ product, url, assetInfo, els }) {
   const art = product.hotspotArt && assetInfo(product.hotspotArt).exists
     ? url(product.hotspotArt) : null;
 
+  /* Where a spot's numbers live. By default x,y (and w,h) are CANVAS pixels. A product
+     with `hotspotImage: [w, h]` gives them in its picture's own pixels instead — the
+     numbers read straight off the Photoshop document — and they are mapped onto where
+     that picture is actually drawn: `object-fit: contain`, centred, in the viewport box.
+     The box is read with offset* (layout pixels, untouched by the stage's scale-to-fit). */
+  let map = (x, y, s) => [x, y, s];
+  if (product.hotspotImage && els.viewport) {
+    const [iw, ih] = product.hotspotImage;
+    const v = els.viewport;
+    const k = Math.min(v.offsetWidth / iw, v.offsetHeight / ih);
+    const left = v.offsetLeft + (v.offsetWidth - iw * k) / 2;
+    const top = v.offsetTop + (v.offsetHeight - ih * k) / 2;
+    map = (x, y, s) => [left + x * k, top + y * k, s * k];
+  }
+
   // Without a declared size the image is laid out in the view box itself, scale 1.
-  const [zw, zh] = product.zoomSize ?? VIEW_BOX;
-  const scale = Math.min(VIEW_BOX[0] / zw, VIEW_BOX[1] / zh);
+  // A product may set its own box (`zoomBox`, design px): Bangie's details are smaller
+  // than Maznah's measured 730 x 1092, from the user's mark-up of 6 Nov 2026.
+  const box = product.zoomBox ?? VIEW_BOX;
+  const [zw, zh] = product.zoomSize ?? box;
+  const scale = Math.min(box[0] / zw, box[1] / zh);
 
   const cards = new Map();     // spot id -> { card, infos }
 
@@ -94,11 +115,16 @@ export function mountHotspots({ product, url, assetInfo, els }) {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'hotspot';
-    b.style.left = `${spot.x}px`;
-    b.style.top = `${spot.y}px`;
-    b.style.width = `${size}px`;
-    b.style.height = `${size}px`;
-    b.style.margin = `${-size / 2}px 0 0 ${-size / 2}px`;   // x,y is the CENTRE
+    // A spot may carry its own w,h (Bangie's rectangles differ in size); otherwise the
+    // product's square hotspotSize.
+    const [cx, cy, k] = map(spot.x, spot.y, 1);
+    const w = (spot.w ?? size) * k;
+    const h = (spot.h ?? size) * k;
+    b.style.left = `${cx}px`;
+    b.style.top = `${cy}px`;
+    b.style.width = `${w}px`;
+    b.style.height = `${h}px`;
+    b.style.margin = `${-h / 2}px 0 0 ${-w / 2}px`;   // x,y is the CENTRE
     b.setAttribute('aria-label', spot.label ?? spot.id);
 
     // Stagger the loop so three markers do not pulse in lockstep, which reads as a
@@ -106,16 +132,23 @@ export function mountHotspots({ product, url, assetInfo, els }) {
     const delay = `${(spots.indexOf(spot) * 0.22).toFixed(2)}s`;
 
     if (spot.button && assetInfo(spot.button).exists) {
-      b.classList.add('hotspot--art');
-      const halo = document.createElement('span');
-      halo.className = 'hotspot__halo';
       const face = document.createElement('img');
       face.className = 'hotspot__face';
       face.src = url(spot.button);
       face.alt = '';
       face.decoding = 'async';
-      halo.style.animationDelay = face.style.animationDelay = delay;
-      b.append(halo, face);
+      face.style.animationDelay = delay;
+      if (product.hotspotPulse === 'blink') {
+        // The artwork itself blinks and swells (Bangie's yellow rectangles); no halo.
+        b.classList.add('hotspot--blink');
+        b.append(face);
+      } else {
+        b.classList.add('hotspot--art');
+        const halo = document.createElement('span');
+        halo.className = 'hotspot__halo';
+        halo.style.animationDelay = delay;
+        b.append(halo, face);
+      }
     } else {
       const glow = document.createElement('span');
       glow.className = 'hotspot__glow';
@@ -146,16 +179,22 @@ export function mountHotspots({ product, url, assetInfo, els }) {
     ));
   }
 
+  // `hotspotsHideOnOpen`: the markers fade out while a detail is open and back when it
+  // closes (Bangie's blinking rectangles were distracting around her detail, 6 Nov 2026).
+  const hideMarkers = Boolean(product.hotspotsHideOnOpen);
+
   function open(id) {
     for (const [key, { card }] of cards) card.classList.toggle('is-on', key === id);
     openId = id;
     els.zoom.classList.add('is-open');
+    if (hideMarkers) els.layer.classList.add('is-hidden');
     playInfo(cards.get(id).infos);
   }
 
   function close() {
     openId = null;
     els.zoom.classList.remove('is-open');
+    els.layer.classList.remove('is-hidden');
     // Leave the picture in place until the fade has finished, or it vanishes instantly
     // and the fade has nothing to show.
     setTimeout(() => {
@@ -171,6 +210,7 @@ export function mountHotspots({ product, url, assetInfo, els }) {
     running = [];
     els.zoom.removeEventListener('click', onZoomClick);
     els.zoom.classList.remove('is-open');
+    els.layer.classList.remove('is-hidden');
     els.layer.innerHTML = '';
     els.zoom.innerHTML = '';
   };

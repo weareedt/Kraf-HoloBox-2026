@@ -312,6 +312,17 @@ body.kiosk { cursor: none; }
   height: 119px;
   z-index: 20;
 }
+/* ENG/MS subtitle toggle (talk screen): the back button's size and left edge, a small gap
+   below it. Its art is the same 316x357 as the back button's. */
+.btn-subs {
+  position: absolute;
+  top: 685px;
+  left: -6px;
+  width: 106px;
+  height: 119px;
+  z-index: 20;
+}
+.btn-subs[hidden] { display: none; }
 
 .zoom-btn { width: 112px; height: 127px; }
 
@@ -790,7 +801,11 @@ body.kiosk { cursor: none; }
   inset: 0;
   z-index: 18;
   pointer-events: none;      /* only the markers themselves are tappable */
+  transition: opacity .14s ease;   /* the zoom overlay's own fade */
 }
+/* `hotspotsHideOnOpen`: markers fade out while a detail is open. */
+.product-hotspots.is-hidden { opacity: 0; }
+.product-hotspots.is-hidden .hotspot { pointer-events: none; }
 
 .hotspot {
   position: absolute;
@@ -874,6 +889,15 @@ body.kiosk { cursor: none; }
   0%   { transform: scale(1);    opacity: .9; background-color: var(--hot-halo-a); }
   70%  { transform: scale(1.55); opacity: 0;  background-color: var(--hot-halo-b); }
   100% { transform: scale(1.55); opacity: 0;  background-color: var(--hot-halo-b); }
+}
+
+/* `hotspotPulse: "blink"` (Bangie's yellow rectangles, 6 Nov 2026): no halo; the artwork
+   itself blinks fast and swells 1.0 -> 1.1 and back, on a 0.6 s loop. Opacity never goes
+   below .3, so the frame always shows where the detail is. */
+.hotspot--blink .hotspot__face { animation: hotspot-blink .6s ease-in-out infinite; }
+@keyframes hotspot-blink {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.1); opacity: .3; }
 }
 
 /* The zoom-in overlay. Always present and always composited — hiding it with `display`

@@ -169,6 +169,24 @@ file names; `HANDOVER.md` → *Infotext* lists them and how to add a set.
 It replaced a placeholder "supers" card (`video.explain.overlay`, `Text1.png` blinking on a
 5 s/5 s loop), removed on 2 Nov 2026.
 
+### Subtitle language: ENG/MS toggle
+
+A talk clip with `srtMs` beside its `srt` gets a toggle button just under the back button
+(`#profile-subs-toggle`, `.btn-subs`: the back button's 106x119 at y 685-804, 18 px below
+it). Its art (`ui.subsMs` / `ui.subsEn`, 316x357 like the back button) is the language a
+tap switches TO: "MS" while English is showing, "ENG" while Malay is. A tap swaps the cue
+list and the line on screen changes language in place (measured: within 0.3 s, always the
+matching cue, both files sharing the same timestamps). A clip without `srtMs` shows no
+button and plays its English, whatever the visitor chose elsewhere.
+
+English at start-up. The choice is per visitor: it carries from Profil into Terangkan
+Produk, and resets to English when the idle timeout (180 s) returns the kiosk to the menu.
+Tested in the app on all of these (5 Nov 2026). Bangie, Maznah and Johnny have it on both
+talks (Maznah and Johnny since 6 Nov, their Malay a first-pass translation of their English
+cue by cue, to be corrected in Subtitle Edit); Samat and Norhaiza have English only. Giving
+another artist the toggle is a content operation: write the `.ms.srt` on the English
+timing and add `srtMs`.
+
 ### The main menu is a carousel
 
 `web/screens/menu.js`. Same idiom as the Pembuatan carousel — absolutely-positioned cards and
@@ -539,6 +557,17 @@ its view with its caption at the measured spot, scaling in over 0.2 s.
 
 Pulsing markers over a product, each opening a close-up. Maznah's basket has three — top,
 side and bottom — and a tap anywhere closes the view again.
+
+Bangie's whole pua (6 Nov 2026) uses three later options. `hotspotImage: [1212, 2400]`
+puts every spot's x,y (centre) and w,h in the picture's OWN pixels, mapped onto where it is
+drawn (`object-fit: contain` in the viewport box), so the numbers are the designer's
+Photoshop values: centre = X + W/2, Y + H/2, and w,h the rectangle PNG's size (10 px over
+the path, the stroke being centred on it). Per-spot `w`/`h` let markers differ in size.
+`hotspotPulse: "blink"` drops the halo and blinks the artwork itself (opacity 1 -> .3,
+scale 1 -> 1.1, 0.6 s). Measured in the app: all four within a pixel of the Photoshop paths.
+`zoomBox: [w, h]` overrides the 730 x 1092 view box for one product: Bangie's 692 px detail
+PNGs carry a glow margin round a 588 px card, and the user marked the card at 632 px, so
+the PNG is fitted into 744 (= 632 x 692/588). Measured: card 224-856 x 644-1276, centred.
 
 ```jsonc
 "hotspotArt": "…/hotspot.png",      // fallback marker, for a spot with no `button`

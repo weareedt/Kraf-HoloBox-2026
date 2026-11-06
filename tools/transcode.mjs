@@ -340,6 +340,11 @@ const ARTWORK = [
   /* Delivered inside Bangie's and Maznah's folders, byte-identical in both. Johnny
    * has no artwork of his own yet, so one copy becomes the shared default. */
   { from: `${MZN}/Button Product Explain.png`, to: '_shared/ui/btn-explain.png' },
+  /* Subtitle language toggle (5 Nov 2026), 316x357 like the back button. Each shows the
+   * language it switches TO: "MS" while English is on, "ENG" while Malay is on. Shared,
+   * because the toggle appears on any talk that has a Malay .srt (only Bangie's so far). */
+  { from: 'premiere file/bangie/product/toggle-ENG.png', to: '_shared/ui/btn-subs-en.png' },
+  { from: 'premiere file/bangie/product/toggle-MS.png',  to: '_shared/ui/btn-subs-ms.png' },
   { from: 'images/8 Title.png',                to: '_shared/title.png' },
   { from: 'images/9 Logo.png',                 to: '_shared/logo.png', key: '0xFFFFFF' },
   { from: 'images/4 Samat MainMenu.png',       to: 'samat/menu/card.png' },
@@ -402,12 +407,24 @@ const ARTWORK = [
    * They are only ever drawn into a 745x1445 design-pixel box, so even a 4K panel
    * cannot show more than ~1490x2890 real pixels. Capping the long edge at 2400
    * keeps a comfortable margin over that and drops each image to ~15 MB decoded. */
-  ...['Image0 TenunanPua', 'Image1', 'Image2', 'Image3', 'Image4'].map((name, i) => ({
-    from: `${ZUL}/${name}.png`,
+  /* view-0 is the designer's NEW base since 6 Nov 2026 (`product explore/newbase.png`,
+   * 1212x2400, opaque), in place of Edited/Image0 TenunanPua. It is already inside the cap,
+   * so it keeps its exact pixels, which matters: the hotspot rectangles are positioned in
+   * its own pixels (content.json `hotspotImage`). */
+  ...['product explore/newbase', 'Edited/Image1', 'Edited/Image2', 'Edited/Image3', 'Edited/Image4'].map((name, i) => ({
+    from: `premiere file/bangie/${name}.png`,
     to: `bangie/products/tenunan-pua/view-${i}.webp`,
     vf: "scale='min(1400,iw)':'min(2400,ih)':force_original_aspect_ratio=decrease:flags=lanczos",
     args: ['-quality', '90'],
   })),
+  /* Hotspots on view-0 (6 Nov 2026): the designer's yellow rectangles (each 10 px larger
+   * than its Photoshop path, the 10 px stroke being centred on it) and the 512x512 detail
+   * each opens. Copied as delivered. */
+  ...[['1 Beji', '1 - Beji'], ['2 Tree', '2 - Tree'], ['3 Tree Broke', '3 - Tree Broke'],
+      ['4 Beji Follower', '4 - BejiFollower']].flatMap(([rect, zoom], i) => [
+    { from: `premiere file/bangie/product explore/Rectangle ${rect}.png`, to: `bangie/products/tenunan-pua/rect-${i + 1}.png` },
+    { from: `premiere file/bangie/product explore/${zoom}.png`,           to: `bangie/products/tenunan-pua/zoom-${i + 1}.png` },
+  ]),
 
   // --- Maznah ---------------------------------------------------------------
   { from: `${MZN}/21 Maznah MainMenu.png`,        to: 'maznah/menu/card.png' },

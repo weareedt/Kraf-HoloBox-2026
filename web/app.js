@@ -28,6 +28,9 @@ let disposeScreen = null;
 let menuIdleSince = 0;
 /** The main-menu carousel; built once at boot and kept for the life of the page. */
 let menu = null;
+/** Subtitle language on the talk screen: 'en' or 'ms'. English at start-up; a visitor's
+ *  choice then holds across talks until the idle timeout hands the kiosk to the next one. */
+let subLang = 'en';
 
 const url = (rel) => CONTENT + String(rel).replace(/^\/+/, '');
 const assetInfo = (rel) => manifest?.assets?.[rel] ?? { bytes: 0, exists: false };
@@ -380,6 +383,27 @@ function mountInfotext(box, list) {
   };
 }
 
+/**
+ * The ENG/MS subtitle toggle. Shown only when the clip has BOTH languages, so an artist
+ * without a Malay .srt simply has no button. Each art image is the language a tap switches
+ * TO ("MS" while English is on). Swapping cue lists makes the band re-find its cue on the
+ * next frame, so the line on screen changes language in place.
+ */
+function mountSubsToggle(btn, band, tracks) {
+  const both = Boolean(tracks.en?.length && tracks.ms?.length);
+  const lang = both ? subLang : (tracks.en ? 'en' : 'ms');
+  const ui = manifest.ui ?? {};
+  const show = (l) => {
+    band.setCues(tracks[l] ?? []);
+    setButtonArt(btn, url(l === 'en' ? ui.subsMs : ui.subsEn));
+    btn.setAttribute('aria-label', l === 'en' ? 'Sarikata Bahasa Melayu' : 'English subtitles');
+  };
+  show(lang);
+  btn.hidden = !both;
+  btn.onclick = both ? () => { subLang = subLang === 'en' ? 'ms' : 'en'; show(subLang); } : null;
+  return { hide() { btn.hidden = true; btn.onclick = null; } };
+}
+
 async function enterTalk(artist, key) {
   leaveScreen();
   showScreen('profile');
@@ -391,16 +415,20 @@ async function enterTalk(artist, key) {
   const band = new SubtitleBand($('profile-subs'));
 
   const cfg = artist.video[key];
-  if (cfg.srt && assetInfo(cfg.srt).exists) {
-    try { band.setCues(await loadSrt(url(cfg.srt))); }
-    catch (e) { console.warn('subtitles unavailable', e); }
-  }
+  // English (`srt`) and, where the clip has one, Malay (`srtMs`) on the same timing.
+  const load = async (rel) => {
+    if (!rel || !assetInfo(rel).exists) return null;
+    try { return await loadSrt(url(rel)); }
+    catch (e) { console.warn('subtitles unavailable', rel, e); return null; }
+  };
+  const tracks = { en: await load(cfg.srt), ms: await load(cfg.srtMs) };
+  const subs = mountSubsToggle($('profile-subs-toggle'), band, tracks);
   const infotext = mountInfotext($('profile-infotext'), cfg.infotext);
 
   // A talk is a one-shot: hold the idle countdown for its duration.
   const release = idle.hold();
 
-  disposeScreen = () => { band.hide(); infotext.hide(); release(); };
+  disposeScreen = () => { band.hide(); subs.hide(); infotext.hide(); release(); };
 
   // Await only the FIRST FRAME, so the caller's fade can lift onto a painted picture.
   // Awaiting the whole clip here would hold the white veil up for the entire talk.
@@ -607,6 +635,7 @@ async function boot() {
   }
 
   idle = new IdleTimer(manifest.kiosk?.idleTimeoutMs ?? 90000, () => {
+    subLang = 'en';   // the next visitor starts in English
     if (activeScreen !== 'menu') goMenu();
   });
 

@@ -226,7 +226,7 @@ export async function mountProducts({ artist, products, manifest, url, assetInfo
     // product declares none, so a previous product's markers are always cleared.
     unspot = mountHotspots({
       product, url, assetInfo,
-      els: { layer: els.hotspots, zoom: els.zoom },
+      els: { layer: els.hotspots, zoom: els.zoom, viewport: els.viewport },
     });
 
     // Centre the product in the free space between the buttons. Done after the

@@ -127,6 +127,16 @@ video. The pipeline never overwrites a subtitle that is newer than its source (s
 subtitles). So: edit the project copy freely; to rebuild one from a changed source, make the
 source the newer file. They are tracked in git, so a correction is safe once committed.
 
+**From 5 Nov 2026 the user edits assets directly in `content/`** (subtitles, and other
+files as needed), because that is what the app shows and so the quickest to test; they keep
+their own copies elsewhere. GitHub is the save point; `HoloBox-media` is refreshed from
+`content/` only at the very end, for Drive. What that means for the pipeline: it skips any
+file in `content/` that is newer than its source, so an edit made there survives a normal
+`npm run prepare-assets`. It does NOT survive `prepare-assets:force` (everything except
+subtitles is rewritten), nor a later change to the source in `outer assets/` (the source
+becomes newer). So: no `--force`, and before re-running after touching a source, check
+`git status` / ask which `content/` files were edited by hand.
+
 ### The panel is a transparent LCD, which inverts two instincts
 
 Verified on the real hardware, and worth knowing before you grade anything:
@@ -227,9 +237,9 @@ Status as signed off on 20 Oct 2026:
 |---|---|---|---|---|
 | 1 | Samat | Wau | Profil +srt, 1 product (3D model), 4 steps | **done** |
 | 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | **done** |
-| 3 | Bangie | Tenunan Pua | Profil +srt, Terangkan +srt, 5 image products; refined footage | title block |
-| 4 | Maznah | Anyaman Mah Meri | Profil +srt, Terangkan +srt, turntable with 3 hotspots | almost done — new Terokai Produk design, infotext |
-| 5 | Johnny | Parang Ilang | Profil +srt, Terangkan +srt, 2 parang turntables with close-ups | mostly done — title block, infotext, blank frame 35 |
+| 3 | Bangie | Tenunan Pua | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), whole pua with 4 hotspots; refined footage | title block |
+| 4 | Maznah | Anyaman Mah Meri | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), turntable with 3 hotspots | almost done — new Terokai Produk design, infotext |
+| 5 | Johnny | Parang Ilang | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), 2 parang turntables with close-ups | mostly done — title block, infotext, blank frame 35 |
 
 Measured 19 Oct 2026, not recalled: every `.srt` in the project was checked for coverage and
 none has a gap over 12 s, so no talk has an unwritten passage left. The turntables were
@@ -268,6 +278,28 @@ talks in English in Premiere (`bangie.prproj`; watermarked review exports in
   (`01. DOCS/BANGIES_VIDEO_TRANSCRIPTION_with_BM.xlsx`, 29 Oct, which also adds Bahasa
   Melayu) has the right line, now in the source `profil EN.srt` (113 cues). The Premiere
   project still has the error, so fix it there before ever re-extracting.
+- **Client corrections and Malay subtitles (5 Nov 2026).** The client's amendments
+  (`outer assets/premiere file/bangie/BANGIE'S VIDEO TRANSCRIPTION amendment 3nov26
+  (semakan 4.11.26).xlsx`; sheet VIDEO 1 = Profil, VIDEO 2 = Terangkan; each entry's
+  correction is the coloured row under it) were typed into the English `.srt` in
+  `content/` by the user, with their own timing and line splits: 115 cues each. Do not
+  re-time to the workbook's column B. The Malay (`profil.ms.srt`, `explain.ms.srt`) is
+  column E's correction split onto exactly those cues, same timestamps. Lines to know:
+  - Profil 22, 51, 85, 90, 91, 98, 108: the user's English keeps lines the client's
+    correction dropped, so their Malay is column E's ORIGINAL (black) wording.
+  - Terangkan 45-46 ("I insisted I wouldn't use chemical dyes...") and 109-115 ("I created
+    the Tangga Beji motif based on my own understanding..."): no Malay anywhere in the
+    workbook; translated here. Have the museum check them.
+  - Terangkan 2 and 3 carry the SAME English line twice (the Malay splits it in two).
+  - Profil 56: the client's English says "In the past", its Malay "Sehingga kini" (until
+    now); column E was followed. Terangkan entries 5-6 were never corrected by the client.
+  - Spelling fixed in passing: tekat -> tekad (Profil 59), bewarna -> berwarna (Terangkan
+    56); "tidak perlu risau warnanya tidak akan luntur" (a double negative) -> "tanpa perlu
+    risau warnanya luntur" (Profil 78).
+- **ENG/MS subtitle toggle (5 Nov 2026)**, now also on Maznah's and Johnny's talks (6 Nov;
+  their Malay is a first-pass translation of their English, cue by cue on its timing, for
+  the user to correct). Tested in the app; how it behaves and how to give another artist
+  one: README → *Subtitle language*.
 - **Infotext** for Terangkan Produk: **all five images in, 3 Nov 2026** (the whole pua,
   Beji, Tree, Tree Broke, Beji Follower), tested in the app. See *Infotext* below.
 - **New cuts, refined (22 Oct 2026).** Walk-in, idle and both talks come from
@@ -287,6 +319,19 @@ talks in English in Premiere (`bangie.prproj`; watermarked review exports in
   menu. Her backdrop is re-measured as #EFF1F0. If clean single-clip exports arrive, drop
   the trims, delete the two files in `content/`, re-run the pipeline and `media-sizes.mjs`,
   and copy them into `HoloBox-media`.
+- **Terokai Produk redone (6 Nov 2026).** One picture, the designer's new base
+  (`outer assets/premiere file/bangie/product explore/newbase.png`, 1212x2400), with four
+  yellow rectangles that blink (0.6 s, 1.0 -> 1.1 swell) and open a detail centred, closed
+  by a tap anywhere, like Maznah's basket. The details were redesigned the same day: 692x692
+  PNGs, a card with a white rounded border (588 px) in a transparent glow, shown so the card
+  spans 632x632 design px, centred, as the user marked it (`zoomBox: [744, 744]`).
+  Positioned in the base's own pixels from
+  the user's Photoshop values (README → *Product hotspots*); measured in the app within a
+  pixel of them. The four close-up views and the right-hand rail are switched off
+  (`enabled: false`), at the user's request. Each rectangle opens the picture of what it
+  frames (checked: the first delivery had 1 and 2 swapped; the redesign fixed it). While a
+  detail is open the rectangles fade out and come back when it closes
+  (`hotspotsHideOnOpen`, Bangie only; Maznah's and Johnny's markers stay as they were).
 - Her title block is a placeholder ("Motif ??? / Teknik ???").
 
 ### Maznah — almost done

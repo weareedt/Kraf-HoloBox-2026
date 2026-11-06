@@ -1,451 +1,460 @@
 1
-00:00:00,150 --> 00:00:10,470
-I am Bangie anak Embol. Originally a native of Sungai Kain.
+00:00:00,150 --> 00:00:05,150
+I am Bangie anak Embol,
 
 2
-00:00:10,550 --> 00:00:20,220
-I come from a lineage of weavers from long ago. Starting from my grandparents back then.
+00:00:05,500 --> 00:00:11,500
+from Sungai Kain,
 
 3
-00:00:20,300 --> 00:00:27,520
-By the time I was 10 years old
+00:00:11,800 --> 00:00:16,800
+and I inherited the weaving
 
 4
-00:00:27,600 --> 00:00:30,990
-I already knew how to weave
+00:00:17,000 --> 00:00:22,153
+tradition from my grandmothers.
 
 5
-00:00:31,070 --> 00:00:33,470
-and I already knew how to tie patterns (ngebat).
+00:00:24,000 --> 00:00:27,000
+By the age of 10,
 
 6
-00:00:33,550 --> 00:00:36,420
-From then on, when I first started tying patterns (ngebat)
+00:00:27,600 --> 00:00:30,990
+I had already mastered weaving
 
 7
-00:00:36,500 --> 00:00:40,960
-I made a pua that wasn't too big,
+00:00:31,070 --> 00:00:33,470
+and motif tying (ngebat).
 
 8
-00:00:42,000 --> 00:00:44,920
-After that, the second and third time,
+00:00:33,550 --> 00:00:37,950
+When I first learned pattern tying (ngebat),
 
 9
-00:00:45,000 --> 00:00:47,920
-I made them bigger and bigger.
+00:00:38,000 --> 00:00:40,800
+I made a small Pua.
 
 10
-00:00:48,000 --> 00:00:50,920
-Back in the early days, I learned from my grandmother,
+00:00:42,000 --> 00:00:44,920
+For my second and third attempts,
 
 11
-00:00:51,000 --> 00:00:56,270
-because my mother passed away. I was an only child
+00:00:45,000 --> 00:00:47,920
+ I created larger pieces.
 
 12
-00:00:56,350 --> 00:00:59,870
-Because my mother passed away,
+00:00:48,000 --> 00:00:50,920
+I learned weaving from my grandmother.
 
 13
-00:00:59,950 --> 00:01:02,870
-I lived together with my grandmother.
+00:00:51,000 --> 00:00:56,270
+My mother had passed away, and I was also an only child.
 
 14
-00:01:02,950 --> 00:01:06,350
-Living together with me, she was the one who taught me how to weave.
+00:00:56,350 --> 00:00:59,870
+After my mother passed away,
 
 15
-00:01:06,900 --> 00:01:12,400
-So starting from the age of 10, I have been weaving, right up until now.
+00:00:59,950 --> 00:01:02,870
+I lived with my grandmother,
 
 16
-00:01:14,550 --> 00:01:18,420
-Besides pua kumbu, things like plaiting: plaiting mats,
+00:01:02,950 --> 00:01:06,350
+who taught me how to weave.
 
 17
-00:01:18,500 --> 00:01:22,960
-plaiting sun hats (tanggi); I can do them too
+00:01:06,900 --> 00:01:12,400
+I started weaving at the age of 10 and have continued doing so ever since.
 
 18
-00:01:23,450 --> 00:01:29,300
-After that, brocade weaving (nyungkit), extra-warp patterning (milih), and embroidery (nyulam).
+00:01:14,550 --> 00:01:18,420
+Besides weaving pua kumbu, I am also skilled in various traditional crafts,
 
 19
-00:01:29,380 --> 00:01:32,780
-Beyond that, all of our traditional Iban tasks around the longhouse,
+00:01:18,500 --> 00:01:22,960
+including mat and sun hat (tanggi) weaving,
 
 20
-00:01:32,860 --> 00:01:35,270
-I can do every single one
+00:01:23,450 --> 00:01:29,300
+supplementary weaving (nyungkit),
 
 21
-00:01:35,350 --> 00:01:40,270
-Because in my heart, even until now,
+00:01:29,380 --> 00:01:32,780
+additional thread patterning (milih),
 
 22
-00:01:40,350 --> 00:01:46,490
-I do not want these traditions to be forgotten among the Iban people.
+00:01:32,860 --> 00:01:35,270
+and embroidery (nyulam).
 
 23
-00:01:48,200 --> 00:01:56,920
-After learning pattern-tying (ngebat),
+00:01:35,350 --> 00:01:40,270
+I continue practising these traditional skills
 
 24
-00:01:57,000 --> 00:01:59,170
-I learn how to do nyungkit,
+00:01:40,350 --> 00:01:46,490
+to preserve Iban heritage for future generations.
 
 25
-00:01:59,250 --> 00:02:00,420
-plaiting (beranyam),
+00:01:48,200 --> 00:01:56,920
+After learning the motif-binding technique,
 
 26
-00:02:00,500 --> 00:02:04,570
-manggit, embroidering (nyulam), and milih,
+00:01:57,000 --> 00:01:59,170
+I also learned other techniques,
 
 27
-00:02:04,650 --> 00:02:06,970
-I can make them all.
+00:01:59,250 --> 00:02:00,420
+ including menyungkit (pattern lifting), weaving,
 
 28
-00:02:07,350 --> 00:02:09,620
-Because I share and teach,
+00:02:00,500 --> 00:02:04,570
+joining fabric, embroidery and arranging threads.
 
 29
-00:02:09,700 --> 00:02:12,050
-because back in those days, I had no schooling.
+00:02:04,650 --> 00:02:06,970
+I am able to perform all of these techniques.
 
 30
-00:02:12,130 --> 00:02:13,130
-I had no parents
+00:02:07,350 --> 00:02:09,620
+I share my knowledge and teach others
 
 31
-00:02:16,070 --> 00:02:17,670
-That is how I learned back then,
+00:02:09,700 --> 00:02:12,050
+because I never had the opportunity to attend school
 
 32
-00:02:17,750 --> 00:02:20,070
-so all of those crafts can be done by me.
+00:02:12,130 --> 00:02:13,130
+and had lost both my parents.
 
 33
-00:02:20,150 --> 00:02:23,150
-Every single tradition and skill of the Iban people
+00:02:16,070 --> 00:02:17,670
+That is how I learned from a young age
 
 34
-00:02:25,000 --> 00:02:27,920
-When I originally make a pua kumbu,
+00:02:17,750 --> 00:02:20,070
+and became skilled in making various
 
 35
-00:02:28,000 --> 00:02:30,870
-it comes from my dream,
+00:02:20,150 --> 00:02:23,150
+traditional Iban crafts.
 
 36
-00:02:30,950 --> 00:02:35,410
-which then enters into my thoughts and mind.
+00:02:25,000 --> 00:02:27,920
+Initially, my inspiration for
 
 37
-00:02:37,600 --> 00:02:39,950
-I do not copy other people's work, for example,
+00:02:28,000 --> 00:02:30,870
+creating pua kumbu came from
 
 38
-00:02:40,030 --> 00:02:42,670
-when I created the pattern Misna Raja Pun Kayu Kaya [Misna, King of the Tree of Wealth]
+00:02:30,950 --> 00:02:35,410
+dreams that stayed in my mind.
 
 39
-00:02:42,750 --> 00:02:44,200
-that was a pua from my dream.
+00:02:37,600 --> 00:02:39,950
+I do not copy other people's work.
 
 40
+00:02:40,030 --> 00:02:42,670
+For example, the Misna Raja Pun Kayu Kaya motif
+
+41
+00:02:42,750 --> 00:02:44,200
+was inspired by one of my own dreams.
+
+42
 00:02:44,280 --> 00:02:45,280
 After that,
 
-41
-00:02:45,360 --> 00:02:48,970
-I made the Buah Karap Merayong Nanga Panggau [The Karap Pattern Encircling the Mouth of Panggau]
-
-42
-00:02:49,050 --> 00:02:51,870
-That is another one of my dream pua—it cannot be matched,
-
 43
-00:02:51,950 --> 00:02:55,890
-and its name is very long, so that is all I will say about it.
+00:02:45,360 --> 00:02:48,970
+I created the Buah Karap Merayong Nanga Panggau motif,
 
 44
-00:02:59,700 --> 00:03:03,660
-So, when I first became a leader among the Pua Kumbu weavers
+00:02:49,050 --> 00:02:51,870
+which was also inspired by one of my dreams.
 
 45
-00:03:03,750 --> 00:03:08,050
-at the very beginning back then, because I was heading [the local chapter of] Saberkas
+00:02:51,950 --> 00:02:56,050
+As the name was very long, I decided to keep it as it was.
 
 46
-00:03:08,130 --> 00:03:13,670
-I brought together all the women of our longhouse to tie patterns (ngebat).
+00:02:59,700 --> 00:03:03,660
+When I first became a leader among pua kumbu weavers
 
 47
-00:03:13,750 --> 00:03:18,320
-Because pattern-tying wasn't just like how people did it in the past;
+00:03:03,750 --> 00:03:08,050
+through Saberkas, I gathered the women in our longhouse
 
 48
-00:03:18,400 --> 00:03:21,320
-I told them it could become a source of income.
+00:03:08,130 --> 00:03:13,670
+to practise ngebat (pattern-tying).
 
 49
+00:03:13,750 --> 00:03:18,320
+I explained that it was not merely a traditional practice
+
+50
+00:03:18,400 --> 00:03:21,320
+but could also provide a source of income.
+
+51
 00:03:21,400 --> 00:03:26,470
 So all the women in our longhouse joined in to tie patterns.
 
-50
-00:03:26,550 --> 00:03:31,090
-Then throughout all of Sungai Kain, Kapit,
-
-51
-00:03:31,170 --> 00:03:33,320
-whoever could tie patterns started doing so
-
 52
-00:03:33,400 --> 00:03:35,000
-That was my intention back then,
+00:03:26,550 --> 00:03:31,090
+The practice then spread throughout Sungai Kain,
 
 53
-00:03:35,080 --> 00:03:37,630
-so that this traditional heritage would not die out
+00:03:31,170 --> 00:03:33,320
+Kapit, with more women taking part.
 
 54
-00:03:37,710 --> 00:03:41,170
-Up until now, because back then
+00:03:33,400 --> 00:03:35,000
+My intention was to preserve this traditional heritage
 
 55
-00:03:41,250 --> 00:03:48,050
-many people bought directly from us in the longhouse
+00:03:35,080 --> 00:03:37,630
+and prevent it from disappearing.
 
 56
-00:03:48,130 --> 00:03:49,980
-whenever buyers came looking for pua.
+00:03:37,710 --> 00:03:41,170
+In the past,
 
 57
-00:03:50,060 --> 00:03:52,820
-That remains the target of my heart's intention,
+00:03:41,250 --> 00:03:48,050
+many buyers came directly to our longhouse
 
 58
-00:03:52,900 --> 00:03:53,950
-right up until today.
+00:03:48,130 --> 00:03:49,980
+to purchase Pua from us.
 
 59
-00:03:54,430 --> 00:03:57,970
-And then I went on to perform ngar [the mordanting/oil-treatment ritual].
+00:03:50,060 --> 00:03:52,820
+My desire to continue this effort
 
 60
-00:03:58,050 --> 00:04:01,870
-In the past, I didn't want to perform ngar. Ngar is difficult and exhausting.
+00:03:52,900 --> 00:03:53,950
+remains unchanged to this day.
 
 61
-00:04:01,950 --> 00:04:04,900
-But I had to, because otherwise it wouldn't work out
+00:03:55,500 --> 00:03:58,000
+I later continued with the ngar process,
 
 62
-00:04:04,980 --> 00:04:08,080
-people don't really want to buy chemical-dyed pua (pua selup).
+00:03:58,050 --> 00:04:01,870
+despite it being difficult and exhausting.
 
 63
-00:04:08,160 --> 00:04:09,720
-If it isn't treated with ngar,
+00:04:01,950 --> 00:04:04,900
+This process is essential for the natural red engkudu dye
 
 64
-00:04:09,800 --> 00:04:12,450
-the natural engkudu red dye won't bind or take color.
+00:04:04,980 --> 00:04:08,080
+to penetrate the threads properly.
 
 65
-00:04:12,850 --> 00:04:17,770
-So for that yellow color, that comes from my own discovery.
+00:04:08,160 --> 00:04:09,720
+Buyers also prefer Pua dyed with natural colourants
 
 66
-00:04:18,250 --> 00:04:21,170
-Because when we were working during the farming season,
+00:04:09,800 --> 00:04:12,450
+rather than synthetic dyes (Pua Selup).
 
 67
-00:04:21,250 --> 00:04:24,170
-I saw that wood was yellow, so I harvested it.
+00:04:12,850 --> 00:04:17,770
+The yellow dye was my own discovery during the farming season.
 
 68
-00:04:24,250 --> 00:04:26,900
-That became what people call the akar penawar landak.
+00:04:18,250 --> 00:04:21,170
+I found a yellow-coloured root
 
 69
-00:04:26,980 --> 00:04:30,970
-Why it is called akar penawar landak: when a porcupine has eaten [poisonous plants/fruit],
+00:04:21,250 --> 00:04:24,170
+known as akar penawar landak (porcupine cure).
 
 70
-00:04:31,050 --> 00:04:35,630
-it eats that root - that is why our ancestors back then called it as that.
+00:04:24,250 --> 00:04:26,900
+According to the elders, porcupines eat this root
 
 71
-00:04:36,700 --> 00:04:40,970
-So that is what we have been using right up until today, just like engkudu.
+00:04:26,980 --> 00:04:30,970
+after consuming poisonous plants or fruits.
 
 72
-00:04:41,050 --> 00:04:47,030
-That yellow one uses the porcupine antidote root (akar penawar landak).
+00:04:31,050 --> 00:04:35,630
+This is how it got its name.
 
 73
-00:04:47,400 --> 00:04:54,520
-That blue one, or what we call dark brown or black (celum), uses renggat or tarum.
+00:04:36,700 --> 00:04:40,970
+To this day, we still use natural dyes:
 
 74
-00:04:54,600 --> 00:04:57,520
-And that red one uses engkudu.
+00:04:41,050 --> 00:04:47,030
+akar penawar landak for yellow,
 
 75
-00:04:57,600 --> 00:05:01,620
-As for my pua, they can be washed.
+00:04:47,400 --> 00:04:54,520
+renggat or tarum for dark blue or black (celum),
 
 76
-00:05:01,700 --> 00:05:05,100
-Nowadays you can even soak them and they will hold up.
+00:04:54,600 --> 00:04:57,520
+and engkudu for red.
 
 77
-00:05:05,650 --> 00:05:10,870
-If its engkudu Pua for me, then it is made from engkudu.
+00:04:57,600 --> 00:05:01,620
+My woven Pua can also be washed or soaked
 
 78
-00:05:10,950 --> 00:05:16,236
-But if you mix it, of course it will turn out different.
+00:05:01,700 --> 00:05:05,100
+for 24 hours without the colours fading.
 
 79
-00:05:16,316 --> 00:05:22,750
-I would not be able to say for everyone else, I wouldn't want to lie.
+00:05:05,650 --> 00:05:10,870
+If I say that a Pua is dyed with engkudu, then engkudu is what I use.
 
 80
-00:05:25,950 --> 00:05:30,570
-So I was appointed as Adiguru [Master Craftsman] back then
+00:05:10,950 --> 00:05:16,236
+However, mixing it with other materials will produce a different result.
 
 81
-00:05:30,800 --> 00:05:36,470
-After I became Adiguru, I was designated  Tokoh Kraf Negara [National Craft Icon]
+00:05:16,316 --> 00:05:22,750
+I cannot speak on behalf of others, as I do not want to give inaccurate information.
 
 82
-00:05:36,550 --> 00:05:41,970
-So I am truly happy
+00:05:25,950 --> 00:05:30,570
+I was first appointed as an Adiguru Kraf (Mastercraftsmen)
 
 83
+00:05:30,800 --> 00:05:36,470
+before being recognised as a Tokoh Kraf Negara (National Mastercraftsmen).
+
+84
+00:05:36,550 --> 00:05:41,970
+I am truly grateful
+
+85
 00:05:42,050 --> 00:05:44,970
 - to everyone from Kraftangan Malaysia,
 
-84
-00:05:45,050 --> 00:05:47,970
-I am so pleased with them,
-
-85
-00:05:48,050 --> 00:05:52,820
-because they all have
-
 86
-00:05:52,900 --> 00:05:57,220
-given me recognition to strengthen my motivation,
+00:05:45,050 --> 00:05:47,970
+for this recognition.
 
 87
-00:05:57,300 --> 00:06:03,750
-encouraging me to teach all the women and men too
+00:05:48,050 --> 00:05:52,820
+It has motivated me
 
 88
-00:06:03,830 --> 00:06:06,970
-there is nothing wrong with men learning if they wish to learn.
+00:05:52,900 --> 00:05:57,220
+to continue teaching weaving
 
 89
-00:06:07,050 --> 00:06:09,720
-In the evenings after completing all their daily work.
+00:05:57,300 --> 00:06:03,750
+to both women and men,
 
 90
+00:06:03,830 --> 00:06:06,970
+there is nothing wrong with men learning
+
+91
+00:06:07,050 --> 00:06:09,720
+if they wish to learn.
+
+92
 00:06:09,800 --> 00:06:12,070
 That is what brings joy to my heart.
 
-91
-00:06:12,150 --> 00:06:16,650
-To the point that I am so happy to be invited here by all of you like this, my children.
-
-92
-00:06:17,700 --> 00:06:20,620
-My heart is at peace and filled with joy,
-
 93
-00:06:20,700 --> 00:06:22,040
-even as I have grown old
+00:06:12,150 --> 00:06:16,650
+I am delighted to be invited here by all of you.
 
 94
-00:06:22,550 --> 00:06:26,770
-From when I was still 40 years old back then,
+00:06:17,700 --> 00:06:20,620
+My heart feels at peace and filled with happiness,
 
 95
-00:06:26,850 --> 00:06:31,030
-right up until my 80s now.
+00:06:20,700 --> 00:06:22,040
+even in my old age.
 
 96
-00:06:34,550 --> 00:06:37,470
-So these are my words of advice,
+00:06:22,550 --> 00:06:26,770
+From the age of 40 until now,
 
 97
-00:06:37,550 --> 00:06:39,890
-because I am indeed old now.
+00:06:26,850 --> 00:06:31,030
+in my eighties.
 
 98
-00:06:40,300 --> 00:06:46,770
-So I hope that whoever - it is my heart's wish
+00:06:34,550 --> 00:06:37,470
+So these are my words of advice.
 
 99
-00:06:46,850 --> 00:06:52,420
-that they will take my place in the future to lead and guide all of our people
+00:06:37,550 --> 00:06:39,890
+As I grow older,
 
 100
-00:06:52,500 --> 00:06:57,200
-My grandchildren, my children, my lineage
+00:06:40,300 --> 00:06:46,770
+my hope is that future generations, including my children,
 
 101
-00:06:58,250 --> 00:07:02,650
-Everyone who wants to craft these textiles, I ask them to succeed me,
+00:06:46,850 --> 00:06:52,420
+ grandchildren and descendants, will carry on this legacy
 
 102
-00:07:02,730 --> 00:07:04,580
-because I may pass away in the future
+00:06:52,500 --> 00:06:57,200
+and continue to lead and guide our next generation.
 
 103
-00:07:04,660 --> 00:07:08,520
-so that there will be someone to take my place.
+00:06:58,250 --> 00:07:02,650
+I hope those interested in traditional crafts
 
 104
-00:07:08,600 --> 00:07:11,520
-Crafts like weaving, like pattern-tying (ngebat).
+00:07:02,730 --> 00:07:04,580
+will continue my role in passing down
 
 105
-00:07:11,600 --> 00:07:14,520
-As for ngar, if we do not receive a dream,
+00:07:04,660 --> 00:07:08,520
+the skills of weaving and pattern-tying (ngebat).
 
 106
-00:07:14,600 --> 00:07:17,520
-we cannot easily perform ngar.
+00:07:08,600 --> 00:07:11,520
+However, the ngar practice must not be performed
 
 107
-00:07:17,600 --> 00:07:20,520
-Those sacred practices cannot be treated carelessly.
+00:07:11,600 --> 00:07:14,520
+without guidance through dreams,
 
 108
-00:07:20,600 --> 00:07:23,520
-That is my heart's deepest wish: I am overjoyed
+00:07:14,600 --> 00:07:17,520
+we cannot easily perform ngar, as this sacred tradition
 
 109
-00:07:23,600 --> 00:07:26,520
-and I hope that others will carry this continuity forward
+00:07:17,600 --> 00:07:20,520
+must be respected and never treated lightly.
 
 110
-00:07:26,600 --> 00:07:32,120
-, so that the work of our women will never become extinct
+00:07:20,600 --> 00:07:23,520
+That is my heartfelt wish:
 
 111
-00:07:32,200 --> 00:07:38,170
-so that what has been held and preserved for so long will help enhance our living standards
+00:07:23,600 --> 00:07:26,520
+for future generations to preserve
 
 112
-00:07:38,250 --> 00:07:43,270
-increase our household income, and assist our husbands and sons.
+00:07:26,600 --> 00:07:32,120
+our women's traditional crafts
 
 113
+00:07:32,200 --> 00:07:38,170
+and prevent them from disappearing.
+
+114
+00:07:38,250 --> 00:07:43,270
+I hope this heritage will continue
+
+115
 00:07:43,350 --> 00:07:46,350
-That is what has been in my thoughts.
+to improve household income.
+
