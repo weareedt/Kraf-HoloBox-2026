@@ -77,6 +77,9 @@ export function mountHotspots({ product, url, assetInfo, els }) {
   const box = product.zoomBox ?? VIEW_BOX;
   const [zw, zh] = product.zoomSize ?? box;
   const scale = Math.min(box[0] / zw, box[1] / zh);
+  // `zoomOffset: [dx, dy]` (design px) moves the view off the canvas centre; translate()
+  // ahead of scale() acts in canvas pixels. Bangie's sits lower, its caption card above it.
+  const [ox, oy] = product.zoomOffset ?? [0, 0];
 
   const cards = new Map();     // spot id -> { card, infos }
 
@@ -85,7 +88,7 @@ export function mountHotspots({ product, url, assetInfo, els }) {
     card.className = 'product-zoom__card';
     card.style.width = `${zw}px`;
     card.style.height = `${zh}px`;
-    card.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    card.style.transform = `translate(calc(-50% + ${ox}px), calc(-50% + ${oy}px)) scale(${scale})`;
 
     const img = document.createElement('img');
     img.className = 'product-zoom__img';
@@ -105,6 +108,9 @@ export function mountHotspots({ product, url, assetInfo, els }) {
         el.decoding = 'async';
         el.style.left = `${i.x}px`;
         el.style.top = `${i.y}px`;
+        // Optional display width, in the same view-image pixels: for a card drawn at a
+        // higher resolution than it is shown (Bangie's, drawn 2x for the 4K panel).
+        if (i.w) el.style.width = `${i.w}px`;
         card.appendChild(el);
         return el;
       });
@@ -162,6 +168,41 @@ export function mountHotspots({ product, url, assetInfo, els }) {
       open(spot.id);
     });
     els.layer.appendChild(b);
+
+    /* `letter: { button, x, y }` -- a lettered button beside the marker, in the same
+     * coordinates, pulsing like Maznah's (face swell + halo) and opening the same detail,
+     * so a visitor who taps the letter rather than the rectangle still gets it (Bangie's
+     * A-F, 11 Nov 2026). Size: the product's `letterSize`, in those coordinates too.
+     * Halo colours: the product's `letterHalo: [from, to]`, else the shared brown/ochre. */
+    const L = spot.letter;
+    if (L?.button && assetInfo(L.button).exists && Number.isFinite(L.x) && Number.isFinite(L.y)) {
+      const lb = document.createElement('button');
+      lb.type = 'button';
+      lb.className = 'hotspot hotspot--art hotspot--letter';
+      const [lx, ly, lk] = map(L.x, L.y, 1);
+      const ls = (product.letterSize ?? size) * lk;
+      Object.assign(lb.style, {
+        left: `${lx}px`, top: `${ly}px`, width: `${ls}px`, height: `${ls}px`,
+        margin: `${-ls / 2}px 0 0 ${-ls / 2}px`,
+      });
+      if (Array.isArray(product.letterHalo)) {
+        lb.style.setProperty('--hot-halo-a', product.letterHalo[0]);
+        lb.style.setProperty('--hot-halo-b', product.letterHalo[1]);
+      }
+      lb.setAttribute('aria-label', spot.label ?? spot.id);
+      const halo = document.createElement('span');
+      halo.className = 'hotspot__halo';
+      halo.style.animationDelay = delay;
+      const face = document.createElement('img');
+      face.className = 'hotspot__face';
+      face.src = url(L.button);
+      face.alt = '';
+      face.decoding = 'async';
+      face.style.animationDelay = delay;
+      lb.append(halo, face);
+      lb.addEventListener('click', (e) => { e.stopPropagation(); open(spot.id); });
+      els.layer.appendChild(lb);    // after every rectangle so far: letters sit on top
+    }
   }
 
   let openId = null;

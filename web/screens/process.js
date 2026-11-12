@@ -11,6 +11,8 @@
  *     (15_SamatCreationStep.png) — each slide owns its band, so only the playing
  *     slide ever shows text and a neighbour's caption can never bleed across
  *   - the layout must be right for any number of steps, including one
+ *   - a step with a Malay .srt (`srtMs`) beside its English gets the ENG/MS toggle; the
+ *     language is the visitor's, shared with the talk screen (10 Nov 2026)
  */
 
 import { loadSrt, SubtitleBand } from '../lib/srt.js';
@@ -18,7 +20,7 @@ import { loadSrt, SubtitleBand } from '../lib/srt.js';
 const SPREAD = 470;   // px between neighbouring slide centres
 const SIDE_SCALE = 0.68;
 
-export async function mountProcess({ steps, manifest, url, assetInfo, idle, els }) {
+export async function mountProcess({ steps, manifest, url, assetInfo, idle, els, subLang, setButtonArt }) {
   const ordered = [...steps].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   // The old full-width band below the carousel is no longer used; captions now live
   // inside each slide. Keep the element hidden so nothing stale can appear there.
@@ -128,16 +130,44 @@ export async function mountProcess({ steps, manifest, url, assetInfo, idle, els 
 
   /* ---------------------------------------------------------- select */
 
+  const has = (rel) => Boolean(rel && assetInfo(rel).exists);
+  const bilingual = (step) => has(step.srt) && has(step.srtMs);
+
   async function loadCues(step) {
-    if (!step.srt || !assetInfo(step.srt).exists) return [];
-    if (cueCache.has(step.srt)) return cueCache.get(step.srt);
+    // Malay when the visitor chose it and this step has it; otherwise the English.
+    const rel = subLang?.get() === 'ms' && bilingual(step) ? step.srtMs : step.srt;
+    if (!has(rel)) return [];
+    if (cueCache.has(rel)) return cueCache.get(rel);
     try {
-      const cues = await loadSrt(url(step.srt));
-      cueCache.set(step.srt, cues);
+      const cues = await loadSrt(url(rel));
+      cueCache.set(rel, cues);
       return cues;
     } catch {
       return [];
     }
+  }
+
+  /* The ENG/MS toggle: shown while the selected step has both languages. Its art is the
+     language a tap switches TO, as on the talk screen. A tap swaps the selected slide's
+     cue list; the band re-finds its cue on the next frame, so the line changes in place. */
+  const toggle = els.subsToggle;
+  const ui = manifest.ui ?? {};
+  function refreshToggle() {
+    if (!toggle) return;
+    const on = bilingual(slides[index].step);
+    toggle.hidden = !on;
+    if (!on) return;
+    const en = subLang.get() !== 'ms';
+    setButtonArt?.(toggle, url(en ? ui.subsMs : ui.subsEn));
+    toggle.setAttribute('aria-label', en ? 'Sarikata Bahasa Melayu' : 'English subtitles');
+  }
+  if (toggle) {
+    toggle.onclick = async () => {
+      subLang.set(subLang.get() === 'ms' ? 'en' : 'ms');
+      refreshToggle();
+      const sel = slides[index];
+      sel.band.setCues(await loadCues(sel.step));
+    };
   }
 
   async function select(i) {
@@ -149,6 +179,7 @@ export async function mountProcess({ steps, manifest, url, assetInfo, idle, els 
     }
     index = i;
     layout();
+    refreshToggle();
 
     const { video, step } = slides[i];
     // Only the selected slide may show a caption; clear the rest first.
@@ -195,6 +226,7 @@ export async function mountProcess({ steps, manifest, url, assetInfo, idle, els 
       video.load();       // release the decoder rather than leaking it
     }
     for (const sl of slides) sl.band.hide();
+    if (toggle) { toggle.hidden = true; toggle.onclick = null; }
     els.carousel.innerHTML = '';
     els.dots.innerHTML = '';
   };

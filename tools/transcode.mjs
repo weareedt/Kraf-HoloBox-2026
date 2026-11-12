@@ -325,6 +325,75 @@ const ZUL = 'premiere file/bangie/Edited';
 const MZN = 'premiere file/maznah/export for claude';
 const MZV = 'premiere file/maznah/product rotate/view preview';
 const JHN = 'premiere file/johnny';
+// The museum's latest product title blocks (12 Nov 2026), "Product Title - <name>.png".
+const NEWT = 'premiere file/new pngs/Product Title -';
+
+/* Intro videos: re-encoded with a backdrop grade (BT.709 pinned both ways, x264 CRF 17,
+ * no audio), so a render's white lands on the artist's page colour (their `backdrop`).
+ * `lut` gives the lutrgb expression for one channel's target value, so a slightly tinted
+ * page (Bangie's #EFF1F0) is matched exactly; `extra` runs after it, in RGB. */
+const introGrade = (lut, [r, g, b], extra = '') => ({
+  vf: 'scale=in_color_matrix=bt709:in_range=tv:out_range=pc,format=rgb24,'
+    + `lutrgb=r='${lut(r, 0)}':g='${lut(g, 1)}':b='${lut(b, 2)}'`
+    + (extra ? `,${extra}` : '')
+    + ',scale=out_color_matrix=bt709:out_range=tv,format=yuv420p',
+  args: ['-an', '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p',
+    '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-color_range', 'tv',
+    '-movflags', '+faststart'],
+});
+/** A monotone curve (Fritsch-Carlson cubic) through [in, out] knots, flat at the last
+ *  knot's output above it, written as a lutrgb expression: linear between samples every
+ *  8 levels (under 1 level off the cubic). */
+function curveExpr(knots) {
+  const xs = knots.map((k) => k[0]), ys = knots.map((k) => k[1]), n = knots.length;
+  const d = xs.slice(1).map((x, i) => (ys[i + 1] - ys[i]) / (x - xs[i]));
+  const m = xs.map((_, i) => (i === 0 ? d[0] : i === n - 1 ? 0
+    : d[i - 1] * d[i] <= 0 ? 0 : (2 * d[i - 1] * d[i]) / (d[i - 1] + d[i])));
+  const f = (v) => {
+    if (v >= xs[n - 1]) return ys[n - 1];
+    let i = 0;
+    while (v > xs[i + 1]) i++;
+    const h = xs[i + 1] - xs[i], t = (v - xs[i]) / h;
+    return (2 * t ** 3 - 3 * t ** 2 + 1) * ys[i] + (t ** 3 - 2 * t ** 2 + t) * h * m[i]
+      + (-2 * t ** 3 + 3 * t ** 2) * ys[i + 1] + (t ** 3 - t ** 2) * h * m[i + 1];
+  };
+  const pts = [];
+  for (let v = 0; v < xs[n - 1]; v += 8) pts.push([v, f(v)]);
+  pts.push([xs[n - 1], ys[n - 1]]);
+  let expr = String(ys[n - 1]);
+  for (let i = pts.length - 2; i >= 0; i--) {
+    const [x0, y0] = pts[i], [x1, y1] = pts[i + 1];
+    const s = (y1 - y0) / (x1 - x0);
+    expr = `if(lt(val,${x1}),${y0.toFixed(2)}+(val-${x0})*${s.toFixed(4)},${expr})`;
+  }
+  return expr;
+}
+// Bangie's render: its cloth is a washed-out pink beside the explore photo (user, 10 Nov
+// 2026: "brighter red, similar to the first frame"), and its backdrop is not clipped but
+// noisy, 242-254 (median 252), with darker edge rows; her page is #EFF1F0 (239,241,240).
+// Measured (k-means, 4 colours, on the render at frame 100 -- fully unrolled -- and on
+// view-0), darkest to lightest, RGB:
+//   render  (126,86,83)  (178,120,114)  (205,167,164)  (243,213,208)   median sat 54
+//   photo   (100,42,28)  (155,98,80)    (209,157,137)  (249,211,194)   median sat 102
+// The weaves differ, so the colours are paired by rank and each channel gets a monotone
+// curve through the pairs, flat at the page colour from 244 up (the backdrop). The photo's
+// light motif is R 249, above the page's 239; a per-channel curve cannot tell it from the
+// backdrop in R, so it lands just under 239 -- the one place it stays short of the photo.
+const BANGIE_INTRO_KNOTS = [
+  [[0, 0], [126, 100], [178, 155], [205, 209]],          // R
+  [[0, 0], [86, 42], [120, 98], [167, 157], [213, 211]], // G
+  [[0, 0], [83, 28], [114, 80], [164, 137], [208, 194]], // B
+];
+const BANGIE_INTRO_LUT = (to, ch) => curveExpr([...BANGIE_INTRO_KNOTS[ch], [244, to]]);
+const BANGIE_PAGE = [0xEF, 0xF1, 0xF0];   // decodes as (239,242,241): no 8-bit tv-range YUV code decodes to #EFF1F0 exactly; this is as close as the format allows (worked through BT.709, matches Chrome)
+// Specks rendered into her backdrop, measured in every frame: two dots under where the
+// fringe lands (x 489-517, y 1992-2007; frames 0-97, the fringe reaches them at 98) and
+// one at 764,1278 (frames 0-67, before the cloth covers it). Painted the page colour only
+// in those frames, when their box holds nothing but backdrop and the speck.
+const BANGIE_INTRO_SPECKS = [
+  "drawbox=x=485:y=1988:w=36:h=24:color=0xEFF1F0:t=fill:enable='lte(n,97)'",
+  "drawbox=x=760:y=1274:w=12:h=14:color=0xEFF1F0:t=fill:enable='lte(n,67)'",
+].join(',');
 
 const ARTWORK = [
   { from: 'images/1 Button Back.png',          to: '_shared/ui/btn-back.png' },
@@ -345,6 +414,45 @@ const ARTWORK = [
    * because the toggle appears on any talk that has a Malay .srt (only Bangie's so far). */
   { from: 'premiere file/bangie/product/toggle-ENG.png', to: '_shared/ui/btn-subs-en.png' },
   { from: 'premiere file/bangie/product/toggle-MS.png',  to: '_shared/ui/btn-subs-ms.png' },
+  /* The drag/scale tutorial shown when a product panel opens (10 Nov 2026): two hands
+   * (512 px) and the square that grows behind the scale hand (460 = a 440 px path and its
+   * 20 px stroke). See web/screens/tutorial.js. */
+  { from: 'premiere file/new pngs/rotate-here.png',   to: '_shared/ui/tutorial-rotate.png' },
+  { from: 'premiere file/new pngs/scale-here.png',    to: '_shared/ui/tutorial-scale.png' },
+  { from: 'premiere file/new pngs/RectScaleHere.png', to: '_shared/ui/tutorial-rect.png' },
+
+  /* Product intros (10 Nov 2026): generated videos of the product assembling, played before
+   * the panel shows the product. Silent by design: the audio track is dropped (Maznah's was
+   * -91 dB anyway); the picture is copied untouched. Under video/, so they ship with the
+   * other videos (HoloBox-media), not in git. */
+  // Graded and de-specked (user, 10 Nov 2026: "apply what was done for Maznah"); see
+  // BANGIE_INTRO_LUT / BANGIE_INTRO_SPECKS above for the measurements.
+  { from: 'premiere file/intro/Bangie Pua.mp4',   to: 'bangie/video/intro.mp4',
+    ...introGrade(BANGIE_INTRO_LUT, BANGIE_PAGE, BANGIE_INTRO_SPECKS) },
+  // Graded, not keyed (user, 10 Nov 2026): the render's backdrop is clipped flat at 255
+  // and the page (and her turntable, transparent round the basket) is #EFEFEF = 239, so the
+  // video showed as a white box. A highlight-only curve takes 255 exactly to 239 and leaves
+  // everything below 192 untouched (soft knee: f(x) = x - 16((x-192)/63)^2 above it, slope
+  // 1 at the knee, still 0.5 at the top, so it stays monotonic and the basket's soft edges
+  // grade smoothly into the backdrop -- no halo, which a key would risk). BT.709 pinned on
+  // both conversions; 239 encodes as tv-range Y 221, which decodes back to 239.
+  { from: 'premiere file/intro/Maznah Bakul.mp4', to: 'maznah/video/intro.mp4',
+    vf: "scale=in_color_matrix=bt709:in_range=tv:out_range=pc,format=rgb24,"
+      + "lutrgb=r='if(gt(val,192),val-16*pow((val-192)/63,2),val)'"
+      + ":g='if(gt(val,192),val-16*pow((val-192)/63,2),val)'"
+      + ":b='if(gt(val,192),val-16*pow((val-192)/63,2),val)',"
+      + 'scale=out_color_matrix=bt709:out_range=tv,format=yuv420p',
+    args: ['-an', '-c:v', 'libx264', '-preset', 'slow', '-crf', '17', '-pix_fmt', 'yuv420p',
+      '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-color_range', 'tv',
+      '-movflags', '+faststart'] },
+  /* Johnny's draw-the-parang swap. Both PNGs are 1080x2048 in the sheathed turntable's own
+   * frame. The sheath is used as delivered (it matches frame 0's sheath to 2.8 levels). The
+   * FadeHide layer becomes the sheath's MASK, so it hides the sheath only, never the blade:
+   * alpha inverted (visible = not faded), and its soft edge (rows 596-700) moved down 1090 px
+   * to sit just under the seated sheath (whose bottom is row 1685). */
+  { from: 'premiere file/intro/Parang SarungOnly.png', to: 'johnny/products/full-parang/sheath.png' },
+  { from: 'premiere file/intro/Parang FadeHide-Sarung.png', to: 'johnny/products/full-parang/sheath-mask.png',
+    vf: 'format=rgba,lutrgb=r=255:g=255:b=255:a=negval,crop=1080:958:0:0,pad=1080:2048:0:1090:color=white@1,format=rgba' },
   { from: 'images/8 Title.png',                to: '_shared/title.png' },
   { from: 'images/9 Logo.png',                 to: '_shared/logo.png', key: '0xFFFFFF' },
   { from: 'images/4 Samat MainMenu.png',       to: 'samat/menu/card.png' },
@@ -355,10 +463,11 @@ const ARTWORK = [
   { from: 'images/14 Norhaiza Button MainMenu.png', to: 'norhaiza/menu/nameplate.png' },
   { from: 'images/16 Keris Type 1.png',             to: 'norhaiza/products/keris-1/icon.png' },
   { from: 'images/17 Keris Type 2.png',             to: 'norhaiza/products/keris-2/icon.png' },
-  // Title/detail blocks are IMAGES, designed by the museum. These two start life as
-  // placeholders generated for the build; replace the files in outer assets and re-run.
-  { from: 'images/18 Keris 1 Title.png',            to: 'norhaiza/products/keris-1/info.png' },
-  { from: 'images/19 Keris 2 Title.png',            to: 'norhaiza/products/keris-2/info.png' },
+  // Title/detail blocks are IMAGES, designed by the museum: the latest set, one per
+  // product, 900x330, from "premiere file/new pngs" (12 Nov 2026; replaced the keris
+  // placeholders, Bangie's and Maznah's "???" blocks, and gave the Wau and parang theirs).
+  { from: `${NEWT} Keris 1.png`, to: 'norhaiza/products/keris-1/info.png' },
+  { from: `${NEWT} Keris 2.png`, to: 'norhaiza/products/keris-2/info.png' },
 
   // Product thumbnail. Only surfaces in the rail (2+ products) or behind a missing
   // model, so it is a convenience rather than load-bearing. Cropped from the old
@@ -368,6 +477,8 @@ const ARTWORK = [
     to: 'samat/products/wau-bulan/thumb.webp',
     vf: 'crop=740:920:62:400,scale=560:-1:flags=lanczos,colorkey=0xFFFFFF:0.12:0.06,format=rgba',
   },
+  // The Wau's title block (12 Nov 2026; before it, plain text).
+  { from: `${NEWT} Wau.png`, to: 'samat/products/wau-bulan/info.png' },
 
   // --- Bangie ---------------------------------------------------------------
   // He ships his own stage buttons, because two of the three are labels no other
@@ -379,7 +490,7 @@ const ARTWORK = [
   { from: `${ZUL}/Button Product Explain.png`, to: 'bangie/ui/btn-explain.png' },
   { from: `${ZUL}/Button Product Explore.png`, to: 'bangie/ui/btn-product.png' },
   // One designed title block, shared by all five views of the cloth.
-  { from: `${ZUL}/Title Product Explore.png`,  to: 'bangie/products/tenunan-pua/info.png' },
+  { from: `${NEWT} Pua.png`,    to: 'bangie/products/tenunan-pua/info.png' },
   // Infotext for Terangkan Produk: 512x512 opaque crops of the pua, the motif framed in
   // yellow. The source names carry the designer's timing (m.ss) — the manifest's atMs/showMs
   // are taken from them. "0 - Title" is the whole pua, opaque, 2400x4699 (28 MB): in the
@@ -420,11 +531,30 @@ const ARTWORK = [
   /* Hotspots on view-0 (6 Nov 2026): the designer's yellow rectangles (each 10 px larger
    * than its Photoshop path, the 10 px stroke being centred on it) and the 512x512 detail
    * each opens. Copied as delivered. */
+  // 5 and 6 (Anai-anai, Village Community) are cut from the base by
+  // tools/make-bangie-details.py, in the designer's frame, rather than designed.
   ...[['1 Beji', '1 - Beji'], ['2 Tree', '2 - Tree'], ['3 Tree Broke', '3 - Tree Broke'],
-      ['4 Beji Follower', '4 - BejiFollower']].flatMap(([rect, zoom], i) => [
+      ['4 Beji Follower', '4 - BejiFollower'], ['5 Anai-anai', '5 - Anai-anai'],
+      ['6 Village Community', '6 - VillageCommunity']].flatMap(([rect, zoom], i) => [
     { from: `premiere file/bangie/product explore/Rectangle ${rect}.png`, to: `bangie/products/tenunan-pua/rect-${i + 1}.png` },
     { from: `premiere file/bangie/product explore/${zoom}.png`,           to: `bangie/products/tenunan-pua/zoom-${i + 1}.png` },
+    // The caption card under each detail, drawn by tools/make-caption-cards.py.
+    { from: `premiere file/bangie/product explore/captions/caption-${i + 1}.png`, to: `bangie/products/tenunan-pua/caption-${i + 1}.png` },
   ]),
+  /* Lettered A-F buttons beside the rectangles (11 Nov 2026), the shared letter art
+   * recoloured: the supplied ochre (182,130,61) sits inside the cloth's own browns and was
+   * hard to pick out. The user wanted it warm (blue was "too different"), so it is AMBER
+   * (240,140,20), the hotspot glow's own amber: rendered on the cloth against ochre,
+   * orange-red, golden orange and the rectangles' yellow, it stood out best -- WCAG
+   * contrast 4.48 against the dark red ground (ochre 3.31), white letter on it 2.48
+   * (gold/yellow 1.6-1.9). Each channel is mapped linearly with white fixed, so the
+   * letters stay exactly white and the anti-aliased edges keep their blend:
+   * out = 255 - (255 - in) x (255 - target) / (255 - ochre). RGBA pinned. */
+  ...'abcdef'.split('').map((k) => ({
+    from: `images/button ${k}.png`, to: `bangie/products/tenunan-pua/letter-${k}.png`,
+    vf: "format=rgba,lutrgb=r='255-(255-val)*15/73':g='255-(255-val)*115/125':b='255-(255-val)*235/194'",
+    args: ['-pix_fmt', 'rgba'],
+  })),
 
   // --- Maznah ---------------------------------------------------------------
   { from: `${MZN}/21 Maznah MainMenu.png`,        to: 'maznah/menu/card.png' },
@@ -434,7 +564,7 @@ const ARTWORK = [
   // Staged ready for when the Terokai Produk assets arrive. Until `products` has
   // entries in content.json the button is not built, so these sit unused.
   { from: `${MZN}/Button Product Explore.png`,    to: 'maznah/ui/btn-product.png' },
-  { from: `${MZN}/Title Product Explore.png`,     to: 'maznah/products/bakul/info.png' },
+  { from: `${NEWT} Bakul.png`,  to: 'maznah/products/bakul/info.png' },
 
   /* Terokai Produk hotspots: the pulsing marker and the three zoom-in views it opens.
    * The marker is a white glow ring on transparent, so it is tinted in CSS rather than
@@ -469,6 +599,8 @@ const ARTWORK = [
   })),
 
   // --- Johnny -------------------------------------------------------------
+  // One title block, shared by both parang (12 Nov 2026).
+  { from: `${NEWT} Parang.png`, to: 'johnny/products/info.png' },
   // Menu card and name plate, delivered late. Both match the sizes the other four artists
   // use exactly (749x1080 card, 903x468 plate), so his card finally carries his name and
   // the carousel row lines up without the aspect-matched placeholder crop.

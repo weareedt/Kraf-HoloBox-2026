@@ -171,6 +171,16 @@ It replaced a placeholder "supers" card (`video.explain.overlay`, `Text1.png` bl
 
 ### Subtitle language: ENG/MS toggle
 
+**Both at once instead (Bangie, 11 Nov 2026, the client's request).** An artist with
+`"subtitles": "both"` gets no toggle. Her talks show Malay on top in the band's regular type
+and English under it in italic at 70% of that size (26.6 px, 12 Nov 2026), set close under
+the Malay with a 4 px margin and a tighter line box (`DualSubtitleBand` in
+`web/lib/srt.js`; the band is 137 px tall where it was 159). Each
+line runs from its own file (`srtMs`, `srt`), so the two need not share cues; the band shows
+while either has text. Checked in the app on her Profil: "Saya Bangie anak Embol," over
+"I am Bangie anak Embol," (normal / italic), toggle hidden. Maznah's talk afterwards still
+had one line and its toggle. Remove the key to go back to the toggle.
+
 A talk clip with `srtMs` beside its `srt` gets a toggle button just under the back button
 (`#profile-subs-toggle`, `.btn-subs`: the back button's 106x119 at y 685-804, 18 px below
 it). Its art (`ui.subsMs` / `ui.subsEn`, 316x357 like the back button) is the language a
@@ -183,7 +193,17 @@ English at start-up. The choice is per visitor: it carries from Profil into Tera
 Produk, and resets to English when the idle timeout (180 s) returns the kiosk to the menu.
 Tested in the app on all of these (5 Nov 2026). Bangie, Maznah and Johnny have it on both
 talks (Maznah and Johnny since 6 Nov, their Malay a first-pass translation of their English
-cue by cue, to be corrected in Subtitle Edit); Samat and Norhaiza have English only. Giving
+cue by cue, to be corrected in Subtitle Edit); Samat and Norhaiza have it on their Profil
+since 10 Nov (the same kind of first pass; empty English cues stay empty).
+
+Pembuatan has the toggle too (10 Nov): a step with `srtMs` beside its `srt` shows it, and
+the same visitor language applies there. Norhaiza's ten steps have Malay; Samat's steps
+have no subtitle files at all (their text is burnt into the video), so his Pembuatan has
+no toggle. On that screen the pair is placed from the user's mark-up: toggle on top
+(face 8-88 x 488-567), back under it (591-670), as 100x113 elements (#process-subs-toggle,
+#process-back); the talk screen keeps its own placement. The same mark-up enlarged the
+active video card to 912 px (from 800; measured 84-996 x 692-1228) and lowered the dots to
+top 1290 (from 1262). Giving
 another artist the toggle is a content operation: write the `.ms.srt` on the English
 timing and add `srtMs`.
 
@@ -553,10 +573,238 @@ matched its PNG to within 2 px). The zoom views are 1334x2000 and opaque, like h
 `zoomSize` and the view box are shared. Checked in the app: each of the five markers opens
 its view with its caption at the measured spot, scaling in over 0.2 s.
 
+### Drag/scale hint (`web/screens/tutorial.js`)
+
+A 4 s hint when a product panel opens (10 Nov 2026), 2 s per part, from the designer's tap
+icons (`outer assets/premiere file/tap icon/`, staged as `_shared/ui/tutorial-*.png`).
+Fades in in 0.15 s; the rotate hand slides 50 px each side of the product's centre, linear,
+a full sweep every 0.75 s; at 1.9-2.1 s it crossfades to the scale hand, static, over a
+square that grows 1x -> 2x about its centre, ease-out, every 0.75 s; fades out at 3.8-4.0 s
+and removes itself. Sizes are the icon document at 0.2 (the drawn hands ~88 px, the square
+92), halved at the user's request from a first version at 0.4 with a 100 px slide over 3 s;
+the scale hand sits 165,137 document px from the square's centre, as in the PSD. Each image
+is shown at its own pixel size x 0.2: the glow versions of 10 Nov (660 / 618 / 598 px files)
+pad the canvas evenly round the same artwork, so the hands and square keep their size and
+place and only gain the glow (measured in the app against the first, glowless set).
+
+Which parts play comes from the product's controls, not the artist: `drag` shows the rotate
+hand, `pinch` the scale hand; one alone holds for the whole 4 s; neither, nothing. So Samat
+and Norhaiza get both, Maznah and Johnny the rotate hand only, Bangie (a still picture)
+none. It plays once per visit to the panel (not on every product switch), centred where the
+product is drawn. **All input is locked while it plays** (12 Nov 2026, every artist): a
+transparent sheet over the whole screen (`.input-block`, the intros' own) takes every
+touch, back button included, until it ends. It used to fade out at a touch on the product;
+now it always runs its 4 s. Tested with a real tap on the back button mid-hint: ignored,
+and the block was gone once it ended. Checked by seeking its
+animations: opacity, hand offset and square scale at each moment match the brief.
+
+### Product intros and the parang's draw (`web/screens/intro.js`, `products.js`)
+
+Added 10 Nov 2026 from `outer assets/premiere file/intro/`.
+
+**Intro videos (Bangie, Maznah).** `product.intro = { src, box }` plays a short video once,
+muted, when the products panel opens, before the drag/scale hint. The pipeline stages the
+video with `-an` (no audio track at all) and `-c:v copy` (Bangie 150 frames, Maznah 154). The
+video's LAST frame is laid over the product's own first picture, so when it ends the real
+product takes over in place. `box` is the whole video frame in that picture's own pixels
+(x, y, w, h). The app reads where the picture is actually drawn off the live canvas or img,
+so the video follows any layout.
+- **Maznah:** template-matched (her turntable frame 0 in the video's last frame: scale
+  0.635, score 0.75).
+- **Bangie:** registered by the cloth's outline (1.240 base px per video px, top edges
+  together). The video is a render whose weave is NOT the photo's, so a straight cut showed
+  the pattern change. At the user's request it ends through solid white instead
+  (`intro.endFade: "white"`): white up over the screen (under the title and back button),
+  product swapped in behind it, white down, each half `kiosk.fadeMs` (420 ms) unless `intro.endFadeMs` is set. Measured in
+  the app: 0 -> 1 -> 0 over ~0.85 s, starting as the video ends.
+
+- **Maznah's backdrop is graded to the page.** The render's backdrop is clipped flat at 255,
+  so it showed as a white box on the page's #EFEFEF (239). Her turntable is transparent
+  round the basket, so it sits on the page too. The pipeline row re-encodes the video
+  (x264 CRF 17, BT.709 pinned both ways) through a highlight-only curve:
+  `f(x) = x - 16((x-192)/63)^2` above 192, identity below. That takes 255 exactly to 239
+  with no kink at the knee, and edge pixels grade smoothly, so there is no keying halo.
+  Measured:
+  - Chrome decodes the backdrop as 239 at every corner, the same as the page.
+  - Basket tones below 192 moved only 2-3 levels, which is the re-encode itself.
+  - 154 frames, no audio, clean decode.
+  - The render is a different view of the basket from frame 0 (wider lid, more orange), so
+    only its outline lines up with the turntable.
+- **Bangie's backdrop is graded to her page too (10 Nov 2026), and two specks are painted
+  out.** Her render's backdrop is not clipped but noisy (242-254, median 252), with darker
+  edge rows, and her page is her own #EFF1F0.
+  - **Its cloth is graded to the photo's colours too** (user: "brighter red, similar to
+    the first frame"). The render's cloth was a washed-out pink. Its four main colours
+    (k-means at frame 100, against view-0) were paired by brightness rank, since the weaves
+    differ. Each channel gets a monotone cubic through the pairs (`BANGIE_INTRO_KNOTS`,
+    `curveExpr` in `tools/transcode.mjs`), flat at the page colour from 244 up.
+
+    | | Darkest | Red ground | Mid | Light motif |
+    |---|---|---|---|---|
+    | Render | (126, 86, 83) | (178, 120, 114) | (205, 167, 164) | (243, 213, 208) |
+    | Graded | (110, 52, 37) | (164, 97, 79) | (195, 154, 137) | (237, 206, 190) |
+    | Photo | (100, 42, 28) | (155, 98, 80) | (209, 157, 137) | (249, 211, 194) |
+
+    Median saturation went 54 -> 78. The photo's 102 is partly composition: its weave is 34%
+    dark red ground against the render's 14%. The light motif stays just under the page in
+    red (the photo's is 249). A per-channel curve cannot tell it from the backdrop there.
+  - No 8-bit TV-range YUV code decodes to #EFF1F0 exactly; the nearest are 2 levels off in
+    total (worked through BT.709, matching Chrome to the level). It lands on
+    (239, 242, 241), uniform over 100% of the backdrop.
+  - Specks rendered into the clip were found frame by frame: two dots at x 489-517,
+    y 1992-2007 (frames 0-97) and one at 764,1278 (frames 0-67). Each is painted the page
+    colour only until the cloth reaches it, so the fringe is never touched. A dark bit by
+    the fringe from frame 120 is a loose thread, after the fade, and was left.
+  - Measured: 150 frames, no audio, clean decode. The cloth's tones moved 2.3 levels on
+    average, which is the re-encode.
+  - It also ends on completion: `endAt: 3.333` (frame 100), when the cloth, fringe
+    included, is fully down. Its bottom steps down every 2-3 frames and stops there, and
+    after it only the fringe sways. Measured: the fade starts at video 3.31 s, the product
+    swaps in at full white, and the white lifts.
+
+- **Maznah's ends on the finished basket, through white.** The weave moves in bursts, and
+  its last movement is frame 139 -> 140 (motion measured frame to frame over the whole
+  clip). The clip then holds still to 5.13 s.
+  - `intro.endAt: 4.667` starts the white fade on frame 140, checked on every decoded frame
+    (`requestVideoFrameCallback`).
+  - Measured in the app: the fade starts at video 4.667 s and reaches full white at 5.13 s,
+    the video's last frame.
+  - At full white the video goes and turntable frame 0 shows, then the white lifts. Same
+    fade as Bangie's (`endFade: "white"`, `kiosk.fadeMs`).
+
+Behaviour, the same for both:
+- **The video is never cut.** Its layer covers the whole screen, not the product's box. The
+  video is drawn larger than that box (Maznah's at y 88-1723 against a box of 300-1580). The
+  clip cut the strands flat across the top and the woven base along the bottom, which read
+  as a dark line under the basket. The video's own margins are the page colour, and the
+  title (z 12), side rail (14) and back button (20) stack above it (11).
+- **Its outermost 4 px are never shown** (`clip-path: inset(4px)`). On the kiosk a dark
+  line appeared along the video's top edge (user, 10 Nov 2026). Every edge row of the file
+  measures 238-239, and the browser pane here draws it clean, so it comes from the kiosk's
+  hardware decode: a known effect at the edge of a scaled frame the decoder has padded
+  (1080 is not a multiple of 16). The margin is page colour, so trimming it costs nothing.
+- **The white fade sits under the title and back button.** It is z 11, after the video, so
+  the title (12), side rail (14) and back button (20) stay on screen through it (user, 10
+  Nov 2026). The input block holds until the white has fully lifted, since the white no
+  longer covers the back button.
+- **Nothing can be tapped while it plays, the back button included.** A transparent sheet
+  over the whole screen (z 850) takes every touch until the product is back; there is no
+  tap-to-skip. Tested with real taps on the back button and on the video mid-intro: both
+  ignored, and the intro played through.
+- **No flash of the product first.** It showed for an instant before the video, because
+  the intro hid the product only once the video's first frame had decoded. Now:
+  - The product is hidden and the video layer is up at once.
+  - The panel's mount, and so its white transition, waits up to 2 s for the first frame.
+  - Playback starts as the white lifts.
+  - Measured with a watcher on the white: the product is hidden while the white is still
+    fully up, and the video is ready and at 0.06-0.09 s as it lifts, for both artists.
+- While it plays, the product and its markers are hidden under it.
+- If the panel is left mid-intro (only the idle timeout can do that now), everything is
+  removed at once.
+- The tutorial starts after it ends.
+
+**The parang's draw (Johnny).** The sheathed parang carries
+`sheath = { bare, image, mask, travelY, durationMs }`, where `bare` is the other parang's id.
+Switching between the two then animates instead of fading:
+- **To the blade:** `sheath.png` (the designer's SarungOnly, 1080x2048, the same canvas as
+  the turntable frames) is laid exactly over the sheathed turntable. It is drawn 1190 frame
+  px down along the blade's curve (below), ease-in, over 0.9 s, and dissolves through
+  `sheath-mask.png` before it reaches the bottom.
+- **Back:** the same path backwards, so it rises fast and settles as it seats. The sheathed
+  turntable then takes over.
+
+The path is not a straight drop (user, 10 Nov 2026). The blade curves, and the bare blade
+was photographed separately, so a straight slide showed the blade beside the sheath: up to
+~5,800 frame px of it at mid-draw, measured. The sheath instead turns clockwise about its
+mouth's centre (`pivot` 507.5,613), with a little sideways drift.
+- `sheath.path` holds the keyframes `[travel, turn°, sideways]` in frame px.
+- The path was fitted by `tools/fit-sheath-path.py`. At every 40 px of travel it finds the
+  turn and shift that leave the least blade showing beside the sheath, below its mouth.
+- The turn is capped at 6°, since the user asked for only a little. 10° only took the peak
+  from ~1,500 to ~960 px.
+- The fit was then smoothed into eight keyframes: 2° by 120 px, 6° and +20 px by 320, easing
+  to 5.5° and 0 by 640.
+
+Results:
+- Blade showing, summed over the draw: ~14,000 px against ~66,000 for the straight slide.
+- None shows from 80 to 280 px of travel, or from 840 on.
+- The ~950 px at rest is the two photographs differing, and is gone by 80 px.
+- `tools/sheath-path-sheet.py` renders straight against fitted, side by side, at seven
+  travels.
+
+**The sheath is opaque from its mouth down (`sheath.fill`).** The curve alone still let the
+bare blade's tip peek out beside the sheath near the end of the draw (up to ~1,360 px, and
+the user saw it). The ~950 px sliver at rest also showed at the end of sheathing. Both come
+from the two photographs not matching exactly, so no path can hide them. At the user's word
+the sheath is now opaque:
+- A solid backing moves with it, under the sheath image, from frame row `fromY` 619 (just
+  under the mouth at 613) to the bottom, with a 20 px soft top edge.
+- Its colour is the artist's `backdrop`, #EFEFEF, which is what the frames' backdrop was
+  painted to and what the page is (both rgb 239, checked in the app). Pure white would show
+  as a lighter box round the sheath.
+- The mask dissolves it along with the sheath.
+
+`tools/sheath-path-sheet.py ... 619 20` renders and measures with the fill. The blade simply
+ends at the sheath's mouth; at no travel does any show beside or below it. Checked in the app
+at 700 ms into the draw and 840 ms into the sheathe, the two places it had shown.
+
+The parang cannot be dragged while the sheath moves, in either direction. Pointer events
+are swallowed in the capture phase on the viewport, which also stops a drag already under
+way.
+
+How it is staged:
+- The mask is the designer's FadeHide-Sarung, inverted to an alpha. Rows 1685/1740/1790 hold
+  247/110/0.
+- The turntables are swapped UNDER the sheath, the new one mounted and centred before the
+  old one goes, so the panel never blinks.
+- A turned or pinched parang first fades back to its front frame at its natural size, since
+  the sheath fits only the parang at rest.
+- The rail cannot be tapped while the animation plays.
+
+Measured in the app:
+- The sheath layer's box equals the sheathed canvas's box to 0.1 px.
+- `sheath.png` matches the sheathed frame 0 to a mean of 2.8 levels, and no pixel differs by
+  more than 40, so the hand-over at either end is seamless.
+- The blade sits under the sheath because it is registered head on head (see *Johnny's
+  parang turntables*).
+- Leaving the panel mid-draw leaves no sheath behind and no rail locked.
+- Paused mid-draw, the sheath reads 5.8° as fitted.
+- The sheathe ends on the identity transform, exactly seated.
+- A 200 px drag during either direction leaves the turntable's canvas untouched, and a drag
+  straight after turns it.
+
 ### Product hotspots (`web/screens/hotspots.js`)
 
 Pulsing markers over a product, each opening a close-up. Maznah's basket has three — top,
 side and bottom — and a tap anywhere closes the view again.
+
+**Letters beside markers (`letter` on a spot; Bangie's A-F, 11 Nov 2026).** A spot can
+carry `letter: { button, x, y }`. That is a lettered button in the spot's own coordinates,
+sized by the product's `letterSize`. It pulses like Maznah's (face swell plus halo, halo
+colours from `letterHalo`), sits above every rectangle, and opens the same detail, so a tap
+on the letter instead of the rectangle still works.
+- **Placement:** taken from the user's Photoshop mock-up by pixel scan of the six squares.
+  They were mapped into the picture's pixels by a fit on three rectangles of known position
+  (0.3618 screenshot px per picture px; the third checks to 0.5 px). Each sits at its
+  rectangle's corner as drawn: A Tree Broke, B Beji, C Anai-anai, D Beji Follower, E Tree,
+  F Village.
+- **Size:** 115 picture px per square, so `letterSize` 117.5 for the whole PNG, 72 design
+  px on the panel (Johnny's are 68).
+- **Colour:** the shared art (`images/button a-f.png`) is recoloured by the pipeline to
+  amber (240,140,20), the hotspot glow's own amber. The supplied ochre (182,130,61) sat
+  inside the cloth's own browns, and the user wanted it warm (a first steel blue was "too
+  different").
+  - Ochre, amber, orange-red, golden orange and the rectangles' yellow were rendered on the
+    cloth. Amber stood out most with its letters still readable: WCAG contrast 4.48 against
+    the dark red ground (ochre 3.31), white letter on it 2.48 (gold/yellow 1.6-1.9).
+    Orange-red reads well but its hue is too near the cloth's.
+  - Each channel is mapped linearly with white fixed,
+    `out = 255 - (255 - in) x (255 - target) / (255 - ochre)`, so the letters stay exactly
+    white and the edges keep their blend (checked on all six).
+  - The halo is amber fading to gold (#F08C14 to #F5C842); Maznah's dark brown would
+    vanish on this dark red cloth.
+- **Checked in the app:** all six in place, each opening its own detail (letter A gives
+  Tree Broke, and so on), hidden with the rectangles while a detail is open.
 
 Bangie's whole pua (6 Nov 2026) uses three later options. `hotspotImage: [1212, 2400]`
 puts every spot's x,y (centre) and w,h in the picture's OWN pixels, mapped onto where it is
@@ -568,6 +816,13 @@ scale 1 -> 1.1, 0.6 s). Measured in the app: all four within a pixel of the Phot
 `zoomBox: [w, h]` overrides the 730 x 1092 view box for one product: Bangie's 692 px detail
 PNGs carry a glow margin round a 588 px card, and the user marked the card at 632 px, so
 the PNG is fitted into 744 (= 632 x 692/588). Measured: card 224-856 x 644-1276, centred.
+
+Bangie's details also carry a caption card each, ABOVE the picture, placed from the user's
+mark-up. The caption is an `info` item at a negative y (x 133.4, y -237.7, in the detail
+PNG's pixels) with a display width `w: 425.2` (it is drawn larger, for the 4K panel);
+`zoomBox: [703, 703]` sizes the detail and `zoomOffset: [0, 41]` (design px) moves it below
+the canvas centre. Measured, all four: caption 324-756 x 408-624 (the mark: y 413-619),
+detail card 241-839 x 702-1300 (the mark: 702-1300). Maznah's view measured unchanged.
 
 ```jsonc
 "hotspotArt": "…/hotspot.png",      // fallback marker, for a spot with no `button`

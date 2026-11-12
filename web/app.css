@@ -324,6 +324,15 @@ body.kiosk { cursor: none; }
 }
 .btn-subs[hidden] { display: none; }
 
+/* Pembuatan has its own placement for the pair (user's mark-up, 10 Nov 2026): the toggle on
+   top, the back button under it, each button's visible face in a 79 px box at x 9, y 487
+   and y 590. The art's face is 250 of its 316 px, starting 33,53 in, so a 100x113 element
+   at left -2 puts the face there. */
+#process-subs-toggle,
+#process-back { left: -2px; width: 100px; height: 113px; }
+#process-subs-toggle { top: 471px; }
+#process-back { top: 574px; }
+
 .zoom-btn { width: 112px; height: 127px; }
 
 /* A pill whose label is drawn over the blank button artwork.
@@ -401,6 +410,18 @@ body.kiosk { cursor: none; }
 }
 .subtitle-band[hidden] { display: none; }
 .subtitle-band i { font-style: italic; }
+/* Both languages at once (`"subtitles": "both"`, Bangie): Malay on top in the band's
+   regular type, English under it in italic at 70% of that size (user, 12 Nov 2026), set
+   close under the Malay but clear of it: its tighter line box and a 4 px margin leave
+   ~10 px between the Malay descenders and the English capitals. */
+.subtitle-band--dual .subtitle-band__ms { font-style: normal; }
+.subtitle-band--dual .subtitle-band__en {
+  font-style: italic;
+  font-size: 0.7em;          /* 38 -> 26.6 px */
+  line-height: 1.2;
+  margin-top: 4px;
+}
+.subtitle-band--dual .subtitle-band__ms[hidden] + .subtitle-band__en { margin-top: 0; }
 .subtitle-band--step { top: auto; bottom: 320px; }
 
 /* ------------------------------------------------- infotext (talk screen)
@@ -475,6 +496,82 @@ body.kiosk { cursor: none; }
 .product-viewport.is-swapping,
 .product-meta.is-swapping {
   opacity: 0;
+}
+
+/* Product intro video (web/screens/intro.js): laid over the viewport's box, the video
+   placed so its last frame lands on the product's own first picture. The product waits
+   hidden under it, so the two never show doubled; a tap skips. */
+.product-intro {
+  position: absolute;
+  inset: 0;                  /* the whole screen: the video is larger than the product box */
+  z-index: 11;
+  overflow: hidden;
+  pointer-events: none;
+}
+/* takes every touch while an intro or the drag/scale hint plays, back button included */
+.input-block,
+.product-intro__block {
+  position: absolute;
+  inset: 0;
+  z-index: 850;
+  pointer-events: auto;
+  touch-action: none;
+}
+.product-intro video {
+  position: absolute;
+  object-fit: fill;
+  background: transparent;
+  /* Never show the video's outermost pixels: on the kiosk's hardware decode a dark line
+     appeared along its top edge (user, 10 Nov 2026), though every edge row of the file
+     measures 238-239 and Chromium's software path draws it clean. Edge rows of a scaled,
+     decoder-padded frame (1080 is not a multiple of 16) are a known source of such
+     lines. The margin is the page colour, so trimming it costs nothing. */
+  clip-path: inset(4px);
+}
+.product-viewport.is-under-intro { visibility: hidden; }
+/* intro.endFade "white": white over the whole screen, but UNDER the title (z 12), side
+   rail (14) and back button (20), which stay put through it (user, 10 Nov 2026). Same z
+   as the video layer and placed after it, so it covers the video. */
+.product-intro__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  background: #fff;
+  opacity: 0;
+  pointer-events: auto;      /* swallow taps while it is up */
+}
+
+/* Parang sheath (products.js sheathSwap): the sheath image over the sheathed turntable's
+   frame, sliding down through a mask that dissolves it before it reaches the bottom. */
+.sheath-layer {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  -webkit-mask-image: var(--sheath-mask);
+  mask-image: var(--sheath-mask);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.sheath-layer__move {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.sheath-layer__img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+/* the sheath's solid backing, from its mouth down (sheath.fill) */
+.sheath-layer__fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 /* A designed title block, supplied as an image, replaces the text lines. */
@@ -675,9 +772,12 @@ body.kiosk { cursor: none; }
   touch-action: pan-y;
 }
 
+/* 912 wide (was 800), from the user's mark-up of 10 Nov 2026: their box around the active
+   video measures 912x536 design px, centred where it was (538,961), i.e. this same slide at
+   1.14x. The neighbours still show an ~84 px strip at each screen edge (mark-up: ~77). */
 .slide {
   position: absolute;
-  width: 800px;
+  width: 912px;
   border-radius: 34px;
   background: linear-gradient(180deg, #FFFEFA 0%, #FBEFD4 100%);
   box-shadow: 0 0 0 3px #fff, 0 16px 50px var(--gold-glow);
@@ -730,12 +830,13 @@ body.kiosk { cursor: none; }
 }
 
 /* Directly under the active slide rather than parked near the bottom of the screen,
-   so the page indicator reads as belonging to the video above it. */
+   so the page indicator reads as belonging to the video above it. Lowered with the larger
+   slide (10 Nov 2026): the user's marked dots centre at ~1305, 28 px below the old row. */
 .dots {
   position: absolute;
   left: 0;
   right: 0;
-  top: 1262px;
+  top: 1290px;
   display: flex;
   justify-content: center;
   gap: 18px;
@@ -891,6 +992,10 @@ body.kiosk { cursor: none; }
   100% { transform: scale(1.55); opacity: 0;  background-color: var(--hot-halo-b); }
 }
 
+/* A lettered button beside a marker (`letter` on a spot, Bangie's A-F): above every
+   rectangle, whatever their order. */
+.hotspot--letter { z-index: 1; }
+
 /* `hotspotPulse: "blink"` (Bangie's yellow rectangles, 6 Nov 2026): no halo; the artwork
    itself blinks fast and swells 1.0 -> 1.1 and back, on a 0.6 s loop. Opacity never goes
    below .3, so the frame always shows where the detail is. */
@@ -899,6 +1004,45 @@ body.kiosk { cursor: none; }
   0%, 100% { transform: scale(1);   opacity: 1; }
   50%      { transform: scale(1.1); opacity: .3; }
 }
+
+/* ------------------------------------------------- drag/scale tutorial (product panel)
+   4 s when the panel opens (web/screens/tutorial.js), 2 s per part. Each phase's opacity
+   runs on the whole 4 s timeline: a very fast fade in (0.15 s), the rotate hand to 1.9 s,
+   a 0.2 s crossfade centred on 2 s, the scale hand to 3.8 s, a 0.2 s fade out. A product
+   with one part only (`--solo`) holds it for the whole 4 s. Inside, the motions loop fast
+   (0.75 s). Above the product, below the markers and the zoom view; never takes a tap. */
+.product-tutorial {
+  position: absolute;
+  inset: 0;
+  z-index: 17;
+  pointer-events: none;
+  transition: opacity .15s ease;
+}
+.product-tutorial[hidden] { display: none; }
+/* (.is-dismissed, the old fade-at-a-touch, went with the input lock, 12 Nov 2026.) */
+.tut-phase { position: absolute; inset: 0; opacity: 0; animation: linear forwards; }
+.tut-phase--rotate { animation-name: tut-first; }
+.tut-phase--scale  { animation-name: tut-second; }
+.tut-phase--solo   { animation-name: tut-solo; }
+.tut-phase img { position: absolute; height: auto; }
+
+/* Percentages of 4 s: 3.75% = 0.15 s, 47.5% = 1.9 s, 52.5% = 2.1 s, 95% = 3.8 s. */
+@keyframes tut-first  { 0% { opacity: 0 } 3.75% { opacity: 1 } 47.5% { opacity: 1 } 52.5% { opacity: 0 } 100% { opacity: 0 } }
+@keyframes tut-second { 0% { opacity: 0 } 47.5% { opacity: 0 } 52.5% { opacity: 1 } 95% { opacity: 1 } 100% { opacity: 0 } }
+@keyframes tut-solo   { 0% { opacity: 0 } 3.75% { opacity: 1 } 95% { opacity: 1 } 100% { opacity: 0 } }
+
+/* Rotate hand: --tut-sway (set by tutorial.js) each side of centre and back, linear. */
+.tut-rotate { animation: tut-sway .75s linear infinite; }
+@keyframes tut-sway {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(var(--tut-sway, 50px)); }
+  75%  { transform: translateX(calc(-1 * var(--tut-sway, 50px))); }
+  100% { transform: translateX(0); }
+}
+/* Scale: the hand is static; the square under it grows to 2x about its centre, ease-out,
+   restarting each loop. */
+.tut-rect { animation: tut-grow .75s ease-out infinite; transform-origin: center; }
+@keyframes tut-grow { from { transform: scale(1); } to { transform: scale(2); } }
 
 /* The zoom-in overlay. Always present and always composited — hiding it with `display`
    would drop its pictures off the compositor and the first tap would show a blank panel

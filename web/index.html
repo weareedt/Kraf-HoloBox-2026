@@ -89,6 +89,8 @@
     <!-- Pulsing markers over the product, and the zoom-in views they open. The overlay
          is always present so its pictures stay composited; it is opacity, not display,
          that hides it. See web/screens/hotspots.js. -->
+    <!-- The 3 s drag/scale hint when the panel opens; see web/screens/tutorial.js. -->
+    <div class="product-tutorial" id="product-tutorial" hidden></div>
     <div class="product-hotspots" id="product-hotspots"></div>
     <div class="product-zoom" id="product-zoom"></div>
   </section>
@@ -96,6 +98,8 @@
   <!-- ============================================ PEMBUATAN -->
   <section class="screen" id="screen-process" data-screen="process" hidden>
     <button class="imgbtn btn-back" id="process-back" aria-label="Kembali"></button>
+    <!-- ENG/MS toggle for the step captions; only when the selected step has a Malay .srt. -->
+    <button class="imgbtn btn-subs" id="process-subs-toggle" hidden></button>
     <div class="carousel" id="carousel"></div>
     <div class="dots" id="carousel-dots"></div>
     <div class="subtitle-band subtitle-band--step" id="process-subs" hidden></div>

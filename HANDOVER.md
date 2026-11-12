@@ -235,9 +235,9 @@ Status as signed off on 20 Oct 2026:
 
 | # | Artist | Craft | Has | Status |
 |---|---|---|---|---|
-| 1 | Samat | Wau | Profil +srt, 1 product (3D model), 4 steps | **done** |
-| 2 | Norhaiza | Ukiran Halus | Profil +srt, 2 turntables, 10 steps +srt | **done** |
-| 3 | Bangie | Tenunan Pua | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), whole pua with 4 hotspots; refined footage | title block |
+| 1 | Samat | Wau | Profil +srt (ENG/MS), 1 product (3D model), 4 steps (text burnt in, no toggle) | **done** |
+| 2 | Norhaiza | Ukiran Halus | Profil +srt (ENG/MS), 2 turntables, 10 steps +srt (ENG/MS) | **done** |
+| 3 | Bangie | Tenunan Pua | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), whole pua with 6 hotspots; refined footage | title block |
 | 4 | Maznah | Anyaman Mah Meri | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), turntable with 3 hotspots | almost done — new Terokai Produk design, infotext |
 | 5 | Johnny | Parang Ilang | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), 2 parang turntables with close-ups | mostly done — title block, infotext, blank frame 35 |
 
@@ -255,7 +255,7 @@ recorded here so nobody rediscovers them as new bugs:
   idle loop itself is the best of the set (0.998).
 - Norhaiza's keris-2 turntable jumps at 2.1-2.3x the median step between frames 26/27,
   27/28, 36/37 and at the wrap 75->00. Keris-1 was repaired with `tools/close-loop.py`. Her
-  two keris info blocks are generated placeholders.
+  two keris title blocks are the museum's latest (12 Nov 2026, see *Product titles*).
 
 Reopen either only if the museum asks.
 
@@ -300,6 +300,13 @@ talks in English in Premiere (`bangie.prproj`; watermarked review exports in
   their Malay is a first-pass translation of their English, cue by cue on its timing, for
   the user to correct). Tested in the app; how it behaves and how to give another artist
   one: README → *Subtitle language*.
+  **Bangie now shows both languages at once (11 Nov 2026, the client's request):** Malay on
+  top (regular), English under it (italic), and no toggle (`"subtitles": "both"` on her
+  artist entry).
+- **Lettered buttons A-F on her Terokai Produk (11 Nov 2026).** One letter beside each
+  yellow rectangle, placed from the user's Photoshop mock-up. They pulse like Maznah's and
+  open the same detail as the rectangle. The shared letter art is recoloured to amber,
+  because the ochre disappeared into the cloth. README → *Product hotspots*.
 - **Infotext** for Terangkan Produk: **all five images in, 3 Nov 2026** (the whole pua,
   Beji, Tree, Tree Broke, Beji Follower), tested in the app. See *Infotext* below.
 - **New cuts, refined (22 Oct 2026).** Walk-in, idle and both talks come from
@@ -332,7 +339,28 @@ talks in English in Premiere (`bangie.prproj`; watermarked review exports in
   frames (checked: the first delivery had 1 and 2 swapped; the redesign fixed it). While a
   detail is open the rectangles fade out and come back when it closes
   (`hotspotsHideOnOpen`, Bangie only; Maznah's and Johnny's markers stay as they were).
-- Her title block is a placeholder ("Motif ??? / Teknik ???").
+  **Caption cards (6 Nov 2026):** a card in Maznah's style with the museum's motif text
+  (title, Malay bold, English italic), scaling in like hers. Drawn by
+  `tools/make-caption-cards.py` (the words are in it: edit and re-run, then
+  `npm run prepare-assets`) into `product explore/captions/`. Placed from the user's
+  mark-up: the caption ABOVE the detail, 432x216 at y 408-624, the detail's card 597 px at
+  y 702-1300, both centred across (their marks sat ~20 px left; taken as hand slack). The
+  caption's type is ~15 design px at that size, about half Maznah's.
+  **Hotspots 5 and 6 (6 Nov 2026):** Anai-anai (termites) and Komuniti Penduduk Kampung
+  (village community), from the museum's motif sheet. Not designed in Photoshop: cut from the
+  base by `tools/make-bangie-details.py`, which puts the crop inside one of the designer's
+  own frames and draws the rectangle in the same style. The termite is the insect in the
+  middle column's diamond (found by matching the sheet's thumbnail); the village is the right
+  end of the row of small figures on the bottom edge. Re-designing them in Photoshop is just
+  a matter of replacing `5 - Anai-anai.png` / `6 - VillageCommunity.png` and the two
+  rectangle PNGs in `product explore/`.
+  **Intro video (10 Nov 2026):** the pua unrolling plays once, muted, as the panel opens. It
+  whitens out the moment the cloth is fully down (3.33 s), because the render's weave is
+  not the photo's, and the photo takes over at full white. The pipeline grades its backdrop
+  to her page (#EFF1F0, within a level), its cloth from a washed-out pink to the photo's red, and paints out two rendered specks.
+  README → *Product intros*.
+- Her title block is the museum's latest, "Kain Pua Tangga Beji" (12 Nov 2026). Check its
+  text: "pewarnaan asli. dan tenunan tradisional" has a stray full stop.
 
 ### Maznah — almost done
 
@@ -343,6 +371,16 @@ Talks, subtitles, stage cycle and turntable all work. Two things are left:
   zoom view now carries its **caption cards**, which scale in one by one every time it opens.
   README → *Product hotspots* has the details and the measured positions. Further pieces of
   the new design to follow, one at a time.
+  **Intro video (10 Nov 2026):** the basket weaving itself plays once, muted, as the panel
+  opens. Its last frame is laid on the turntable's frame 0. Its white backdrop is graded by
+  the pipeline to the page's #EFEFEF, so no box shows (Chrome decodes it as 239). It whitens
+  out the moment the basket is complete (4.667 s) and the turntable takes over at full
+  white. Both intros lock all input while they play and are no longer clipped to the
+  product's box. README → *Product intros*.
+  Both intros (`content/artists/{bangie,maznah}/video/intro.mp4`) are video, so they are
+  gitignored like the rest. **Copy them into `HoloBox-media`** with the end-of-project
+  refresh, then re-run `node tools/media-sizes.mjs` and commit. Until then the startup check
+  does not cover them, because it only checks videos it has a size for.
 - **Infotext** during Terangkan Produk (see below). Built; waiting on the artwork and timings.
 
 ### Johnny — mostly done
@@ -357,8 +395,24 @@ Profil and Terangkan buttons.
   the panel with no box. **ParangOnly35.png is blank as delivered** and is skipped (50 of 51
   frames). Ask for a re-export. README → *Johnny's parang turntables*.
   **Close-ups done (22 Oct 2026):** lettered A/B/C markers with captions, as on Maznah's
-  basket — three on the sheathed parang, two on the blade. Still to come:
-  - a designed title block: the title and meta are placeholder text for now.
+  basket — three on the sheathed parang, two on the blade.
+  **Switching no longer moves the parang (10 Nov 2026):** the bare blade is registered on
+  the sheathed parang, head on head (template-matched hilts: the blade's is drawn 0.94x as
+  large), via its `fitHeight` 1.0106 and `centreX`/`centreY` (the latter a new sequence
+  option). Its A/B markers moved with it, onto the same points of the blade. Checked by
+  rendering both opening frames as the viewer places them: the heads land on the same
+  115x202 px box. The sheathed parang is unchanged.
+  **Drawing the blade (10 Nov 2026):** switching parang now draws the sheath down off the
+  blade, dissolving it, and back up to sheathe it, instead of the fade. It follows the
+  blade's curve with a turn of up to 6°, fitted by `tools/fit-sheath-path.py`. The sheath is
+  also opaque from its mouth down: a backing in the page's #EFEFEF moves with it. So the
+  separately photographed blade never shows beside or below it. The parang cannot be dragged
+  while it plays. Tested both
+  ways, from a turned parang, and leaving mid-draw. README → *Product intros and the parang's
+  draw*.
+  Still to come:
+  - (done 12 Nov 2026: the museum's "Parang Ilang" title block, shared by both parang.
+    Check "MotifSarung", which is missing a space.)
 - **Infotext** during Terangkan Produk (see below). Built; waiting on the artwork and timings.
 
 ### Infotext — built; Bangie's set is in
@@ -433,6 +487,24 @@ which blinked `Text1.png` on a 5 s show / 5 s hide loop. The code, the manifest 
 two `explain-supers.png` files (Bangie's and an unused one for Maznah) and their pipeline
 rows are all gone.
 
+### Product titles — the museum's latest set (12 Nov 2026)
+
+Every product's title block, top right of its Terokai Produk panel, is now the museum's
+latest card from `outer assets/premiere file/new pngs/Product Title - <name>.png`. Each is
+900x330 and shown at 450x165, like the old ones. The pipeline stages them byte for byte to
+each product's `info.png` (Johnny's two parang share `johnny/products/info.png`), and
+content.json's `metaImage` points at them. Samat's Wau and Johnny's parang had plain text
+titles before.
+
+Three things in the cards to check with the museum. They are their artwork, so they are
+left as delivered:
+- **Wau:** it reads "Wau Helang", where the product is named "Wau Bulan".
+- **Pua:** "pewarnaan asli. dan tenunan tradisional" has a stray full stop.
+- **Parang:** "MotifSarung" is missing a space.
+
+The tutorial hand icons moved into the same folder. Their pipeline rows follow them, and the
+files are identical.
+
 ---
 
 ## 6. The tools
@@ -455,6 +527,8 @@ it from scratch.
 | `media-sizes.mjs` | record each video's exact byte size into `content/media-sizes.json`, so the startup check can spot a damaged copy. Re-run and commit when the masters change |
 | `retime-subs.py` | carry existing subtitles across a re-cut |
 | `prproj-captions.py` | read caption tracks (text and timing) out of a Premiere project as `.srt`; how Bangie's translation got into the app |
+| `make-caption-cards.py` | draw Bangie's six Terokai Produk caption cards (Maznah's card style); the text lives in the script |
+| `make-bangie-details.py` | cut Bangie's hotspots 5-6 (termite, village) from the base: detail picture in the designer's frame, and the rectangle |
 | `script-to-subs.py` | **superseded** — spreads a known script across measured speech |
 
 ### Subtitles: transcribe, do not spread

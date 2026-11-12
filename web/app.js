@@ -9,7 +9,7 @@
 
 import { SeamlessPlayer } from './lib/seamless-player.js';
 import { AssetLoader, preloadImage } from './lib/loader.js';
-import { loadSrt, SubtitleBand } from './lib/srt.js';
+import { loadSrt, SubtitleBand, DualSubtitleBand } from './lib/srt.js';
 import { IdleTimer } from './lib/idle-timer.js';
 import { mountProducts } from './screens/products.js';
 import { mountProcess } from './screens/process.js';
@@ -412,7 +412,6 @@ async function enterTalk(artist, key) {
   const session = ++profileSession;
 
   profilePlayer ??= new SeamlessPlayer($('profile-video'), 2);
-  const band = new SubtitleBand($('profile-subs'));
 
   const cfg = artist.video[key];
   // English (`srt`) and, where the clip has one, Malay (`srtMs`) on the same timing.
@@ -422,7 +421,19 @@ async function enterTalk(artist, key) {
     catch (e) { console.warn('subtitles unavailable', rel, e); return null; }
   };
   const tracks = { en: await load(cfg.srt), ms: await load(cfg.srtMs) };
-  const subs = mountSubsToggle($('profile-subs-toggle'), band, tracks);
+
+  // `"subtitles": "both"` on the artist: Malay and English on screen together, no toggle
+  // (Bangie, at the client's request, 11 Nov 2026). Otherwise one language and the toggle.
+  let band, subs;
+  if (artist.subtitles === 'both' && tracks.en?.length && tracks.ms?.length) {
+    band = new DualSubtitleBand($('profile-subs'));
+    band.setCues(tracks);
+    $('profile-subs-toggle').hidden = true;
+    subs = { hide() { band.dispose(); } };
+  } else {
+    band = new SubtitleBand($('profile-subs'));
+    subs = mountSubsToggle($('profile-subs-toggle'), band, tracks);
+  }
   const infotext = mountInfotext($('profile-infotext'), cfg.infotext);
 
   // A talk is a one-shot: hold the idle countdown for its duration.
@@ -474,6 +485,7 @@ async function enterProducts(artist, products) {
       side: $('product-side'),
       hotspots: $('product-hotspots'),
       zoom: $('product-zoom'),
+      tutorial: $('product-tutorial'),
     },
   });
 }
@@ -485,10 +497,14 @@ async function enterProcess(artist, steps) {
   showScreen('process');
   disposeScreen = await mountProcess({
     artist, steps, manifest, url, assetInfo, idle,
+    // The visitor's subtitle language, shared with the talk screen.
+    subLang: { get: () => subLang, set: (l) => { subLang = l; } },
+    setButtonArt,
     els: {
       carousel: $('carousel'),
       dots: $('carousel-dots'),
       subs: $('process-subs'),
+      subsToggle: $('process-subs-toggle'),
     },
   });
 }

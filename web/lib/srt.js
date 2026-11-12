@@ -67,6 +67,53 @@ export async function loadSrt(url) {
 }
 
 /**
+ * Both languages at once in one band: Malay on top (regular), English under it (italic),
+ * each line driven by its own cue list, so the two .srt files need not have the same cues.
+ * The band shows while either line has text. (Bangie, at the client's request, 11 Nov
+ * 2026; an artist opts in with `"subtitles": "both"`.)
+ */
+export class DualSubtitleBand {
+  constructor(el) {
+    this.el = el;
+    el.innerHTML = '';
+    el.classList.add('subtitle-band--dual');
+    const top = document.createElement('div');
+    top.className = 'subtitle-band__ms';
+    const bottom = document.createElement('div');
+    bottom.className = 'subtitle-band__en';
+    el.append(top, bottom);
+    this.ms = new SubtitleBand(top);
+    this.en = new SubtitleBand(bottom);
+    this.el.hidden = true;
+  }
+
+  setCues({ ms, en }) {
+    this.ms.setCues(ms);
+    this.en.setCues(en);
+    this.el.hidden = true;
+  }
+
+  update(time) {
+    this.ms.update(time);
+    this.en.update(time);
+    this.el.hidden = this.ms.el.hidden && this.en.el.hidden;
+  }
+
+  hide() {
+    this.ms.hide();
+    this.en.hide();
+    this.el.hidden = true;
+  }
+
+  /** Back to an ordinary single-line band for the next clip. */
+  dispose() {
+    this.hide();
+    this.el.innerHTML = '';
+    this.el.classList.remove('subtitle-band--dual');
+  }
+}
+
+/**
  * Drives a subtitle band element from a cue list.
  * Cheap: cues are sorted, so lookup walks from the last index rather than scanning.
  */

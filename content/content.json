@@ -22,7 +22,11 @@
     "join": "artists/_shared/ui/btn-combine.png",
     "_note_subs": "Subtitle language toggle on the talk screen (5 Nov 2026). Each image is the language the tap switches TO, so subsMs ('MS') shows while English is on and subsEn ('ENG') while Malay is on. It only appears on a talk with an srtMs.",
     "subsEn": "artists/_shared/ui/btn-subs-en.png",
-    "subsMs": "artists/_shared/ui/btn-subs-ms.png"
+    "subsMs": "artists/_shared/ui/btn-subs-ms.png",
+    "_note_tutorial": "The 4 s drag/scale hint (2 s per part) when a product panel opens (10 Nov 2026). Driven by the product's own controls: a 'drag' control shows the rotate hand, a 'pinch' control the scale hand with its growing square; neither, no hint.",
+    "tutorialRotate": "artists/_shared/ui/tutorial-rotate.png",
+    "tutorialScale": "artists/_shared/ui/tutorial-scale.png",
+    "tutorialRect": "artists/_shared/ui/tutorial-rect.png"
   },
   "kiosk": {
     "_note_idle": "3 minutes of no touch returns to the main menu. The countdown is suspended while the artist is talking (Profil) and while a Pembuatan step video is playing; it starts again when that video ends.",
@@ -113,7 +117,9 @@
         "profile": {
           "src": "artists/samat/video/profil.mp4",
           "fps": 25,
-          "srt": "artists/samat/video/profil.srt"
+          "srt": "artists/samat/video/profil.srt",
+          "_note_srtMs": "Malay for the ENG/MS toggle (10 Nov 2026), Profil only for now (Pembuatan later): translated from his English cue by cue, on exactly its timing. A first pass, to be corrected by the user in Subtitle Edit.",
+          "srtMs": "artists/samat/video/profil.ms.srt"
         }
       },
       "products": [
@@ -122,6 +128,8 @@
           "order": 1,
           "enabled": true,
           "title": "Wau Bulan",
+          "_note_metaImage": "12 Nov 2026: the museum's title block (it reads \"Wau Helang\"), replacing the text title and meta lines below, which stay as its alt text.",
+          "metaImage": "artists/samat/products/wau-bulan/info.png",
           "meta": [
             "Kraf Wau Tradisional",
             "Perlis"
@@ -262,7 +270,9 @@
         "profile": {
           "src": "artists/norhaiza/video/profil.mp4",
           "fps": 25,
-          "srt": "artists/norhaiza/video/profil.srt"
+          "srt": "artists/norhaiza/video/profil.srt",
+          "_note_srtMs": "Malay for the ENG/MS toggle (10 Nov 2026), Profil only for now (Pembuatan steps later): translated from his English cue by cue, on exactly its timing; its ten empty cues stay empty. A first pass, to be corrected by the user in Subtitle Edit.",
+          "srtMs": "artists/norhaiza/video/profil.ms.srt"
         }
       },
       "products": [
@@ -347,60 +357,71 @@
           "order": 1,
           "video": "artists/norhaiza/steps/01.mp4",
           "srt": "artists/norhaiza/steps/01.srt",
+          "_note_srtMs": "10 Nov 2026: each of his ten steps has a Malay .ms.srt for the ENG/MS toggle, translated from the English cue by cue on exactly its timing (a first pass for the user to correct). Samat's steps have no subtitle files (their text is burnt into the video), so his Pembuatan shows no toggle.",
+          "srtMs": "artists/norhaiza/steps/01.ms.srt",
           "thumb": "artists/norhaiza/steps/01.webp"
         },
         {
           "order": 2,
           "video": "artists/norhaiza/steps/02.mp4",
           "srt": "artists/norhaiza/steps/02.srt",
+          "srtMs": "artists/norhaiza/steps/02.ms.srt",
           "thumb": "artists/norhaiza/steps/02.webp"
         },
         {
           "order": 3,
           "video": "artists/norhaiza/steps/03.mp4",
           "srt": "artists/norhaiza/steps/03.srt",
+          "srtMs": "artists/norhaiza/steps/03.ms.srt",
           "thumb": "artists/norhaiza/steps/03.webp"
         },
         {
           "order": 4,
           "video": "artists/norhaiza/steps/04.mp4",
           "srt": "artists/norhaiza/steps/04.srt",
+          "srtMs": "artists/norhaiza/steps/04.ms.srt",
           "thumb": "artists/norhaiza/steps/04.webp"
         },
         {
           "order": 5,
           "video": "artists/norhaiza/steps/05.mp4",
           "srt": "artists/norhaiza/steps/05.srt",
+          "srtMs": "artists/norhaiza/steps/05.ms.srt",
           "thumb": "artists/norhaiza/steps/05.webp"
         },
         {
           "order": 6,
           "video": "artists/norhaiza/steps/06.mp4",
           "srt": "artists/norhaiza/steps/06.srt",
+          "srtMs": "artists/norhaiza/steps/06.ms.srt",
           "thumb": "artists/norhaiza/steps/06.webp"
         },
         {
           "order": 7,
           "video": "artists/norhaiza/steps/07.mp4",
           "srt": "artists/norhaiza/steps/07.srt",
+          "srtMs": "artists/norhaiza/steps/07.ms.srt",
           "thumb": "artists/norhaiza/steps/07.webp"
         },
         {
           "order": 8,
           "video": "artists/norhaiza/steps/08.mp4",
           "srt": "artists/norhaiza/steps/08.srt",
+          "srtMs": "artists/norhaiza/steps/08.ms.srt",
           "thumb": "artists/norhaiza/steps/08.webp"
         },
         {
           "order": 9,
           "video": "artists/norhaiza/steps/09.mp4",
           "srt": "artists/norhaiza/steps/09.srt",
+          "srtMs": "artists/norhaiza/steps/09.ms.srt",
           "thumb": "artists/norhaiza/steps/09.webp"
         },
         {
           "order": 10,
           "video": "artists/norhaiza/steps/10.mp4",
           "srt": "artists/norhaiza/steps/10.srt",
+          "srtMs": "artists/norhaiza/steps/10.ms.srt",
           "thumb": "artists/norhaiza/steps/10.webp"
         }
       ]
@@ -415,6 +436,8 @@
       "menuPlate": "artists/bangie/menu/nameplate.png",
       "_note_backdrop": "Measured by the transcode tool from her idle. #EFF1F0 since 3 Nov 2026, from the user's re-edited idle (a light regrade, ~3 levels); it was #F2F2F2 from the refined idle of 22 Oct, whose grey studio backdrop tools/refine-video.py had lifted to 240, the same target as Maznah and Johnny (both #EFEFEF). It is also the page colour of her Terokai Produk panel; the pua photographs are full-bleed cloth with no white of their own, so nothing shows a box against it. Before the refine this was #FFFFFF over a mid-grey (~#928E8A to ~#B0A9A4) backdrop.",
       "backdrop": "#EFF1F0",
+      "_note_subtitles": "11 Nov 2026, the client's request: both languages on screen together on her talks (Profil, Terangkan Produk) -- Malay on top in the band's regular type, English under it in italic -- and no ENG/MS toggle. Each line runs from its own .srt (srtMs, srt). Remove this key to go back to one language with the toggle.",
+      "subtitles": "both",
       "_note_ui": "Per-artist button artwork, layered over the shared set. Two of the three carry labels no other artist has.",
       "ui": {
         "profile": "artists/bangie/ui/btn-profile.png",
@@ -486,26 +509,54 @@
             "src": "artists/bangie/products/tenunan-pua/view-0.webp"
           },
           "controls": [],
+          "_note_intro": "10 Nov 2026: a generated video of the cloth unrolling, played (muted, once) when the panel opens, before the tutorial. Its last frame is laid over the base picture: `box` is the whole video frame in the BASE's pixels (x, y, w, h). The render's weave is not the photo's, so it was registered by the cloth's outline rather than its pattern: side edges at video x 18-995 against the base's 0-1211 give 1.240 base px per video px (the height agrees to 1%), and the top edges are put together; the video's fringe falls below the base's bottom. Its backdrop is graded to the page's #EFEFEF by the pipeline (see _note_intro_end).",
+          "_note_intro_fade": "endFade 'white': the video ends through solid white (up, product swapped in behind, down), like a panel change, rather than cutting from the render's weave to the photo's (user, 10 Nov 2026). Each half is endFadeMs if set, else kiosk.fadeMs. Remove endFade for a straight cut.",
+          "_note_intro_end": "endAt 3.333 s = frame 100 of 150: the cloth, fringe included, has fully unrolled (its bottom, measured across the middle columns, steps down every 2-3 frames and stops at frame 100); after it only the fringe sways. The white fade starts there, like Maznah's on her finished basket (user, 10 Nov 2026). The pipeline grades the video's cloth to this photo's colours (washed-out pink to red; user, 10 Nov 2026), its backdrop to the page, and paints out two rendered specks (tools/transcode.mjs, BANGIE_INTRO_*).",
+          "intro": { "src": "artists/bangie/video/intro.mp4", "box": [-22.3, -19.8, 1267.3, 2512.2], "endAt": 3.333, "endFade": "white" },
           "_note_hotspots": "6 Nov 2026: four yellow rectangles on the designer's new base (view-0 = product explore/newbase.png, 1212x2400), each opening a 512x512 detail centred, like Maznah's basket; a tap anywhere closes it. Positions are in the BASE IMAGE's pixels (hotspotImage), so they stay on the cloth wherever the picture is drawn. x,y is each rectangle's centre = Photoshop X + W/2, Y + H/2 off the user's screenshots (Rectangle 1 Beji: X 773.31 Y 640.78 W 115.39 H 209.46; 2 Tree: 769.47 1764 119 336; 3 Tree Broke: 341.66 330.63 133.8 377.78; 4 Beji Follower: 400 1666 201 288). w,h are the PNGs' own sizes, 10 px over the path because the 10 px stroke is centred on it. hotspotPulse 'blink': fast opacity blink with a 1.0 -> 1.1 swell, no halo.",
           "hotspotImage": [1212, 2400],
           "hotspotPulse": "blink",
           "hotspotsHideOnOpen": true,
+          "_note_letters": "11 Nov 2026: a lettered button A-F beside each rectangle, placed from the user's Photoshop mock-up (screenshot), pulsing like Maznah's (swell + halo) and opening the same detail, so a tap on the letter works too. Measured by pixel scan: the six ochre squares' centres, mapped into this picture's pixels by a fit on three rectangles whose positions are known (Tree Broke, Beji, Village; 0.3618 screenshot px per picture px, origin 139.3,86.8; the third checks to 0.5 px). Squares ~41.5 screenshot px = ~115 picture px; letterSize 117.5 is the whole 512 PNG (its square is 500/512), ~72 design px on the panel. Letter art is the shared button a-f recoloured by the pipeline to AMBER (240,140,20), the hotspot glow's own: the supplied ochre sat inside the cloth's own browns, and the user wanted a warm colour (a first steel blue was 'too different'). Of ochre, amber, orange-red, golden orange and yellow rendered on the cloth, amber stood out most with its white letters still readable (WCAG 4.48 against the dark ground, 2.48 letter). Halo: amber fading to gold, since Maznah's dark brown would vanish on this dark red cloth.",
+          "letterSize": 117.5,
+          "letterHalo": ["#F08C14", "#F5C842"],
           "_note_zoom": "Details redesigned 6 Nov 2026: 692x692 PNGs, the card (white rounded border) 588 px across with a transparent glow round it. The user marked the card at 632x635 design px, centred (measured off their screenshot via the back button: 2.667 design px per screenshot px, centre 547,949 against the canvas centre 540,960). So the whole PNG is fitted into 744 = 632 x 692/588, and the card itself spans 632.",
+          "_note_captions": "6 Nov 2026: each detail has a caption card under it (tools/make-caption-cards.py, Maznah's card style, the museum's motif text in Malay bold and English italic). Re-placed from the user's mark-up of 6 Nov 2026 (red box = detail, pink = caption; stroke centrelines, 2.73 design px per screenshot px): detail card 596x598 at y 702-1300, caption 432x206 at y 413-619, ABOVE it; both drawn ~20 px left of centre, taken as hand slack and kept centred. So: the detail at 703 (card 597 = 588 x 703/692), moved 41 down from the canvas centre (zoomOffset) to put its card at 702-1300; the caption, still 2:1, 432 wide = 425.2 units, at x 133.4, y -237.7 in the detail PNG's pixels (negative = above the picture), i.e. design y 408-624, 78 above the card. Its type is ~15 design px at this size.",
           "zoomSize": [692, 692],
-          "zoomBox": [744, 744],
+          "zoomBox": [703, 703],
+          "zoomOffset": [0, 41],
           "hotspots": [
             { "id": "beji", "label": "Beji", "x": 831.0, "y": 745.5, "w": 125, "h": 219,
               "button": "artists/bangie/products/tenunan-pua/rect-1.png",
-              "image": "artists/bangie/products/tenunan-pua/zoom-1.png" },
-            { "id": "tree", "label": "Pokok entepung", "x": 829.0, "y": 1932.0, "w": 129, "h": 346,
+              "letter": { "button": "artists/bangie/products/tenunan-pua/letter-b.png", "x": 878.1, "y": 617.2 },
+              "image": "artists/bangie/products/tenunan-pua/zoom-1.png",
+              "info": [{ "image": "artists/bangie/products/tenunan-pua/caption-1.png", "x": 133.4, "y": -237.7, "w": 425.2 }] },
+            { "id": "tree", "label": "Tangga Gergasi", "x": 829.0, "y": 1932.0, "w": 129, "h": 346,
               "button": "artists/bangie/products/tenunan-pua/rect-2.png",
-              "image": "artists/bangie/products/tenunan-pua/zoom-2.png" },
-            { "id": "tree-broke", "label": "Pokok patah", "x": 408.6, "y": 519.5, "w": 144, "h": 388,
+              "letter": { "button": "artists/bangie/products/tenunan-pua/letter-e.png", "x": 760.1, "y": 1771.4 },
+              "image": "artists/bangie/products/tenunan-pua/zoom-2.png",
+              "info": [{ "image": "artists/bangie/products/tenunan-pua/caption-2.png", "x": 133.4, "y": -237.7, "w": 425.2 }] },
+            { "id": "tree-broke", "label": "Tangga Gergasi yang Telah Rosak", "x": 408.6, "y": 519.5, "w": 144, "h": 388,
               "button": "artists/bangie/products/tenunan-pua/rect-3.png",
-              "image": "artists/bangie/products/tenunan-pua/zoom-3.png" },
-            { "id": "beji-follower", "label": "Pengikut Beji", "x": 500.5, "y": 1810.0, "w": 211, "h": 298,
+              "letter": { "button": "artists/bangie/products/tenunan-pua/letter-a.png", "x": 324.8, "y": 671.9 },
+              "image": "artists/bangie/products/tenunan-pua/zoom-3.png",
+              "info": [{ "image": "artists/bangie/products/tenunan-pua/caption-3.png", "x": 133.4, "y": -237.7, "w": 425.2 }] },
+            { "id": "beji-follower", "label": "Pahlawan (Pengikut Beji)", "x": 500.5, "y": 1810.0, "w": 211, "h": 298,
               "button": "artists/bangie/products/tenunan-pua/rect-4.png",
-              "image": "artists/bangie/products/tenunan-pua/zoom-4.png" }
+              "letter": { "button": "artists/bangie/products/tenunan-pua/letter-d.png", "x": 381.2, "y": 1647.9 },
+              "image": "artists/bangie/products/tenunan-pua/zoom-4.png",
+              "info": [{ "image": "artists/bangie/products/tenunan-pua/caption-4.png", "x": 133.4, "y": -237.7, "w": 425.2 }] },
+            { "_note": "5 and 6 added 6 Nov 2026 from the museum's motif sheet, cut from the base by tools/make-bangie-details.py: the insect in the middle column's diamond (located by matching the sheet's thumbnail, red box at base 668-769 x 895-1070), and the right end of the row of small figures along the bottom edge.",
+              "id": "anai-anai", "label": "Anai-anai", "x": 718.5, "y": 982.5, "w": 111, "h": 185,
+              "button": "artists/bangie/products/tenunan-pua/rect-5.png",
+              "letter": { "button": "artists/bangie/products/tenunan-pua/letter-c.png", "x": 658.4, "y": 1081.5 },
+              "image": "artists/bangie/products/tenunan-pua/zoom-5.png",
+              "info": [{ "image": "artists/bangie/products/tenunan-pua/caption-5.png", "x": 133.4, "y": -237.7, "w": 425.2 }] },
+            { "id": "village", "label": "Komuniti Penduduk Kampung", "x": 1013.5, "y": 2342.0, "w": 193, "h": 110,
+              "button": "artists/bangie/products/tenunan-pua/rect-6.png",
+              "letter": { "button": "artists/bangie/products/tenunan-pua/letter-f.png", "x": 918.5, "y": 2273.1 },
+              "image": "artists/bangie/products/tenunan-pua/zoom-6.png",
+              "info": [{ "image": "artists/bangie/products/tenunan-pua/caption-6.png", "x": 133.4, "y": -237.7, "w": 425.2 }] }
           ]
         },
         {
@@ -635,6 +686,9 @@
             "Tahun ????"
           ],
           "metaImage": "artists/maznah/products/bakul/info.png",
+          "_note_intro": "10 Nov 2026: a generated video of the strands weaving into the basket, played (muted, once) when the panel opens, before the tutorial. `box` is the whole video frame in turntable frame 0's own pixels (784x876): frame 0 template-matched on the video's last frame at 0.635 (score 0.75) lands at 296,722, so the 1080x1920 video spans -466.1,-1137.0 at 1700.8 x 3023.6. The render is a different view of the basket from frame 0 (wider lid, more orange), so only its outline lines up. Backdrop graded to the page's #EFEFEF by the pipeline (user, 10 Nov 2026; see the Maznah Bakul row in tools/transcode.mjs): it was clipped 255, a white box on the page; now decodes as 239 in Chrome, every corner, the basket's tones below 192 untouched.",
+          "_note_intro_end": "endAt 4.667 s = frame 140 of 154, the basket's LAST movement (frame-to-frame motion measured over the whole clip: the weave moves in bursts, the last at 139->140, then the clip holds still to 5.13 s). The white fade starts there, at the user's request (10 Nov 2026), and at full white the video goes and turntable frame 0 shows; the fade then lifts. Same fade as Bangie's (kiosk.fadeMs each way).",
+          "intro": { "src": "artists/maznah/video/intro.mp4", "box": [-466.1, -1137.0, 1700.8, 3023.6], "endAt": 4.667, "endFade": "white" },
           "type": "sequence",
           "sequence": {
             "pattern": "artists/maznah/products/bakul/frames/frame-{i:03}.webp",
@@ -730,8 +784,21 @@
           "order": 1,
           "enabled": true,
           "title": "Parang Ilang",
+          "metaImage": "artists/johnny/products/info.png",
           "meta": ["Bersarung"],
           "icon": "artists/johnny/products/full-parang/icon.png",
+          "_note_sheath": "10 Nov 2026, in place of an intro: switching to the bare blade DRAWS it -- the sheath (sheath.png, this turntable's own 1080x2048 frame, matching frame 0's sheath to 2.8 levels) slides straight down off the blade and dissolves through sheath-mask.png (the designer's FadeHide, inverted, its soft edge put just under the seated sheath, rows 1686-1790). Switching back plays it reversed: the sheath rises from below and seats. The mask applies to the sheath only, so the blade is never covered. Both directions start from frame 0; a turned or pinched parang is faded back to it first, and the parang cannot be dragged while the sheath moves.",
+          "_note_sheath_path": "Not a straight drop (user, 10 Nov 2026): the blade curves, so a straight slide showed it beside the sheath (up to ~5800 frame px of blade, measured). `path` is keyframes [travel, turn, sideways] in frame px: travel = how far the mouth has dropped, turn = degrees clockwise about `pivot` (the mouth's centre, 507.5,613), sideways = extra x. Fitted by tools/fit-sheath-path.py (contact sheet: tools/sheath-path-sheet.py): at each travel, the turn (capped at 6 degrees, at the user's 'not too much') and shift that leave the least blade showing beside the sheath, then smoothed. Shown blade summed over the draw: ~14000 px against ~66000 straight; none from 80 to 280 px of travel and from 840 on. The ~950 px at rest is the two photographs differing (the bare blade sits slightly off the sheathed one), gone by 80 px of travel. The last keyframe (1190) takes the sheath's top (613) past the mask's edge (1790).",
+          "_note_sheath_fill": "The path alone still let the blade's tip peek out beside the sheath near the end of the draw (user, 10 Nov 2026; up to ~1360 px measured), so the sheath is made OPAQUE from its mouth down, at the user's word: `fill` is a solid backing that moves with it, from frame row fromY (619, just under the mouth at 613) to the bottom, with a soft top edge of `soft` px. Its colour is the artist's backdrop (#EFEFEF, what the frames' backdrop was painted to) rather than pure white, so no lighter box shows round the sheath. Measured with tools/sheath-path-sheet.py ... 619 20: blade showing below the mouth falls to <= ~220 px at any travel, and on the contact sheet none is visible; the blade simply ends at the mouth.",
+          "sheath": {
+            "bare": "parang-only",
+            "image": "artists/johnny/products/full-parang/sheath.png",
+            "mask": "artists/johnny/products/full-parang/sheath-mask.png",
+            "fill": { "fromY": 619, "soft": 20 },
+            "pivot": [507.5, 613],
+            "path": [[0, 0, 0], [120, 2, 0], [240, 5, 16], [320, 6, 20], [480, 6, 8], [640, 5.5, 0], [800, 5.5, 0], [1190, 5.5, 0]],
+            "durationMs": 900
+          },
           "type": "sequence",
           "sequence": {
             "pattern": "artists/johnny/products/full-parang/frames/frame-{i:02}.webp",
@@ -763,6 +830,7 @@
           "order": 2,
           "enabled": true,
           "title": "Parang Ilang",
+          "metaImage": "artists/johnny/products/info.png",
           "meta": ["Tanpa sarung"],
           "icon": "artists/johnny/products/parang-only/icon.png",
           "type": "sequence",
@@ -770,19 +838,21 @@
             "pattern": "artists/johnny/products/parang-only/frames/frame-{i:02}.webp",
             "start": 0,
             "count": 50,
-            "centreX": 627,
-            "_note_centre": "The blade was shot off-centre: measured over all 50 repainted frames, its middle averages x 627 of the 1080-wide frame (range 608..654), 87 px right of centre. centreX makes the viewer centre the blade, not the frame. The sheathed turn needs none: it averages 543.",
+            "centreX": 649.46,
+            "centreY": 1090.8,
+            "_note_centre": "Registered on the sheathed parang, head on head, so switching between the two does not move the parang (user, 10 Nov 2026; the sheathed one is unchanged). Its hilt head in frame 0, template-matched against the sheathed parang's frame 0 (score 0.978), is drawn 0.94x as large, and the sheathed head's corner (431,254) falls at (547,367) here. So fitHeight 0.95/0.94 = 1.0106 makes the heads the same size, and centreX/centreY put that point where the sheathed one shows it: 649.46 = 547 + (540 - 431) x 0.94, 1090.8 = 367 + (1024 - 254) x 0.94. (Before: centreX 627, the blade's own middle, at fit 0.95.)",
             "_note_count": "50, not the 51 delivered: ParangOnly35.png is blank (every pixel 253, no parang), so the build skips it rather than flash an empty frame mid-turn. Back to 51 when a re-export arrives — and remove `skip` from its SEQUENCES entry.",
-            "fitHeight": 0.95
+            "fitHeight": 1.0106
           },
           "_note_hotspots": "Close-ups as on Maznah's basket: lettered markers open a zoom card whose caption scales in each time. Marker x,y are their CENTRES in design-canvas pixels, measured off the museum's app mock-ups (the ochre squares, scaled by the page width to 1080); 68 px is the size the buttons have in those mock-ups. Caption x,y are top-left in the zoom image's own 1334x2000 pixels, measured from the Photoshop layouts by the cards' straight strokes; every measured height matched its PNG to 2 px.",
           "hotspotSize": 68,
           "zoomSize": [1334, 2000],
           "hotspots": [
-            { "id": "hilt", "label": "Bahagian hulu bilah", "x": 416, "y": 739, "image": "artists/johnny/products/parang-only/zoom-hilt.webp",
+            { "_note": "A and B moved with the parang when it was registered on the sheathed one (10 Nov 2026): each still marks the same point of the blade (source px 446.5,685.5 and 800.2,1123.4). Were 416,739 and 626,999.",
+              "id": "hilt", "label": "Bahagian hulu bilah", "x": 395, "y": 684, "image": "artists/johnny/products/parang-only/zoom-hilt.webp",
               "button": "artists/johnny/products/btn-a.png",
               "info": [ { "image": "artists/johnny/products/parang-only/info-hilt-1.png", "x": 203, "y": 1093 } ] },
-            { "id": "blade", "label": "Bilah", "x": 626, "y": 999, "image": "artists/johnny/products/parang-only/zoom-blade.webp",
+            { "id": "blade", "label": "Bilah", "x": 618, "y": 961, "image": "artists/johnny/products/parang-only/zoom-blade.webp",
               "button": "artists/johnny/products/btn-b.png",
               "info": [ { "image": "artists/johnny/products/parang-only/info-blade-1.png", "x": 203, "y": 1247 } ] }
           ],

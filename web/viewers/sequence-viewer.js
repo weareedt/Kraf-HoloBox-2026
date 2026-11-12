@@ -50,6 +50,9 @@ export async function mountSequence({ product, viewport, url }) {
   // middle. Set it when a turn was shot off-centre in an uncropped frame (Johnny's bare
   // blade sits 87 px right of its frame's centre), so the object, not the frame, is centred.
   const centreX = Number.isFinite(seq.centreX) ? seq.centreX : null;
+  // The same for the frame ROW put at the viewport's middle. Used to register one turntable
+  // on another (Johnny's bare blade onto his sheathed parang, head on head).
+  const centreY = Number.isFinite(seq.centreY) ? seq.centreY : null;
 
   /* ------------------------------------------------------------- stage */
 
@@ -64,6 +67,7 @@ export async function mountSequence({ product, viewport, url }) {
   let zoom = 1;
   let shiftPx = 0;
   let centreShift = 0;                         // CSS px that bring centreX to the middle
+  let centreShiftY = 0;                        // and centreY
 
   /* ------------------------------------------------------------- layout */
 
@@ -79,30 +83,44 @@ export async function mountSequence({ product, viewport, url }) {
     canvas.style.top = `${(vh - cssH) / 2}px`;
     // Only once frame 0 has given the real width; before that natW is a placeholder 1.
     centreShift = centreX === null || natW <= 1 ? 0 : (natW / 2 - centreX) * (cssW / natW);
+    centreShiftY = centreY === null || natH <= 1 ? 0 : (natH / 2 - centreY) * (cssH / natH);
     applyTransform();
   }
 
   function applyTransform() {
     // The scale is about the canvas centre, so the object's offset from it scales too.
-    canvas.style.transform = `translateX(${shiftPx + centreShift * zoom}px) scale(${zoom})`;
+    canvas.style.transform =
+      `translate(${shiftPx + centreShift * zoom}px, ${centreShiftY * zoom}px) scale(${zoom})`;
   }
 
-  /** Nearest frame that has actually decoded, so scrubbing never shows a blank. */
+  /* Distance AROUND the turn: the last frame sits next to the first. Measuring it in
+   * frame numbers instead made a first drag LEFT jump (user, 10 Nov 2026): one step left
+   * of frame 0 is the last frame, still loading, and the "nearest" loaded frame by number
+   * was whichever high frame had just decoded -- a different side of the keris. */
+  const around = (a, b) => { const d = Math.abs(a - b) % count; return Math.min(d, count - d); };
+
+  /** Nearest frame, around the turn, that has actually decoded, so scrubbing never shows
+   *  a blank. Returns its index, or -1. */
   function nearestLoaded(i) {
-    if (bitmaps[i]) return bitmaps[i];
-    for (let d = 1; d < count; d++) {
-      if (bitmaps[i - d]) return bitmaps[i - d];
-      if (bitmaps[i + d]) return bitmaps[i + d];
+    if (bitmaps[i]) return i;
+    for (let d = 1; d <= count / 2; d++) {
+      const back = (i - d + count) % count, fwd = (i + d) % count;
+      if (bitmaps[back]) return back;
+      if (bitmaps[fwd]) return fwd;
     }
-    return null;
+    return -1;
   }
 
+  let shown = -1;                              // the frame actually on the canvas
   function draw() {
-    const bmp = nearestLoaded(frame);
-    if (!bmp) return;
+    const at = nearestLoaded(frame);
+    if (at < 0) return;
+    const bmp = bitmaps[at];
+    shown = at;
     // Mirrored onto the element so the frame is visible to diagnostics and tests without
     // reaching into the closure; nothing in the app reads it.
     canvas.dataset.frame = String(frame);
+    canvas.dataset.shown = String(at);
     if (canvas.width !== bmp.width || canvas.height !== bmp.height) {
       canvas.width = bmp.width;
       canvas.height = bmp.height;
@@ -120,7 +138,9 @@ export async function mountSequence({ product, viewport, url }) {
     const bmp = await createImageBitmap(img);
     if (disposed) { bmp.close(); return; }
     bitmaps[i] = bmp;
-    if (i === frame || !nearestLoaded(frame) || Math.abs(i - frame) < 2) draw();
+    // Repaint when this frame is closer, around the turn, to the one wanted than what is
+    // on screen now -- a stand-in is replaced as soon as something better arrives.
+    if (shown < 0 || around(i, frame) < around(shown, frame)) draw();
   }
 
   // Frame 0 first, and wait for it: the panel must never open blank.
@@ -130,8 +150,14 @@ export async function mountSequence({ product, viewport, url }) {
   draw();
 
   // The rest behind it, a few at a time so the first swipe is not starved of decode time.
+  // Outward from frame 0 in BOTH directions (1, last, 2, last-1, ...), since a visitor may
+  // drag either way first; loading 1, 2, 3... left the frames just left of 0 until last.
   (async () => {
-    const queue = Array.from({ length: count - 1 }, (_, k) => k + 1);
+    const queue = [];
+    for (let d = 1; queue.length < count - 1; d++) {
+      queue.push(d);
+      if (queue.length < count - 1 && count - d !== d) queue.push(count - d);
+    }
     const workers = Array.from({ length: LOAD_CONCURRENCY }, async () => {
       while (!disposed && queue.length) {
         const i = queue.shift();

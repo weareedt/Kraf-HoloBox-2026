@@ -1,0 +1,25 @@
+1
+00:00:01,000 --> 00:00:04,000
+Proses keenam ialah mengikis,
+
+2
+00:00:04,024 --> 00:00:08,624
+menggunakan alat yang dikenali sebagai pengikis.
+
+3
+00:00:08,648 --> 00:00:13,148
+Alat ini berbentuk segi tiga dengan
+hujung yang tajam di depan,
+
+4
+00:00:13,172 --> 00:00:17,172
+membolehkannya mengikis celah-celah dengan berkesan
+
+5
+00:00:17,196 --> 00:00:21,196
+seperti lekuk dan celah
+
+6
+00:00:21,220 --> 00:00:24,220
+pada hulu keris.
+
