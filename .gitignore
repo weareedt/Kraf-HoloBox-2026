@@ -27,3 +27,8 @@ CLAUDE.md
 .cursor/
 .aider*
 .github/copilot-instructions.md
+
+# This PC's own settings, never shared. On our development PCs it holds
+# { "autoStart": false } so the app does not make the PC open the kiosk at logon
+# (electron/autostart.cjs). The museum PC has no such file.
+kiosk.local.json

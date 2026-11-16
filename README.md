@@ -1619,6 +1619,70 @@ swallows F11. **F11 toggles between fullscreen and a 608×1080 portrait window**
 to whatever it is given, so both modes are correct; 608×1080 is deliberately ~9:16 to match
 the design canvas with almost no letterboxing.
 
+## Auto-start at logon (`electron/autostart.cjs`)
+
+The museum staff only switch the PC on. The kiosk opens by itself (user, 16 Nov 2026).
+
+**What happens on the first run.** The first time the Electron app runs on a PC, it
+registers a Windows scheduled task, **"KRAF HoloBox"**. The task:
+
+- starts that same `electron.exe` on that folder, 15 s after this Windows user logs on;
+- keeps running on battery;
+- has no time limit (Task Scheduler's default would stop it after 72 h);
+- never starts a second copy;
+- restarts the app up to three times if it crashes.
+
+**Later runs.** Each later launch checks that the task is still there and still points at
+this folder, and re-registers it if the folder has moved. So copying the project somewhere
+else and starting it once is enough.
+
+**No admin needed.** It runs as the logged-on user with normal rights, so registering it
+needs no admin (tested on a standard account). If a locked-down PC refuses it anyway, the
+app falls back to Electron's own login item, the per-user Run key. Every outcome is logged
+to `.cache/autostart.log`, so a museum PC can be checked without opening Task Scheduler.
+
+**One copy at a time.** The app now takes a single-instance lock. A staff member
+double-clicking `start.bat` while the kiosk is already running just brings the running copy
+forward. It no longer opens a second full-screen window with a second server.
+
+**The switch, for our own PCs.** Put a `kiosk.local.json` in the repo root:
+
+```json
+{ "autoStart": false }
+```
+
+- `false`: never set up auto-start on this PC, and remove the task if it was set up earlier.
+- No file, or `true`: the museum behaviour.
+
+The file is gitignored on purpose. A switch flipped in tracked code would be committed sooner
+or later, and the museum would get a kiosk that no longer starts itself.
+
+The switch is still read if Notepad saves the file with a byte-order mark, or if a comma is
+out of place. Both used to make the switch be ignored silently.
+
+**How it was tested (16 Nov 2026), on a standard account.**
+
+1. The real app with the switch on: it created the task, pointing at
+   `node_modules\electron\dist\electron.exe "D:\…\HoloBox"` and starting in `HoloBox`.
+2. A second launch exited, leaving the first copy running.
+3. With the switch off, the next run removed the task.
+4. Nothing was left behind: no task, no Run entry.
+
+**What the PC still needs.** The task fires at **logon**, so the museum PC needs Windows
+auto-login (`netplwiz`, untick "Users must enter a user name and password"), or staff must
+log in themselves. Do not also put `start.bat` in the Startup folder. It would be harmless
+because of the single-instance lock, but it is redundant.
+
+**To remove auto-start from a PC:** set the switch to `false` and run the app once, or
+delete the task in Task Scheduler, or run:
+
+```
+schtasks /Delete /TN "KRAF HoloBox" /F
+```
+
+The Chrome fallback in `start.bat` does not set auto-start up. Only the Electron app does,
+and that is what ships.
+
 ## Pressed state
 
 Buttons take a **50% dark-brown wash while held** (`--press-tint`). The tint is a
@@ -1733,7 +1797,8 @@ whether `ui[<label key>]` exists in the manifest.
 ### Kiosk machine setup
 
 Auto-login; sleep, hibernate and screensaver off; Windows Update active hours locked;
-notifications off; `start.bat` in Startup. **Pin Chrome's version or disable its updater** —
+notifications off. Run the app once and it sets itself to open at every logon (see *Auto-start
+at logon*; not on a PC with `kiosk.local.json` switching it off). **Pin Chrome's version or disable its updater** —
 otherwise this runs for eight months and dies on a Tuesday.
 
 ---

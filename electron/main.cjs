@@ -23,6 +23,21 @@ const { spawn } = require('node:child_process');
 const { readFileSync } = require('node:fs');
 const { createConnection } = require('node:net');
 const { join, resolve } = require('node:path');
+const { syncAutoStart } = require('./autostart.cjs');
+
+// One kiosk at a time. Once the PC starts the app at logon, a staff member double-clicking
+// start.bat as well must not open a second full-screen copy on top: the second launch just
+// brings the running one forward and exits.
+if (!app.requestSingleInstanceLock()) {
+  app.quit();
+  process.exit(0);
+}
+app.on('second-instance', () => {
+  if (!win) return;
+  if (win.isMinimized()) win.restore();
+  win.show();
+  win.focus();
+});
 
 // Esc on the main menu asks the shell to close the app (see electron/preload.cjs).
 ipcMain.on('kraf:quit', () => app.quit());
@@ -149,6 +164,15 @@ app.whenReady().then(async () => {
   globalShortcut.register('F11', toggleFullscreen);
   globalShortcut.register('CommandOrControl+R', () => win?.reload());
   globalShortcut.register('CommandOrControl+Shift+I', () => win?.webContents.toggleDevTools());
+
+  // First run on a PC: make it open the kiosk at every logon. Switched off on our own PCs
+  // by kiosk.local.json; see electron/autostart.cjs. In the background, after the window,
+  // so it can never delay or break the exhibit.
+  syncAutoStart({
+    root: ROOT,
+    exe: process.execPath,
+    loginItem: (on) => app.setLoginItemSettings({ openAtLogin: on, path: process.execPath, args: [ROOT] }),
+  }).then((r) => console.log(`[autostart] ${r}`));
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

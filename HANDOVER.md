@@ -37,6 +37,22 @@ npm run prepare-assets:force  same, ignoring the "up to date" checks
 `start.bat` prefers the bundled Electron and falls back to Chrome. **Ship Electron**, not
 Chrome: its Chromium is pinned and cannot update itself mid-exhibition. README → *Runtime*.
 
+**Auto-start (16 Nov 2026).** On a new PC, the first run of the Electron app registers a
+Windows scheduled task, "KRAF HoloBox". From then on the kiosk opens by itself 15 s after
+logon. Pair it with Windows auto-login, so the museum staff only have to switch the PC on.
+A second launch just brings the running copy forward.
+
+**On our own development PCs, switch it off** with a gitignored `kiosk.local.json` in the
+repo root:
+
+```json
+{ "autoStart": false }
+```
+
+That also removes the task if it was already set up. The main development PC has this file.
+A colleague's PC without it will set the task up on its first run. Delete it with
+`schtasks /Delete /TN "KRAF HoloBox" /F` if that happens. README → *Auto-start at logon*.
+
 ---
 
 ## 2. Read this before you touch anything
@@ -596,7 +612,9 @@ doing video work; every entry is there because it cost a day.
 5. Leave it running overnight — memory flat, parked on the menu.
 
 **Kiosk machine:** auto-login; sleep, hibernate and screensaver off; Windows Update active
-hours locked; notifications off; `start.bat` in Startup. **Pin Chrome's version or disable
+hours locked; notifications off. Then run the app once. It sets the PC to open the kiosk at
+every logon (the "KRAF HoloBox" scheduled task; README → *Auto-start at logon*), and
+`.cache/autostart.log` says it did. **Pin Chrome's version or disable
 its updater** if you ship the Chrome fallback — otherwise this runs for eight months and dies
 on a Tuesday.
 
