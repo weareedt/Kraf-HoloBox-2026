@@ -175,13 +175,16 @@ export async function mountSequence({ product, viewport, url }) {
   // Degrees map onto frames so the shared drag sensitivity feels the same as the Wau.
   // 360 degrees is one full turn = `count` frames, so wrapping is modular and seamless.
   const degPerFrame = 360 / count;
+  // `reverse`: the turn was shot spinning the other way, so the frames run backwards under
+  // a drag. Johnny's parang (user, 16 Nov 2026: a drag left turned it the wrong way).
+  const sign = seq.reverse ? -1 : 1;
 
   return {
     available: true,
     initialRotation: 0,
 
     setRotation(deg) {
-      const next = ((Math.round(deg / degPerFrame) % count) + count) % count;
+      const next = ((Math.round(sign * deg / degPerFrame) % count) + count) % count;
       if (next !== frame) { frame = next; draw(); }
     },
     setZoom(z) { zoom = z; applyTransform(); },

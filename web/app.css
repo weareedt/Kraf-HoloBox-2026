@@ -458,12 +458,15 @@ body.kiosk { cursor: none; }
 
 /* --------------------------------------------------------- produk */
 
+/* Top LEFT since 16 Nov 2026 (the museum's comment; it was top right, `right: 70px;
+   left: 260px; text-align: right`): the block mirrors its old place, so its text starts
+   as far from the left edge as it used to end from the right. */
 .product-meta {
   position: absolute;
   top: 150px;
-  right: 70px;
-  left: 260px;
-  text-align: right;
+  left: 70px;
+  right: 260px;
+  text-align: left;
   z-index: 12;
 }
 .product-meta__title { font-size: 56px; font-weight: 700; color: #5A4526; line-height: 1.1; }
@@ -574,11 +577,14 @@ body.kiosk { cursor: none; }
   bottom: 0;
 }
 
-/* A designed title block, supplied as an image, replaces the text lines. */
+/* A designed title block, supplied as an image, replaces the text lines. The museum's
+   16 Nov 2026 cards are 982x330 with LEFT-aligned text (the 12 Nov ones were 900x330,
+   right-aligned). Shown at the same scale as before, so the type is the same size:
+   450 x 982/900 = 491. Anchored to the LEFT edge (see .product-meta), so every card's
+   text starts at the same x and a short one simply ends sooner. */
 .product-meta__image {
   display: block;
-  margin-left: auto;
-  width: 450px;
+  width: 491px;
   height: auto;
 }
 
@@ -716,8 +722,8 @@ body.kiosk { cursor: none; }
    than cropping or stretching — the zoom IS the crop, and trimming it again would
    defeat the point of having five views. */
 .screen[data-layout="explore"] .product-viewport { inset: 229px 171px 230px 170px; }
-.screen[data-layout="explore"] .product-meta     { top: 28px; right: 51px; left: 400px; }
-.screen[data-layout="explore"] .product-meta__image { width: 489px; }
+.screen[data-layout="explore"] .product-meta     { top: 28px; left: 51px; right: 400px; }   /* mirrored to the left, 16 Nov 2026 */
+.screen[data-layout="explore"] .product-meta__image { width: 534px; }   /* 489 x 982/900 */
 
 /* The switcher is the whole interaction here, so it sits on its own rather than
    under a control stack, and its tiles are bare crops of the cloth — no frame, no

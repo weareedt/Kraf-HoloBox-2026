@@ -386,13 +386,14 @@ const BANGIE_INTRO_KNOTS = [
 ];
 const BANGIE_INTRO_LUT = (to, ch) => curveExpr([...BANGIE_INTRO_KNOTS[ch], [244, to]]);
 const BANGIE_PAGE = [0xEF, 0xF1, 0xF0];   // decodes as (239,242,241): no 8-bit tv-range YUV code decodes to #EFF1F0 exactly; this is as close as the format allows (worked through BT.709, matches Chrome)
-// Specks rendered into her backdrop, measured in every frame: two dots under where the
-// fringe lands (x 489-517, y 1992-2007; frames 0-97, the fringe reaches them at 98) and
-// one at 764,1278 (frames 0-67, before the cloth covers it). Painted the page colour only
-// in those frames, when their box holds nothing but backdrop and the speck.
+// Specks rendered into her backdrop, measured in every frame. v2 (17 Nov 2026, 24 fps,
+// 121 frames) has the same three dots in the same places as v1: two under where the
+// fringe lands (x 488-515, y 1991-2004; backdrop and speck only through frame 91, the
+// cloth enters the box at 92) and one at 763-765,1277-1282 (through frame 59, cloth at 60).
+// Painted the page colour only in those frames. (v1, 30 fps: frames 0-97 and 0-67.)
 const BANGIE_INTRO_SPECKS = [
-  "drawbox=x=485:y=1988:w=36:h=24:color=0xEFF1F0:t=fill:enable='lte(n,97)'",
-  "drawbox=x=760:y=1274:w=12:h=14:color=0xEFF1F0:t=fill:enable='lte(n,67)'",
+  "drawbox=x=485:y=1988:w=36:h=24:color=0xEFF1F0:t=fill:enable='lte(n,91)'",
+  "drawbox=x=760:y=1272:w=12:h=14:color=0xEFF1F0:t=fill:enable='lte(n,59)'",
 ].join(',');
 
 const ARTWORK = [
@@ -426,8 +427,11 @@ const ARTWORK = [
    * -91 dB anyway); the picture is copied untouched. Under video/, so they ship with the
    * other videos (HoloBox-media), not in git. */
   // Graded and de-specked (user, 10 Nov 2026: "apply what was done for Maznah"); see
-  // BANGIE_INTRO_LUT / BANGIE_INTRO_SPECKS above for the measurements.
-  { from: 'premiere file/intro/Bangie Pua.mp4',   to: 'bangie/video/intro.mp4',
+  // BANGIE_INTRO_LUT / BANGIE_INTRO_SPECKS above for the measurements. Since 17 Nov 2026
+  // the source is the editor's v2 render (1020x2024, 24 fps, 121 frames, one smooth roll
+  // instead of v1's steps), still ungraded pink on a 252 backdrop, so the same grade
+  // applies. Its outline matches v1's to half a pixel (left 10, top 14, right 1000.5).
+  { from: 'premiere file/bangie/product/TenunanPua_Rolled Down_v2.mp4', to: 'bangie/video/intro.mp4',
     ...introGrade(BANGIE_INTRO_LUT, BANGIE_PAGE, BANGIE_INTRO_SPECKS) },
   // Graded, not keyed (user, 10 Nov 2026): the render's backdrop is clipped flat at 255
   // and the page (and her turntable, transparent round the basket) is #EFEFEF = 239, so the
@@ -491,17 +495,20 @@ const ARTWORK = [
   { from: `${ZUL}/Button Product Explore.png`, to: 'bangie/ui/btn-product.png' },
   // One designed title block, shared by all five views of the cloth.
   { from: `${NEWT} Pua.png`,    to: 'bangie/products/tenunan-pua/info.png' },
-  // Infotext for Terangkan Produk: 512x512 opaque crops of the pua, the motif framed in
-  // yellow. The source names carry the designer's timing (m.ss) — the manifest's atMs/showMs
-  // are taken from them. "0 - Title" is the whole pua, opaque, 2400x4699 (28 MB): in the
-  // shared 490x372 infotext box it shows at 190x372 design px, i.e. 380x744 on the 4K panel,
-  // so it is scaled to exactly that (format pinned, or ffmpeg may palettise the PNG).
-  { from: 'premiere file/bangie/product/0 - Title (0.2-0.7).png',          to: 'bangie/infotext/infotext0.png',
-    vf: 'scale=380:744:flags=lanczos,format=rgb24' },
-  { from: 'premiere file/bangie/product/1 - Beji (0.37-0.42).png',          to: 'bangie/infotext/infotext1.png' },
-  { from: 'premiere file/bangie/product/2 - Tree (0.46-0.51).png',          to: 'bangie/infotext/infotext2.png' },
-  { from: 'premiere file/bangie/product/3 - Tree Broke (1.22).png',         to: 'bangie/infotext/infotext3.png' },
-  { from: 'premiere file/bangie/product/4 - Beji Follower(1.36-1.41).png', to: 'bangie/infotext/infotext4.png' },
+  // Infotext for Terangkan Produk (Bangie, Johnny, Maznah), all redone 17 Nov 2026: 600x600
+  // RGBA cards, copied as-is. The source names carry the designer's timing as mm.ss-mm.ss —
+  // the manifest's atMs/showMs are taken from them. They replace Bangie's first set of
+  // 3 Nov ('premiere file/bangie/product/', 0 - Title ... 4 - Beji Follower).
+  ...[
+    ['bangie', ['info1 (00.27-00.33)', 'info2 (00.35-00.40)', 'info3 (00.40-00.44)',
+                'info4 (00.47-00.55)', 'info5 (01.15-01.24)', 'info6 (01.27-01.35)']],
+    ['johnny', ['info1 (00.41-00.45)', 'info2 (00.46-00.54)', 'info3 (01.23-01.40)',
+                'info4 (01.53-01.58)', 'info5 (01.58-02.03)', 'info6 (02.03-02.07)']],
+    ['maznah', ['info1 (00.55-01.00)', 'info2 (01.16-01.22)', 'info3 (01.23-01.29)',
+                'info4 (01.55-02.04)']],
+  ].flatMap(([id, names]) => names.map((n, i) => ({
+    from: `explain image timing/${id}/${n}.png`, to: `${id}/infotext/infotext${i + 1}.png`,
+  }))),
 
   // Switcher thumbnails. Bare crops of the cloth — no frame, no glow — so they take
   // the products rail's plain-tile path rather than the artwork-button path.

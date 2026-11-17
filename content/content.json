@@ -479,13 +479,14 @@
           "_note_srt": "English and Malay exactly as the profile's: the user's corrected English (115 cues, client amendments of 4 Nov) and the Malay from column E on the same cues.",
           "srt": "artists/bangie/video/explain.srt",
           "srtMs": "artists/bangie/video/explain.ms.srt",
-          "_note_infotext": "Timings are the designer's, written in the source file names as m.ss (e.g. 'Beji (0.37-0.42)' = 0:37-0:42), and each lands on the subtitle that names it: the whole pua ('0 - Title (0.2-0.7)') on 'this pattern here is the Tangga Beji pattern' 2.65 s, Beji 37.6 s, the Entepung tree 46.9 s, 'the pillar broke' 82.2 s, 'Beji and his followers' 97.5 s. 'Tree Broke (1.22)' has no end time, so it got the same 5 s as the others. Then each was held 2 s longer at the end, by request (7 s; start times unchanged): 2-9, 37-44, 46-53, 82-89, 96-103 s, no overlaps. The title (tall, 2400x4699) is staged at 380x744 and shows at 190x372 in the same bottom-right corner as the squares (3 Nov 2026).",
+          "_note_infotext": "Redone 17 Nov 2026 from the user's new set ('outer assets/explain image timing/bangie', 600x600 cards), replacing the five of 3 Nov. Timings are exactly the file names, mm.ss-mm.ss, with no padding: 27-33, 35-40, 40-44, 47-55, 75-84, 87-95 s. 2 and 3 abut at 40 s and simply swap. Each starts on the line it illustrates: 'Kaki Kemebai Bejalai' 26.95 s, 'Beji climbing the tree' 37.6 s, 'Entepung tree' 46.9 s, 'depicts Beji as he nearly reaches the sky' 74.6 s, 'the entepung tree breaks' 86.95 s. No infotextBox: her mark-up was only given for Johnny and Maznah, so she keeps the default spot from the CSS (bottom-right, above her two-language band, 372x372 at x 676-1048, y 608-980), where her first set sat at the user's mark-up of 3 Nov.",
           "infotext": [
-            { "image": "artists/bangie/infotext/infotext0.png", "atMs": 2000, "showMs": 7000 },
-            { "image": "artists/bangie/infotext/infotext1.png", "atMs": 37000, "showMs": 7000 },
-            { "image": "artists/bangie/infotext/infotext2.png", "atMs": 46000, "showMs": 7000 },
-            { "image": "artists/bangie/infotext/infotext3.png", "atMs": 82000, "showMs": 7000 },
-            { "image": "artists/bangie/infotext/infotext4.png", "atMs": 96000, "showMs": 7000 }
+            { "image": "artists/bangie/infotext/infotext1.png", "atMs": 27000, "showMs": 6000 },
+            { "image": "artists/bangie/infotext/infotext2.png", "atMs": 35000, "showMs": 5000 },
+            { "image": "artists/bangie/infotext/infotext3.png", "atMs": 40000, "showMs": 4000 },
+            { "image": "artists/bangie/infotext/infotext4.png", "atMs": 47000, "showMs": 8000 },
+            { "image": "artists/bangie/infotext/infotext5.png", "atMs": 75000, "showMs": 9000 },
+            { "image": "artists/bangie/infotext/infotext6.png", "atMs": 87000, "showMs": 8000 }
           ]
         }
       },
@@ -511,8 +512,8 @@
           "controls": [],
           "_note_intro": "10 Nov 2026: a generated video of the cloth unrolling, played (muted, once) when the panel opens, before the tutorial. Its last frame is laid over the base picture: `box` is the whole video frame in the BASE's pixels (x, y, w, h). The render's weave is not the photo's, so it was registered by the cloth's outline rather than its pattern: side edges at video x 18-995 against the base's 0-1211 give 1.240 base px per video px (the height agrees to 1%), and the top edges are put together; the video's fringe falls below the base's bottom. Its backdrop is graded to the page's #EFEFEF by the pipeline (see _note_intro_end).",
           "_note_intro_fade": "endFade 'white': the video ends through solid white (up, product swapped in behind, down), like a panel change, rather than cutting from the render's weave to the photo's (user, 10 Nov 2026). Each half is endFadeMs if set, else kiosk.fadeMs. Remove endFade for a straight cut.",
-          "_note_intro_end": "endAt 3.333 s = frame 100 of 150: the cloth, fringe included, has fully unrolled (its bottom, measured across the middle columns, steps down every 2-3 frames and stops at frame 100); after it only the fringe sways. The white fade starts there, like Maznah's on her finished basket (user, 10 Nov 2026). The pipeline grades the video's cloth to this photo's colours (washed-out pink to red; user, 10 Nov 2026), its backdrop to the page, and paints out two rendered specks (tools/transcode.mjs, BANGIE_INTRO_*).",
-          "intro": { "src": "artists/bangie/video/intro.mp4", "box": [-22.3, -19.8, 1267.3, 2512.2], "endAt": 3.333, "endFade": "white" },
+          "_note_intro_end": "17 Nov 2026: the video is now the editor's v2 render ('premiere file/bangie/product/TenunanPua_Rolled Down_v2.mp4', 1020x2024, 24 fps, 121 frames, 5.04 s), one smooth roll where v1 stepped. Its outline matches v1's to half a pixel (left 10, top 14, right 1000.5 of the frame), so the registration is unchanged: same 1.240 base px per video px and the same top-left, the box just 2 px smaller (1020 x 1.240 = 1264.8, 2024 x 1.240 = 2509.8). The cloth is fully down at frame 93 (3.875 s; its bottom stops descending there and settles by frame 97). The fade timing was tried three ways on 17 Nov 2026: 1 s before the cloth lands (2.875 s), then 0.5 s before (3.375 s), both too early for the user; it now starts in the video's last 0.25 s, endAt 4.792 s = frame 115 of 121 (the file is 5.042 s), so the cloth is down and the fringe has settled. The white takes ~0.4 s, longer than the 0.25 s left; the video just holds its last frame under it ('ended' finds the intro already finishing). (v1: endAt 3.333 = its frame 100, when it was fully down.) The pipeline grades the video's cloth to this photo's colours (washed-out pink to red; user, 10 Nov 2026), its backdrop to the page, and paints out the render's specks (tools/transcode.mjs, BANGIE_INTRO_*).",
+          "intro": { "src": "artists/bangie/video/intro.mp4", "box": [-22.3, -19.8, 1264.8, 2509.8], "endAt": 4.792, "endFade": "white" },
           "_note_hotspots": "6 Nov 2026: four yellow rectangles on the designer's new base (view-0 = product explore/newbase.png, 1212x2400), each opening a 512x512 detail centred, like Maznah's basket; a tap anywhere closes it. Positions are in the BASE IMAGE's pixels (hotspotImage), so they stay on the cloth wherever the picture is drawn. x,y is each rectangle's centre = Photoshop X + W/2, Y + H/2 off the user's screenshots (Rectangle 1 Beji: X 773.31 Y 640.78 W 115.39 H 209.46; 2 Tree: 769.47 1764 119 336; 3 Tree Broke: 341.66 330.63 133.8 377.78; 4 Beji Follower: 400 1666 201 288). w,h are the PNGs' own sizes, 10 px over the path because the 10 px stroke is centred on it. hotspotPulse 'blink': fast opacity blink with a 1.0 -> 1.1 swell, no halo.",
           "hotspotImage": [1212, 2400],
           "hotspotPulse": "blink",
@@ -670,7 +671,15 @@
           "fps": 50,
           "_note_srt": "Her Terangkan Produk has real captions, so it runs the subtitle band.",
           "srt": "artists/maznah/video/explain.srt",
-          "srtMs": "artists/maznah/video/explain.ms.srt"
+          "srtMs": "artists/maznah/video/explain.ms.srt",
+          "_note_infotext": "17 Nov 2026, from 'outer assets/explain image timing/maznah' (600x600 cards). Timings are exactly the file names, mm.ss-mm.ss: 55-60, 76-82, 83-89, 115-124 s; each starts on its line ('this Sungu Duri' 55.1 s, 'anyaman gila' 77.95 s, 'the middle here is also anyaman gila' 83.0 s, 'shaping the spines' 113-116 s). The box is the user's magenta mark-up over a 1:23 frame: the video spans screenshot x 511-868 (358 px = 1080 design px) from y 72, the box x 742-862, y 218-339, so x 697-1062, y 440-808 on the canvas, right of her head and 18 px from the edge. It sits lower than Johnny's (y 374), as marked.",
+          "infotextBox": { "x": 697, "y": 440, "w": 365, "h": 365 },
+          "infotext": [
+            { "image": "artists/maznah/infotext/infotext1.png", "atMs": 55000, "showMs": 5000 },
+            { "image": "artists/maznah/infotext/infotext2.png", "atMs": 76000, "showMs": 6000 },
+            { "image": "artists/maznah/infotext/infotext3.png", "atMs": 83000, "showMs": 6000 },
+            { "image": "artists/maznah/infotext/infotext4.png", "atMs": 115000, "showMs": 9000 }
+          ]
         }
       },
       "_note_products": "One product, so the switcher rail never appears — the panel is the turntable alone. Same `sequence` viewer as Norhaiza's keris, and like his it LOOPS: no rotationLimits is declared, so dragging past the last frame wraps to the first.",
@@ -764,7 +773,17 @@
           "src": "artists/johnny/video/explain.mp4",
           "fps": 50,
           "srt": "artists/johnny/video/explain.srt",
-          "srtMs": "artists/johnny/video/explain.ms.srt"
+          "srtMs": "artists/johnny/video/explain.ms.srt",
+          "_note_infotext": "17 Nov 2026, from 'outer assets/explain image timing/johnny' (600x600 cards). Timings are exactly the file names, mm.ss-mm.ss: 41-45, 46-54, 83-100, 113-118, 118-123, 123-127 s (4, 5 and 6 abut and simply swap); each starts on its line ('its carving we call kunding' 39.7 s, 'the sheath we make from wood' 45.5 s, 'this sheath is made of selected hardwood' 82.3 s, 'lemetak, remang and fish motifs' 112.4 s, 'the blade is forged' 117.7 s, 'the hilt ... hornbill' 123.4 s). The box is the user's magenta mark-up over a 0:41 frame: the video spans screenshot x 495-852 (358 px = 1080 design px) from y 33, the box x 727-847, y 157-278, so x 700-1065, y 374-742 on the canvas, beside his head and 15 px from the edge.",
+          "infotextBox": { "x": 700, "y": 374, "w": 365, "h": 365 },
+          "infotext": [
+            { "image": "artists/johnny/infotext/infotext1.png", "atMs": 41000, "showMs": 4000 },
+            { "image": "artists/johnny/infotext/infotext2.png", "atMs": 46000, "showMs": 8000 },
+            { "image": "artists/johnny/infotext/infotext3.png", "atMs": 83000, "showMs": 17000 },
+            { "image": "artists/johnny/infotext/infotext4.png", "atMs": 113000, "showMs": 5000 },
+            { "image": "artists/johnny/infotext/infotext5.png", "atMs": 118000, "showMs": 5000 },
+            { "image": "artists/johnny/infotext/infotext6.png", "atMs": 123000, "showMs": 4000 }
+          ]
         }
       },
       "_note_ui": "Terokai Produk artwork, the same file Bangie and Maznah use, so his three buttons match. Profil and Terangkan Produk come from the shared set.",
@@ -804,6 +823,8 @@
             "pattern": "artists/johnny/products/full-parang/frames/frame-{i:02}.webp",
             "start": 0,
             "count": 66,
+            "reverse": true,
+            "_note_reverse": "16 Nov 2026, the user: dragging felt backwards (a drag left turned the parang the wrong way). Both parang turns were shot spinning the other way from the keris and the basket, so the frames run backwards under a drag.",
             "fitHeight": 0.95,
             "_note_fit": "Fraction of the product viewport height for the WHOLE uncropped 2048px frame. The parang itself fills about 68% of the frame's height, so it lands near Norhaiza's keris (0.68 of a cropped frame)."
           },
@@ -838,6 +859,8 @@
             "pattern": "artists/johnny/products/parang-only/frames/frame-{i:02}.webp",
             "start": 0,
             "count": 50,
+            "reverse": true,
+            "_note_reverse": "As the sheathed parang: the frames run backwards under a drag (16 Nov 2026).",
             "centreX": 649.46,
             "centreY": 1090.8,
             "_note_centre": "Registered on the sheathed parang, head on head, so switching between the two does not move the parang (user, 10 Nov 2026; the sheathed one is unchanged). Its hilt head in frame 0, template-matched against the sheathed parang's frame 0 (score 0.978), is drawn 0.94x as large, and the sheathed head's corner (431,254) falls at (547,367) here. So fitHeight 0.95/0.94 = 1.0106 makes the heads the same size, and centreX/centreY put that point where the sheathed one shows it: 649.46 = 547 + (540 - 431) x 0.94, 1090.8 = 367 + (1024 - 254) x 0.94. (Before: centreX 627, the blade's own middle, at fit 0.95.)",

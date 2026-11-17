@@ -354,9 +354,18 @@ let profileSession = 0;
  * comes (a not-yet-decoded <img> would show blank for as long as its decode took).
  * Entries whose file is missing are skipped. update(t) shows the entry whose window
  * contains t -- the latest-starting one if windows overlap -- and hides the rest.
+ *
+ * `place` (the clip's `infotextBox`, { x, y, w, h } in design px) moves the box for that
+ * clip alone; without it the box keeps its default spot from `.talk-infotext` in the CSS.
+ * Each artist's spot is marked up separately (17 Nov 2026: Johnny's and Maznah's sit at
+ * different heights, beside each one's head), so it is manifest data, not code.
  */
-function mountInfotext(box, list) {
+function mountInfotext(box, list, place) {
   box.innerHTML = '';
+  const ok = place && ['x', 'y', 'w', 'h'].every((k) => Number.isFinite(place[k]));
+  Object.assign(box.style, ok
+    ? { left: `${place.x}px`, top: `${place.y}px`, width: `${place.w}px`, height: `${place.h}px`, right: 'auto', bottom: 'auto' }
+    : { left: '', top: '', width: '', height: '', right: '', bottom: '' });
   const items = (list ?? [])
     .filter((e) => e?.image && assetInfo(e.image).exists && Number.isFinite(e.atMs) && Number.isFinite(e.showMs))
     .map((e) => {
@@ -434,7 +443,7 @@ async function enterTalk(artist, key) {
     band = new SubtitleBand($('profile-subs'));
     subs = mountSubsToggle($('profile-subs-toggle'), band, tracks);
   }
-  const infotext = mountInfotext($('profile-infotext'), cfg.infotext);
+  const infotext = mountInfotext($('profile-infotext'), cfg.infotext, cfg.infotextBox);
 
   // A talk is a one-shot: hold the idle countdown for its duration.
   const release = idle.hold();

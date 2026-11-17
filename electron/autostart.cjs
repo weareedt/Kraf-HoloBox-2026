@@ -49,11 +49,11 @@ const xmlEscape = (s) => String(s)
  *  counts if it says `"autoStart": false`: Notepad and PowerShell save UTF-8 with a
  *  byte-order mark, and a stray comma is an easy slip, and either one made JSON.parse fail
  *  and the switch be silently ignored (found in testing, 16 Nov 2026). */
-function enabledOnThisPc(root) {
+function enabledOnThisPc(root, key = 'autoStart') {
   let text;
   try { text = readFileSync(join(root, 'kiosk.local.json'), 'utf8').replace(/^﻿/, ''); } catch { return true; }
-  try { return JSON.parse(text).autoStart !== false; } catch { /* fall through */ }
-  return !/"autoStart"\s*:\s*false/.test(text);
+  try { return JSON.parse(text)[key] !== false; } catch { /* fall through */ }
+  return !new RegExp(`"${key}"\\s*:\\s*false`).test(text);
 }
 
 function taskXml({ user, command, args, workDir }) {

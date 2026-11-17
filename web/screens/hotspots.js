@@ -32,7 +32,8 @@
  * pixels (`product.zoomSize`). The view and its cards share one box, laid out at the
  * image's native size and scaled down as a unit, so the numbers in content.json are the
  * ones read off the Photoshop layout and the cards stay registered to the picture. On
- * every open the cards scale in 0 -> 1, one after another.
+ * every open the picture scales in 70% -> 100% (0.3 s), then the cards 0 -> 1, one after
+ * another.
  */
 
 const DEFAULT_SIZE = 96;
@@ -44,6 +45,10 @@ const DEFAULT_SIZE = 96;
 const VIEW_BOX = [730, 1092];
 
 const INFO_MS = 200;   // each card's scale-in, linear, one after another
+// The picture itself scales in first, 70% -> 100% in 0.3 s, and the caption cards
+// follow once it has landed (client's request, 17 Nov 2026).
+const IMG_MS = 300;
+const IMG_FROM = 0.7;
 
 export function mountHotspots({ product, url, assetInfo, els }) {
   const spots = (product.hotspots ?? []).filter((h) => h.image && assetInfo(h.image).exists);
@@ -116,7 +121,7 @@ export function mountHotspots({ product, url, assetInfo, els }) {
       });
 
     els.zoom.appendChild(card);
-    cards.set(spot.id, { card, infos });
+    cards.set(spot.id, { card, img, infos });
 
     const b = document.createElement('button');
     b.type = 'button';
@@ -208,16 +213,22 @@ export function mountHotspots({ product, url, assetInfo, els }) {
   let openId = null;
   let running = [];              // the info animations of the view currently open
 
-  // Scale each card in from nothing, one after another. Called on EVERY open, so going
-  // back and forth replays it; the old animations are cancelled first, or a quick
-  // re-open would find the cards already at full size.
-  function playInfo(infos) {
+  // The picture scales in from IMG_FROM, then each caption card from nothing, one after
+  // another. Called on EVERY open, so going back and forth replays it; the old animations
+  // are cancelled first, or a quick re-open would find everything already at full size.
+  function playOpen({ img, infos }) {
     for (const a of running) a.cancel();
-    running = infos.map((el, i) => el.animate(
-      [{ transform: 'scale(0)' }, { transform: 'scale(1)' }],
-      // `both` holds each card at scale 0 until its turn, and at 1 afterwards.
-      { duration: INFO_MS, delay: i * INFO_MS, easing: 'linear', fill: 'both' },
-    ));
+    running = [
+      img.animate(
+        [{ transform: `scale(${IMG_FROM})` }, { transform: 'scale(1)' }],
+        { duration: IMG_MS, easing: 'ease-out', fill: 'both' },
+      ),
+      ...infos.map((el, i) => el.animate(
+        [{ transform: 'scale(0)' }, { transform: 'scale(1)' }],
+        // `both` holds each card at scale 0 until its turn, and at 1 afterwards.
+        { duration: INFO_MS, delay: IMG_MS + i * INFO_MS, easing: 'linear', fill: 'both' },
+      )),
+    ];
   }
 
   // `hotspotsHideOnOpen`: the markers fade out while a detail is open and back when it
@@ -229,7 +240,7 @@ export function mountHotspots({ product, url, assetInfo, els }) {
     openId = id;
     els.zoom.classList.add('is-open');
     if (hideMarkers) els.layer.classList.add('is-hidden');
-    playInfo(cards.get(id).infos);
+    playOpen(cards.get(id));
   }
 
   function close() {

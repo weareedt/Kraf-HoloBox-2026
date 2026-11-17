@@ -24,6 +24,7 @@ const { readFileSync } = require('node:fs');
 const { createConnection } = require('node:net');
 const { join, resolve } = require('node:path');
 const { syncAutoStart } = require('./autostart.cjs');
+const { syncKioskLock } = require('./kiosk-lock.cjs');
 
 // One kiosk at a time. Once the PC starts the app at logon, a staff member double-clicking
 // start.bat as well must not open a second full-screen copy on top: the second launch just
@@ -172,7 +173,10 @@ app.whenReady().then(async () => {
     root: ROOT,
     exe: process.execPath,
     loginItem: (on) => app.setLoginItemSettings({ openAtLogin: on, path: process.execPath, args: [ROOT] }),
-  }).then((r) => console.log(`[autostart] ${r}`));
+  }).then((r) => console.log(`[autostart] ${r}`))
+    // Then the edge-swipe lock (one UAC prompt on a PC's first run; electron/kiosk-lock.cjs).
+    .then(() => syncKioskLock({ root: ROOT }))
+    .then((r) => console.log(`[kiosk-lock] ${r}`));
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

@@ -272,8 +272,11 @@ why a colour key cannot separate a rosewood sheath from the wooden stand it rest
 5. Leave it running overnight — memory flat, parked on the menu.
 
 **Kiosk machine:** auto-login; sleep, hibernate and screensaver off; Windows Update active
-hours locked; notifications off. Run the app once: it sets the PC to open the kiosk at every
-logon by itself (README → *Auto-start at logon*). On our own PCs a gitignored
-`kiosk.local.json` with `{ "autoStart": false }` switches that off. If you ship the Chrome fallback
+hours locked; notifications off; three- and four-finger touch gestures off. Run the app
+once: it sets the PC to open the kiosk at every logon by itself (README → *Auto-start at
+logon*), and asks once for admin to turn off Windows' edge swipes; approve it and restart
+(README → *Kiosk lock*; `kiosk-setup.bat` if the prompt was declined). On our own PCs a
+gitignored `kiosk.local.json` with `{ "autoStart": false, "lockEdgeSwipes": false }` switches
+both off. If you ship the Chrome fallback
 rather than Electron, **pin Chrome's version or disable its updater** — otherwise this runs
 for eight months and dies on a Tuesday.

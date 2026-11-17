@@ -157,14 +157,17 @@ own start and duration:
 ]
 ```
 
-They all appear in one fixed box just above the subtitle band, on the right: 490 x 372 px,
+By default they appear in one box just above the subtitle band, on the right: 490 x 372 px,
 32 px from the right edge and 18 px above the band (`.talk-infotext` in `web/app.css`),
-measured from the user's annotated screenshot. An image is fitted inside it, sitting in its
+measured from the user's annotated screenshot. A clip can place its own box with
+`"infotextBox": { "x", "y", "w", "h" }` in design px: Johnny's and Maznah's sit beside the
+artist's head at different heights, from the user's mark-up of 17 Nov 2026. An image is fitted inside it, sitting in its
 bottom-right corner (moved there from centred on the user's mark-up, 3 Nov 2026), and
 simply appears and hides. It is driven from the **video's own
 currentTime**, not a wall clock, so it stays in step if playback stalls and there are no
-timers to cancel on the way out. Bangie has five (3 Nov 2026), timed from the designer's
-file names; `HANDOVER.md` → *Infotext* lists them and how to add a set.
+timers to cancel on the way out. Bangie has six, Johnny six, Maznah four (17 Nov 2026),
+timed from the windows written in the file names; `HANDOVER.md` → *Infotext* lists them
+and how to add a set.
 
 It replaced a placeholder "supers" card (`video.explain.overlay`, `Text1.png` blinking on a
 5 s/5 s loop), removed on 2 Nov 2026.
@@ -383,7 +386,8 @@ turns on for that video only. It is a per-step field, so an artist can mix both.
 
 `artist.productsLayout` names a CSS block for the panel's geometry (currently `"explore"`).
 The panels genuinely differ — the Wau and the keris are objects centred in the free space
-between the buttons, while Bangie's cloth is a full-height picture with its title top-right —
+between the buttons, while Bangie's cloth is a full-height picture with its title top-left
+(top-right until the museum's redesigned, left-aligned title cards of 16 Nov 2026) —
 so this is a stylesheet block plus one string, not a new screen.
 
 #### Five views of one object
@@ -559,7 +563,14 @@ the canvas by `(frameWidth/2 - centreX)` scaled to the drawn size, multiplied by
 object stays anchored when a product does zoom. Checked in the app: both parangs now land on
 the same free-space centre.
 
-Titles and meta are placeholders until a designed title block arrives.
+Both carry the museum's "Parang Ilang" title block (12 Nov 2026; top left since 16 Nov).
+
+**Drag direction (16 Nov 2026).** Both parang turns were shot spinning the other way from
+the keris and the basket, so a drag to the left turned the parang the wrong way (user: "the
+rotate feels weird like it was reversed"). `sequence.reverse: true` on both makes the viewer
+run the frames backwards under a drag (`sign` in `web/viewers/sequence-viewer.js`); nothing
+else changes, and the keris and the basket keep the default. The user is testing it on the
+panel.
 
 **Close-ups (22 Oct 2026), Maznah's pattern unchanged.** Each parang declares its own
 `hotspots`, and the products screen re-mounts them on every switch, so the rail swaps the
@@ -571,7 +582,8 @@ were measured off those mock-ups (the ochre squares, scaled by the app page's wi
 the caption positions off the Photoshop layouts by their straight strokes (every height
 matched its PNG to within 2 px). The zoom views are 1334x2000 and opaque, like hers, so
 `zoomSize` and the view box are shared. Checked in the app: each of the five markers opens
-its view with its caption at the measured spot, scaling in over 0.2 s.
+its view with its caption at the measured spot, scaling in over 0.2 s. (Since 17 Nov 2026 the
+picture itself scales in first, 70% -> 100% in 0.3 s: *Product hotspots*.)
 
 ### Drag/scale hint (`web/screens/tutorial.js`)
 
@@ -604,7 +616,8 @@ Added 10 Nov 2026 from `outer assets/premiere file/intro/`.
 
 **Intro videos (Bangie, Maznah).** `product.intro = { src, box }` plays a short video once,
 muted, when the products panel opens, before the drag/scale hint. The pipeline stages the
-video with `-an` (no audio track at all) and `-c:v copy` (Bangie 150 frames, Maznah 154). The
+video with `-an` (no audio track at all); Bangie's (121 frames at 24 fps since 17 Nov 2026) and
+Maznah's (154) are re-encoded through a grade, below. The
 video's LAST frame is laid over the product's own first picture, so when it ends the real
 product takes over in place. `box` is the whole video frame in that picture's own pixels
 (x, y, w, h). The app reads where the picture is actually drawn off the live canvas or img,
@@ -612,7 +625,13 @@ so the video follows any layout.
 - **Maznah:** template-matched (her turntable frame 0 in the video's last frame: scale
   0.635, score 0.75).
 - **Bangie:** registered by the cloth's outline (1.240 base px per video px, top edges
-  together). The video is a render whose weave is NOT the photo's, so a straight cut showed
+  together). **Replaced 17 Nov 2026 by the editor's v2 render**
+  (`premiere file/bangie/product/TenunanPua_Rolled Down_v2.mp4`: 1020x2024, 24 fps, 121
+  frames, 5.04 s, one smooth roll where v1 stepped). Its outline matches v1's to half a
+  pixel (left 10, top 14, right 1000.5), so the same registration holds and the box only
+  lost v1's 2 px: `[-22.3, -19.8, 1264.8, 2509.8]`. It arrived ungraded (the same washed-out
+  pink, median saturation 66, backdrop 252), so the same grade and speck fix below apply;
+  after it the cloth's median saturation is 100 against the photo's 104. The video is a render whose weave is NOT the photo's, so a straight cut showed
   the pattern change. At the user's request it ends through solid white instead
   (`intro.endFade: "white"`): white up over the screen (under the title and back button),
   product swapped in behind it, white down, each half `kiosk.fadeMs` (420 ms) unless `intro.endFadeMs` is set. Measured in
@@ -651,16 +670,21 @@ so the video follows any layout.
   - No 8-bit TV-range YUV code decodes to #EFF1F0 exactly; the nearest are 2 levels off in
     total (worked through BT.709, matching Chrome to the level). It lands on
     (239, 242, 241), uniform over 100% of the backdrop.
-  - Specks rendered into the clip were found frame by frame: two dots at x 489-517,
-    y 1992-2007 (frames 0-97) and one at 764,1278 (frames 0-67). Each is painted the page
-    colour only until the cloth reaches it, so the fringe is never touched. A dark bit by
-    the fringe from frame 120 is a loose thread, after the fade, and was left.
-  - Measured: 150 frames, no audio, clean decode. The cloth's tones moved 2.3 levels on
-    average, which is the re-encode.
-  - It also ends on completion: `endAt: 3.333` (frame 100), when the cloth, fringe
-    included, is fully down. Its bottom steps down every 2-3 frames and stops there, and
-    after it only the fringe sways. Measured: the fade starts at video 3.31 s, the product
-    swaps in at full white, and the white lifts.
+  - Specks rendered into the clip were found frame by frame. v2 has the same three as v1,
+    in the same places: two dots at x 488-515, y 1991-2004 (backdrop and speck only through
+    frame 91; v1 0-97) and one at 763,1277 (through frame 59; v1 0-67). Each is painted the
+    page colour only until the cloth reaches it, so the fringe is never touched. Measured
+    after: within 1 level of the page in those frames.
+  - Measured (v2): 121 frames, no audio, 0 decode errors; the backdrop decodes as
+    (239, 241, 241) at every corner.
+  - **It whitens out in the video's last 0.25 s (user, 17 Nov 2026).** `endAt: 4.792`
+    (frame 115 of 121; the file is 5.042 s). v2's cloth is fully down at frame 93 (3.875 s),
+    and the fade was tried 1 s and then 0.5 s before that (2.875, 3.375 s); both were too
+    early. The white takes ~0.4 s, longer than the 0.25 s left, so the video ends with the
+    white at ~80% and holds its last frame under it: `ended` finds the intro already
+    finishing. Measured in the app: fade starts at video 4.81 s, video ends at white 0.80,
+    the product swaps in at full white, the white lifts, nothing is left behind. (v1 ended on completion, `endAt:
+    3.333`, its frame 100.)
 
 - **Maznah's ends on the finished basket, through white.** The weave moves in bursts, and
   its last movement is frame 139 -> 140 (motion measured frame to frame over the whole
@@ -892,10 +916,13 @@ document's on-screen width gave the zoom, and each card was found by its straigh
 bottom strokes. A colour mask alone does not work, because the weave contains the same brown.
 Every measured card height matched its PNG to within 2 px, which is the cross-check.
 
-On every open the cards scale in **0 → 1, linear, 0.2 s each, one after another**, from their
-own centres (`INFO_MS` in `hotspots.js`), and play **once**: a single iteration, then they
-hold at full size. Measured in the browser: the first card 0.08 → 0.83 over 48-188 ms, the
-second 0.25 → 1 over 282-421 ms, both still at 1 three seconds later. This is the Web
+On every open the **picture scales in first, 70% → 100% in 0.3 s, ease-out** (`IMG_FROM`,
+`IMG_MS`; the client's request, 17 Nov 2026, for every artist with zoom details: Maznah,
+Bangie, Johnny), and only then do the cards scale in **0 → 1, linear, 0.2 s each, one after
+another**, from their own centres (`INFO_MS` in `hotspots.js`). All of it plays **once**: a
+single iteration, then holds at full size. Measured in the app on Maznah's bottom detail
+(17 Nov 2026): picture 0.70 → 0.99 over 16-282 ms and 1.00 from 349 ms; first card
+0.17 → 1 over 349-549 ms, second 0.17 → 1 over 549-749 ms. This is the Web
 Animations API rather than a CSS class, because it has to restart on every open: the
 previous run is cancelled first, so going back and forth always replays it from scale 0. The cards sit above the picture and ignore taps, so tapping a card
 still closes the view.
@@ -1683,6 +1710,50 @@ schtasks /Delete /TN "KRAF HoloBox" /F
 The Chrome fallback in `start.bat` does not set auto-start up. Only the Electron app does,
 and that is what ships.
 
+## Kiosk lock: no Windows edge swipes (`electron/kiosk-lock.cjs`, `kiosk-setup.bat`)
+
+On the touch panel, a visitor swiping in from a screen edge opens Windows' own UI over the
+exhibit: the notification centre from the right, Widgets / Task View from the left, the
+taskbar from the bottom (user, 16 Nov 2026: visitors must not be able to). Windows has one
+policy that turns all of them off, *Allow edge swipe* (Administrative Templates > Windows
+Components > Edge UI), which is the registry value
+
+```
+HKLM\SOFTWARE\Policies\Microsoft\Windows\EdgeUI   AllowEdgeSwipe = 0 (DWORD)
+```
+
+**It needs admin, once.** The Policies keys are read-only to a standard user, the per-user
+copy under HKCU included (measured 16 Nov 2026). So on its first run on a PC the app asks
+Windows **once** for permission: one UAC prompt, answered by whoever sets the PC up. Yes
+writes the value for the whole machine. Whatever the answer, it never asks again
+(`.cache/kiosk-lock.asked` records that it asked), so a visitor never sees a prompt. Delete
+that file to be asked again. Windows reads the policy at logon, so it **takes effect after
+the next sign-in or restart**.
+
+**By hand: `kiosk-setup.bat`** in the repo root does the same, asks for admin itself, and is
+the way back if the prompt was declined:
+
+```
+kiosk-setup.bat          lock
+kiosk-setup.bat undo     unlock
+kiosk-setup.bat status   show the state (no admin needed)
+```
+
+Every launch reads the value (reading needs no rights) and logs to `.cache/autostart.log`
+with the prefix `edge swipes:`, so a museum PC can be checked without regedit.
+
+**The switch, for our own PCs:** `"lockEdgeSwipes": false` in the same gitignored
+`kiosk.local.json` as `autoStart`. It means never touch this PC. It does not undo a lock that
+is already there (that needs admin too): run `kiosk-setup.bat undo`.
+
+**Not covered:** Windows 11's three- and four-finger touch gestures are a separate setting
+(Settings > Bluetooth & devices > Touch > *Three- and four-finger touch gestures*: off). Do
+that by hand on the museum PC.
+
+**Tested so far:** only that this development PC is skipped (switch off: "switched off on this
+PC" in the log). The prompt, the bat and the real effect on the panel are **not yet tested**:
+do it on the museum PC (approve the prompt, restart, swipe in from every edge).
+
 ## Pressed state
 
 Buttons take a **50% dark-brown wash while held** (`--press-tint`). The tint is a
@@ -1761,7 +1832,7 @@ own, and no Terokai Produk yet.
 | ~~Bangie's idle loop does not close~~ | **done** — the editor's 29.14 s re-cut loops (0.987). See *Bangie's refined footage* |
 | ~~Bangie's walk-in re-export~~ | **done** (3 Nov 2026) — the user's re-edit, trimmed out of a 61 s export that held walk-in and idle twice. See *Bangie's refined footage* |
 | ~~Bangie's footage is on grey~~ | **done** (22 Oct 2026) — lifted to #F2F2F2 by `tools/refine-video.py`, and she is colour-graded |
-| ~~Bangie's supers card~~ | **removed** (2 Nov 2026) — replaced by **infotext**. Bangie's five images are in (3 Nov 2026); Maznah's and Johnny's sets are still to come. See `HANDOVER.md` → *Infotext* |
+| ~~Bangie's supers card~~ | **removed** (2 Nov 2026) — replaced by **infotext**. All three sets are in (17 Nov 2026): Bangie 6, Johnny 6, Maznah 4. See `HANDOVER.md` → *Infotext* |
 | ~~Bangie has no subtitles~~ | **done** (2 Nov 2026) — the editor's English captions from Premiere, carried onto the refined cut by audio. See *Bangie's refined footage* |
 | Bangie's title block reads "???" | `Title Product Explore.png` ships with placeholder Motif/Teknik text |
 | Norhaiza keris info blocks | `18 Keris 1 Info.png` / `19 Keris 2 Info.png` are still generated placeholders. Norhaiza was accepted as done on 20 Oct 2026 with these in place |

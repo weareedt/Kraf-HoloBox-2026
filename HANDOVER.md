@@ -53,6 +53,15 @@ That also removes the task if it was already set up. The main development PC has
 A colleague's PC without it will set the task up on its first run. Delete it with
 `schtasks /Delete /TN "KRAF HoloBox" /F` if that happens. README → *Auto-start at logon*.
 
+**Edge swipes locked (16 Nov 2026).** Visitors must not be able to swipe in Windows' own
+UI (notification centre, Widgets, taskbar) from a screen edge. On its first run on a PC the
+app asks for admin **once** (one UAC prompt, for whoever sets the PC up) and sets the Windows
+policy that turns every edge swipe off; it takes effect after a restart. If the prompt was
+declined, run `kiosk-setup.bat` (also `undo` and `status`). Our own PCs skip it with
+`"lockEdgeSwipes": false` in the same `kiosk.local.json`; the main development PC has both
+switches set to `false`. **Untested on the museum PC so far.** Windows 11's three- and
+four-finger gestures are a separate setting; turn them off by hand. README → *Kiosk lock*.
+
 ---
 
 ## 2. Read this before you touch anything
@@ -254,8 +263,8 @@ Status as signed off on 20 Oct 2026:
 | 1 | Samat | Wau | Profil +srt (ENG/MS), 1 product (3D model), 4 steps (text burnt in, no toggle) | **done** |
 | 2 | Norhaiza | Ukiran Halus | Profil +srt (ENG/MS), 2 turntables, 10 steps +srt (ENG/MS) | **done** |
 | 3 | Bangie | Tenunan Pua | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), whole pua with 6 hotspots; refined footage | title block |
-| 4 | Maznah | Anyaman Mah Meri | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), turntable with 3 hotspots | almost done — new Terokai Produk design, infotext |
-| 5 | Johnny | Parang Ilang | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), 2 parang turntables with close-ups | mostly done — title block, infotext, blank frame 35 |
+| 4 | Maznah | Anyaman Mah Meri | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), turntable with 3 hotspots | almost done — new Terokai Produk design |
+| 5 | Johnny | Parang Ilang | Profil +srt (ENG/MS), Terangkan +srt (ENG/MS), 2 parang turntables with close-ups | mostly done — blank frame 35 |
 
 Measured 19 Oct 2026, not recalled: every `.srt` in the project was checked for coverage and
 none has a gap over 12 s, so no talk has an unwritten passage left. The turntables were
@@ -323,8 +332,8 @@ talks in English in Premiere (`bangie.prproj`; watermarked review exports in
   yellow rectangle, placed from the user's Photoshop mock-up. They pulse like Maznah's and
   open the same detail as the rectangle. The shared letter art is recoloured to amber,
   because the ochre disappeared into the cloth. README → *Product hotspots*.
-- **Infotext** for Terangkan Produk: **all five images in, 3 Nov 2026** (the whole pua,
-  Beji, Tree, Tree Broke, Beji Follower), tested in the app. See *Infotext* below.
+- **Infotext** for Terangkan Produk: **redone 17 Nov 2026** with the user's new set of six
+  600x600 cards, replacing the five of 3 Nov. Tested in the app. See *Infotext* below.
 - **New cuts, refined (22 Oct 2026).** Walk-in, idle and both talks come from
   `highbitrate/`, refined by `tools/refine-video.py`: the grey backdrop is lifted to white
   (#F2F2F2, like Maznah and Johnny) and her warm cast graded out. README → *Bangie's refined
@@ -385,6 +394,8 @@ Talks, subtitles, stage cycle and turntable all work. Two things are left:
 - **Terokai Produk redesign, in progress.** Done 21 Oct 2026: the glow-ring markers became
   the lettered **A/B/C buttons** (top, side, bottom; ochre, 48 px) with a pulsing brown halo, and each
   zoom view now carries its **caption cards**, which scale in one by one every time it opens.
+  Since 17 Nov 2026 (client's request, all artists) the picture itself scales in first,
+  70% -> 100% in 0.3 s, and the captions follow it.
   README → *Product hotspots* has the details and the measured positions. Further pieces of
   the new design to follow, one at a time.
   **Intro video (10 Nov 2026):** the basket weaving itself plays once, muted, as the panel
@@ -393,11 +404,17 @@ Talks, subtitles, stage cycle and turntable all work. Two things are left:
   out the moment the basket is complete (4.667 s) and the turntable takes over at full
   white. Both intros lock all input while they play and are no longer clipped to the
   product's box. README → *Product intros*.
+  **Bangie's intro was replaced on 17 Nov 2026** by the editor's v2 render (smooth roll,
+  24 fps, graded and de-specked by the same pipeline row) and now whitens out in the
+  video's last 0.25 s (`endAt` 4.792 s), at the user's request after 1 s and 0.5 s before
+  the cloth landed both felt too early. README → *Product intros*.
+  The old graded v1 is not in git; its source is still `premiere file/intro/Bangie Pua.mp4`.
   Both intros (`content/artists/{bangie,maznah}/video/intro.mp4`) are video, so they are
-  gitignored like the rest. **Copy them into `HoloBox-media`** with the end-of-project
+  gitignored like the rest. `HoloBox-media` still holds Bangie's v1 until that refresh. **Copy them into `HoloBox-media`** with the end-of-project
   refresh, then re-run `node tools/media-sizes.mjs` and commit. Until then the startup check
   does not cover them, because it only checks videos it has a size for.
-- **Infotext** during Terangkan Produk (see below). Built; waiting on the artwork and timings.
+- **Infotext** during Terangkan Produk: **in, 17 Nov 2026** (four cards, placed from the
+  user's mark-up). See *Infotext* below.
 
 ### Johnny — mostly done
 
@@ -418,6 +435,9 @@ Profil and Terangkan buttons.
   option). Its A/B markers moved with it, onto the same points of the blade. Checked by
   rendering both opening frames as the viewer places them: the heads land on the same
   115x202 px box. The sheathed parang is unchanged.
+  **Drag direction fixed (16 Nov 2026):** both parang turned the wrong way under a drag
+  (they were shot spinning the other way from the keris and basket). `sequence.reverse:
+  true` on both runs their frames backwards. The user is testing it on the panel.
   **Drawing the blade (10 Nov 2026):** switching parang now draws the sheath down off the
   blade, dissolving it, and back up to sheathe it, instead of the fade. It follows the
   blade's curve with a turn of up to 6°, fitted by `tools/fit-sheath-path.py`. The sheath is
@@ -429,52 +449,60 @@ Profil and Terangkan buttons.
   Still to come:
   - (done 12 Nov 2026: the museum's "Parang Ilang" title block, shared by both parang.
     Check "MotifSarung", which is missing a space.)
-- **Infotext** during Terangkan Produk (see below). Built; waiting on the artwork and timings.
+- **Infotext** during Terangkan Produk: **in, 17 Nov 2026** (six cards, placed from the
+  user's mark-up). See *Infotext* below.
 
-### Infotext — built; Bangie's set is in
+### Infotext — all three sets in (17 Nov 2026)
 
-Briefed 20 Oct 2026, built 2 Nov 2026. **Bangie's five images went in on 3 Nov 2026**;
-Maznah and Johnny have none yet.
+Briefed 20 Oct 2026, built 2 Nov 2026. **All three sets went in on 17 Nov 2026** from
+`outer assets/explain image timing/<artist>/`: Bangie 6 (replacing her first five of 3 Nov,
+which are backed up in git), Johnny 6, Maznah 4. Every card is a 600 x 600 RGBA PNG, copied
+as-is to `content/artists/<id>/infotext/infotext<n>.png` by `ARTWORK` rows in
+`tools/transcode.mjs`.
 
-**Bangie's set.** Source: `outer assets/premiere file/bangie/product/`. The designer writes
-each image's timing into its file name as **minutes.seconds**, e.g. `1 - Beji (0.37-0.42)`
-is 0:37-0:42. Each lands on the subtitle that names it:
+**Timing.** The user writes each card's window into its file name as **mm.ss-mm.ss**:
+`info1 (00.41-00.45)` shows from 0:41 to 0:45. The manifest takes exactly that, with no
+padding (the 3 Nov set had 2 s added by request; this set did not ask for it). Where one
+card ends as the next begins (Bangie 2/3 at 40 s; Johnny 4/5/6 at 118 and 123 s) they simply
+swap. Each window was checked against the subtitles: every card starts on the line that
+names what it shows (the reasoning per card is in each clip's `_note_infotext`). If a file
+is renamed, update both its `ARTWORK` row and its `atMs`/`showMs`.
 
-| # | Source file | Shows | Subtitle it matches |
-|---|---|---|---|
-| 0 | `0 - Title (0.2-0.7).png` | 2-9 s | "So, this pattern here is the Tangga Beji [Beji's Ladder] pattern" (2.65 s) |
-| 1 | `1 - Beji (0.37-0.42).png` | 37-44 s | "This is Beji, who is going to climb this tree." (37.6 s) |
-| 2 | `2 - Tree (0.46-0.51).png` | 46-53 s | "...it was an Entepung tree..." (46.9 s) |
-| 3 | `3 - Tree Broke (1.22).png` | 82-89 s | "But then the entepung pillar broke." (82.2-86.9 s) |
-| 4 | `4 - Beji Follower(1.36-1.41).png` | 96-103 s | "...Beji and his followers..." (97.5 s) |
+| Artist | Windows (s) | Where |
+|---|---|---|
+| Bangie | 27-33, 35-40, 40-44, 47-55, 75-84, 87-95 | default box: bottom-right above her two-language band, 372 x 372 at x 676-1048, y 608-980 |
+| Johnny | 41-45, 46-54, 83-100, 113-118, 118-123, 123-127 | `infotextBox` x 700, y 374, 365 x 365 (beside his head) |
+| Maznah | 55-60, 76-82, 83-89, 115-124 | `infotextBox` x 697, y 440, 365 x 365 (beside her head, lower than Johnny's) |
 
-The file names give 5 s each (`Tree Broke` has no end time and was given the same). The
-user then asked for **every image held 2 s longer, added at the end** (3 Nov 2026), so each
-shows 7 s from the designer's start time: the table above is what plays. They still do not
-overlap. `0 - Title` is the whole pua, opaque and tall (2400 x 4699, 28 MB) where the others
-are 512 x 512 squares. In the shared box it fits at 190 x 372 design px, in the same
-bottom-right corner and at the same height as the squares (x 858-1048, y 608-980), so its
-`ARTWORK` row scales it to 380 x 744, exactly that size on the 4K panel (0.78 MB). Checked in
-the app at 540 x 960: each image is on inside its window and off either side of it. If the designer renames a file, update its `ARTWORK` row.
+**Placement.** The user marked Johnny's and Maznah's boxes in magenta over a VLC frame
+pasted into Photoshop (Johnny at 0:41, Maznah at 1:23). Measured off those screenshots: the
+video is 358 screenshot px wide, which is 1080 design px, so 1 screenshot px = 3.02 design
+px, and the box is converted from the video's top-left corner (the VLC menu bar sits above
+it). The two marks differ in height, so each artist has its own `infotextBox` in the
+manifest. **Bangie had no mark-up this time**, so she keeps the default spot of her 3 Nov
+set. If she should match the others, give her an `infotextBox` (a manifest edit).
+
+Checked in the app at 1080 x 1920: each box lands exactly at its design rectangle, the right
+card is on inside its window, and the box goes back to the default after an artist with a
+custom one. (In the browser pane the frame callback is throttled to about 1 per second, so a
+card there can lag its window by up to a second; the subtitles share that clock, and on the
+kiosk it runs every frame.)
 
 *Infotext* is a set of reference images shown while an artist talks in **Terangkan
 Produk**: pictures of whatever they are describing at that moment.
 
 - **Who has it:** Maznah, Bangie and Johnny. Samat and Norhaiza have none and need nothing:
   an explain clip without an `infotext` list shows nothing.
-- **Assets:** 3-5 PNGs per artist, named `infotext1.png`, `infotext2.png`, ... For Bangie
-  they follow the client's choice on the *Content Approval* slide: 3-5 of the pua detail
-  areas A-H, each with its motif and meaning.
+- **Assets:** PNGs per artist, named `infotext1.png`, `infotext2.png`, ...
 - **Timing:** each image has its own start and duration against the explain video's clock,
   e.g. *appears at 18 s, stays 4 s*. Get them from whoever briefs the artwork, not from
   the audio, and check them against the subtitles.
-- **Position:** one fixed box, the same for every image and artist, just above the subtitle
-  band and to the right: 490 x 372 px on the 1080 x 1920 canvas, 32 px from the right
-  edge, 18 px above the band. Measured from the annotated screenshot (the circle spans
-  x 558-1048, y 595-967). Each image is fitted inside it and sits in its **bottom-right
-  corner**, so it is near the screen edge whatever its shape: Bangie's 512 x 512 squares
-  show at 372 x 372, x 676-1048. (They were centred, at 617-989, until the user's mark-up
-  of 3 Nov 2026 moved them right.) No animation: an image appears and hides.
+- **Position:** a default box, just above the subtitle band and to the right: 490 x 372 px
+  on the 1080 x 1920 canvas, 32 px from the right edge, 18 px above the band
+  (`.talk-infotext` in `web/app.css`, measured from the annotated screenshot of 2 Nov). An
+  image is fitted inside it and sits in its **bottom-right corner**. A clip can move the box
+  with `"infotextBox": { "x", "y", "w", "h" }` in design px (17 Nov 2026, Johnny and Maznah).
+  No animation: an image appears and hides.
 
 **To add one artist's set:**
 
@@ -482,13 +510,15 @@ Produk**: pictures of whatever they are describing at that moment.
    `tools/transcode.mjs`, staging them to `content/artists/<id>/infotext/infotext1.png` and
    so on (rule: nothing under `content/artists/` is hand-placed). These are small and are
    committed; only `video/` is kept out of git.
-2. Add the list to that artist's `video.explain` in `content/content.json`:
+2. Add the list to that artist's `video.explain` in `content/content.json`, plus an
+   `infotextBox` if the mark-up puts it somewhere other than the default:
 
 ```json
 "infotext": [
   { "image": "artists/bangie/infotext/infotext1.png", "atMs": 18000, "showMs": 4000 },
   { "image": "artists/bangie/infotext/infotext2.png", "atMs": 41000, "showMs": 5000 }
-]
+],
+"infotextBox": { "x": 700, "y": 374, "w": 365, "h": 365 }
 ```
 
 3. Run `npm run prepare-assets`, open the talk and check each image comes in at its time.
@@ -503,20 +533,29 @@ which blinked `Text1.png` on a 5 s show / 5 s hide loop. The code, the manifest 
 two `explain-supers.png` files (Bangie's and an unused one for Maznah) and their pipeline
 rows are all gone.
 
-### Product titles — the museum's latest set (12 Nov 2026)
+### Product titles — the museum's latest set (12 Nov 2026, redesigned 16 Nov)
 
-Every product's title block, top right of its Terokai Produk panel, is now the museum's
-latest card from `outer assets/premiere file/new pngs/Product Title - <name>.png`. Each is
-900x330 and shown at 450x165, like the old ones. The pipeline stages them byte for byte to
-each product's `info.png` (Johnny's two parang share `johnny/products/info.png`), and
-content.json's `metaImage` points at them. Samat's Wau and Johnny's parang had plain text
-titles before.
+Every product's title block is the museum's card from
+`outer assets/premiere file/new pngs/Product Title - <name>.png`. The pipeline stages them
+byte for byte to each product's `info.png` (Johnny's two parang share
+`johnny/products/info.png`), and content.json's `metaImage` points at them. Samat's Wau and
+Johnny's parang had plain text titles before.
 
-Three things in the cards to check with the museum. They are their artwork, so they are
-left as delivered:
+**Redesign (16 Nov 2026, the museum's comment).** The cards are now 982x330 with
+left-aligned, tabulated text (they were 900x330, right-aligned). The block moved to the
+**top left** of the panel, mirroring its old top-right place:
+- Most products: `left: 70px`, top 150, so 70-561 x 150-315.
+- Bangie's explore layout: `left: 51px`, top 28, so 51-585 x 28-207.
+
+They are shown at the same scale as before (491 px wide, 534 on Bangie's), so the type is
+the same size. Every card's text starts at the same x. All seven were measured in the app;
+the old cards are backed up in the session scratchpad.
+
+Things in the cards to check with the museum. They are their artwork, so they are left as
+delivered:
 - **Wau:** it reads "Wau Helang", where the product is named "Wau Bulan".
 - **Pua:** "pewarnaan asli. dan tenunan tradisional" has a stray full stop.
-- **Parang:** "MotifSarung" is missing a space.
+- **Parang:** fixed in the redesign ("Motif Sarung").
 
 The tutorial hand icons moved into the same folder. Their pipeline rows follow them, and the
 files are identical.
@@ -612,9 +651,11 @@ doing video work; every entry is there because it cost a day.
 5. Leave it running overnight — memory flat, parked on the menu.
 
 **Kiosk machine:** auto-login; sleep, hibernate and screensaver off; Windows Update active
-hours locked; notifications off. Then run the app once. It sets the PC to open the kiosk at
-every logon (the "KRAF HoloBox" scheduled task; README → *Auto-start at logon*), and
-`.cache/autostart.log` says it did. **Pin Chrome's version or disable
+hours locked; notifications off; Windows 11's three- and four-finger touch gestures off
+(Settings > Bluetooth & devices > Touch). Then run the app once. It sets the PC to open the
+kiosk at every logon (the "KRAF HoloBox" scheduled task; README → *Auto-start at logon*),
+and asks once for admin to lock out the edge swipes: **approve it**, then restart and swipe
+in from every edge to check (README → *Kiosk lock*). `.cache/autostart.log` records both. **Pin Chrome's version or disable
 its updater** if you ship the Chrome fallback — otherwise this runs for eight months and dies
 on a Tuesday.
 
@@ -630,8 +671,7 @@ on a Tuesday.
    mid-task.
 3. **Check the masters backup.** `outer assets/` syncs to the shared drive (§2); `_source/`
    still exists on one machine only.
-4. Chase the museum for **Bangie's full Iban translation**. Her re-edit, subtitles and
-   infotext all wait on it, so start early.
+4. Chase the museum for **Bangie's full Iban translation**. Her re-edit and subtitles
+   wait on it, so start early.
 5. Collect the outstanding artwork: **Maznah's new Terokai Produk design**, **Johnny's
-   Terokai Produk brief**, and the **infotext PNGs and timings** for Maznah, Bangie and
-   Johnny. Infotext is built; adding a set is a manifest edit (§5).
+   Terokai Produk brief**. (Infotext for Maznah, Bangie and Johnny is in, 17 Nov 2026.)
